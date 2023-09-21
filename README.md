@@ -1,2 +1,2 @@
 # r8ge
-Retor 8-Bit Game Engine
+Retro 8-Bit Game Engine
