@@ -17,5 +17,6 @@ add_subdirectory(testbed)
 # Installation
 install(TARGETS testbed r8ge-core
         RUNTIME DESTINATION ${INSTALL_DIR}
-        LIBRARY ARCHIVE ARCHIVE DESTINATION ${INSTALL_DIR}/lib
+        LIBRARY DESTINATION ${INSTALL_DIR}/elf
+        ARCHIVE DESTINATION ${INSTALL_DIR}/lib
 )
