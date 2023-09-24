@@ -11,12 +11,12 @@ add_subdirectory(r8ge-core)
 
 
 # Executables
-add_subdirectory(testbed)
+# add_subdirectory(testbed) # Testing executable, may use different name
 
 
 # Installation
-install(TARGETS testbed r8ge-core
+install(TARGETS r8ge-core
         RUNTIME DESTINATION ${INSTALL_DIR}
-        LIBRARY DESTINATION ${INSTALL_DIR}/elf
+        LIBRARY DESTINATION ${INSTALL_DIR}/slib
         ARCHIVE DESTINATION ${INSTALL_DIR}/lib
 )
