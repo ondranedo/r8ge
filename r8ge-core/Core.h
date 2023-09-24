@@ -2,9 +2,9 @@
 #define R8GE_CORE_H
 
 #ifdef linux
-    #define R8GE_LINUX
+    #define R8GE_LINUX extern
 #elif _WIN32
-    #define R8GE_WINDOWS
+    #define R8GE_WINDOWS extern
 #else//!_WIN32
     #error "Unknown/Unsupported platform"
 #endif//!linux
@@ -14,5 +14,8 @@
 #else
     #define R8GE_API
 #endif//!R8GE_WINDOWS
+
+
+
 
 #endif//!R8GE_CORE_H
