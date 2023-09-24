@@ -5,18 +5,22 @@ project(r8ge LANGUAGES C CXX)
 # Variables
 set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/install/${CMAKE_SYSTEM_NAME}/${CMAKE_BUILD_TYPE})
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${INSTALL_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${INSTALL_DIR}/slib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${INSTALL_DIR}")
+
 
 # Libraries
 add_subdirectory(r8ge-core)
 
 
 # Executables
-# add_subdirectory(testbed) # Testing executable, may use different name
+add_subdirectory(testbed)
 
 
 # Installation
-install(TARGETS r8ge-core
-        RUNTIME DESTINATION ${INSTALL_DIR}
-        LIBRARY DESTINATION ${INSTALL_DIR}/slib
-        ARCHIVE DESTINATION ${INSTALL_DIR}/lib
+install(TARGETS testbed r8ge-core
+        RUNTIME DESTINATION ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
+        LIBRARY DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+        ARCHIVE DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
