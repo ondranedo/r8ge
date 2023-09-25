@@ -32,52 +32,6 @@ namespace r8ge {
             for(auto& type : list)
                 vec_list.emplace_back(typeToString(type));
 
-            /*
-            std::size_t counter = 0;
-            bool open = false;
-            bool _protected = false;
-            enum{UNKNOWN, SIGNED, UNSIGNED} mode{UNKNOWN};
-
-            std::string in_brackets{};
-            std::string out_string{};
-
-            for(char c : form) {
-                if(c == '\\') _protected = true;
-                if(c == '{' && !_protected) open = true;
-                if(open && c != '{' && c != '}') in_brackets += c;
-                else
-                    if(c != '{' && c != '}') out_string += c;
-
-                if(c == '}') {
-                    open = false;
-
-                    if(in_brackets.empty() && mode!=SIGNED)
-                    {
-                        mode = UNSIGNED;
-                        if(counter >= vec_list.size())
-                            out_string += "{out-of-bound}";
-                        else
-                            out_string += vec_list[counter++];
-                    }
-
-                    if(!in_brackets.empty() && mode!=UNSIGNED)
-                    {
-                        mode = SIGNED;
-                        size_t tester = std::stoi(in_brackets);
-                        if(tester >= vec_list.size())
-                            out_string += "{out-of-bound}";
-                        else
-                            out_string += vec_list[counter];
-                    }
-
-                    in_brackets = "";
-                }
-
-                if(c != '\\') _protected = false;
-            }
-
-            return out_string;*/
-
             return formatLoop(form, vec_list);
         }
 
@@ -88,23 +42,23 @@ namespace r8ge {
             size_t counter = 0;
 
             for(char c : form) {
-                FormatMode newmode = mode != FormatMode::PROTECTED ? formatModeFromChar(mode, c) : FormatMode::OUT_BRACKETS;
+                FormatMode new_mode = mode != FormatMode::PROTECTED ? formatModeFromChar(mode, c) : FormatMode::OUT_BRACKETS;
 
-                if(newmode == FormatMode::OUT_BRACKETS
-                && mode != FormatMode::IN_BRACKETS) outstr += c;
+                if(new_mode == FormatMode::OUT_BRACKETS
+                   && mode != FormatMode::IN_BRACKETS) outstr += c;
 
-                if(newmode == FormatMode::IN_BRACKETS
-                && mode != FormatMode::OUT_BRACKETS) instr += c;
+                if(new_mode == FormatMode::IN_BRACKETS
+                   && mode != FormatMode::OUT_BRACKETS) instr += c;
 
-                if(newmode == FormatMode::PROTECTED
-                && c != '\\') outstr += c;
+                if(new_mode == FormatMode::PROTECTED
+                   && c != '\\') outstr += c;
 
                 if(mode == FormatMode::IN_BRACKETS &&
-                newmode == FormatMode::OUT_BRACKETS) {
+                   new_mode == FormatMode::OUT_BRACKETS) {
                     outstr += formatInBrackets(instr, &counter, list);
                     instr = "";
                 }
-                mode = newmode;
+                mode = new_mode;
             }
 
             return outstr;
