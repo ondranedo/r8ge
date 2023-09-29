@@ -1,13 +1,20 @@
 #include "EntryPoint.h"
 
 #include "Logger.h"
+#include "Ar8ge.h"
 
 namespace r8ge {
     int main(const EntryPointData& entry_data)
     {
-        r8ge::mainLogger = new Logger;
+        mainLogger = new Logger;
+        auto engine = new Ar8ge;
 
-        delete r8ge::mainLogger;
+
+        engine->run();
+
+        delete engine;
+        delete mainLogger;
+
         return 0;
     }
 }

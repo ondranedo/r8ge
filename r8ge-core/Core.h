@@ -16,7 +16,7 @@
         #define R8GE_API __declspec((__dllimport))
     #endif//!R8GE_CORE_BUILD
 #else
-    #define R8GE_API extern
+    #define R8GE_API
 #endif//!R8GE_WINDOWS
 
 #include <cassert>

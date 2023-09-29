@@ -13,7 +13,9 @@ add_library(r8ge-core
         "EntryPoint.h"
         "Logger.cpp"
         "Logger.h"
-        "platform/EntryPoint.cpp" # Main for each platform
+        "platform/EntryPoint.cpp"  # main() for each platform
+        "Ar8ge.cpp"
+        "Ar8ge.h"
 )
 
 
