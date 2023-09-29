@@ -9,11 +9,11 @@ namespace r8ge {
     namespace utility {
         /*
          * StringFormat is a utility class which provides the ability tu use
-         * vert basic `fmt` like string formats.
+         * very basic `fmt-like` string formats.
          *
          * example:
          *  StringFormat("{1}, {0}!", {"World", "Hello"}) -> "Hello, World!"
-         *  StringFormat("{}, {}! {}", {"World", "Hello"}) -> "Hello, World! "Hello"
+         *  StringFormat("{}, {}! {}", {"World", "Hello"}) -> "World, Hello! "Hello"
          *  StringFormat("{} {} {}", {1, 2, 3}) -> "1 2 3"
          *  StringFormat("{0} {} {} {1}", {"Ahoj", 1, 2}) -> "Ahoj Ahoj 1 1"
          *  StringFormat("{}{}{}", {'a'}) -> "aaa"
