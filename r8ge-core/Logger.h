@@ -38,20 +38,15 @@ namespace r8ge {
         std::queue<Log> m_queue;
     };
 
-    template<typename ... Args>
-    void mainLog(Logger::Priority p, const std::string& parser, Args... args) {
-        if(mainLogger)
-            mainLogger->log(p, utility::StringFormat(parser, {args...}).to_string());
-
-        // TODO: Some error output or smth
-    }
+    void mainLog(Logger::Priority p, const std::string& parser,
+                 const std::initializer_list<utility::StringFormat::ValidType>& t);
 }
 
-#define R8GE_LOG_TRACE(...) r8ge::mainLog(r8ge::Logger::Priority::TRACE, __VA_ARGS__);
-#define R8GE_LOG_DEBUG(...) r8ge::mainLog(r8ge::Logger::Priority::DEBUG, __VA_ARGS__);
-#define R8GE_LOG_WARNI(...) r8ge::mainLog(r8ge::Logger::Priority::WARNI, __VA_ARGS__);
-#define R8GE_LOG_ERROR(...) r8ge::mainLog(r8ge::Logger::Priority::ERROR, __VA_ARGS__);
-#define R8GE_LOG_FATAL(...) r8ge::mainLog(r8ge::Logger::Priority::FATAL, __VA_ARGS__);
+#define R8GE_LOG_TRACE(str, ...) r8ge::mainLog(r8ge::Logger::Priority::TRACE, str,{__VA_ARGS__})
+#define R8GE_LOG_DEBUG(str, ...) r8ge::mainLog(r8ge::Logger::Priority::DEBUG, str,{__VA_ARGS__})
+#define R8GE_LOG_WARNI(str, ...) r8ge::mainLog(r8ge::Logger::Priority::WARNI, str,{__VA_ARGS__})
+#define R8GE_LOG_ERROR(str, ...) r8ge::mainLog(r8ge::Logger::Priority::ERROR, str,{__VA_ARGS__})
+#define R8GE_LOG_FATAL(str, ...) r8ge::mainLog(r8ge::Logger::Priority::FATAL, str,{__VA_ARGS__})
 
 //#define R8GE_LOG(...) R8GE_LOG_TRACE(__VA_ARGS__)z
 

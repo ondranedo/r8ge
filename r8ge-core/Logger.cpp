@@ -48,4 +48,12 @@ namespace r8ge {
     }
 
     Logger::Log::Log(const std::string &raw, Logger::Priority p) : raw_data(raw), priority(p) {}
+
+    void mainLog(Logger::Priority p, const std::string &parser,
+                 const std::initializer_list<utility::StringFormat::ValidType> &t) {
+        if(mainLogger)
+            mainLogger->log(p, utility::StringFormat(parser, t).to_string());
+
+        // TODO: Some error output or smth
+    }
 }

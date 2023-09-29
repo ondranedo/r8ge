@@ -9,7 +9,6 @@ namespace r8ge {
         static std::string typeToString(const StringFormat::ValidType &type);
         static std::string formatLoop(const std::string &form, const std::vector<std::string>& list);
         static std::string format(const std::string &form, const StringFormat::ValidList &list);
-        static FormatMode formatModeFromChar(FormatMode fm, char c);
         static std::string formatInBrackets(const std::string&, size_t*, const std::vector<std::string>&);
 
         StringFormat::StringFormat(const std::string &form, const ValidList & list) : m_str(format(form, list)){}
@@ -33,28 +32,32 @@ namespace r8ge {
 
         std::string formatLoop(const std::string &form, const std::vector<std::string>& list){
             FormatMode mode = FormatMode::OUT_BRACKETS;
-            std::string outstr = "";
-            std::string instr = "";
+            std::string outstr{""},instr{""};
             size_t counter = 0;
+            char prev = '\0';
 
             for(char c : form) {
-                FormatMode new_mode = mode != FormatMode::PROTECTED ? formatModeFromChar(mode, c) : FormatMode::OUT_BRACKETS;
+                if(c != '\\' && c!='{' && c!='}' && prev!='\\') {
+                    if(mode == FormatMode::OUT_BRACKETS)
+                        outstr+=c;
+                    else
+                        instr+=c;
+                    prev = c;
+                    continue;
+                }
 
-                if(new_mode == FormatMode::OUT_BRACKETS
-                   && mode != FormatMode::IN_BRACKETS) outstr += c;
-
-                if(new_mode == FormatMode::IN_BRACKETS
-                   && mode != FormatMode::OUT_BRACKETS) instr += c;
-
-                if(new_mode == FormatMode::PROTECTED
-                   && c != '\\') outstr += c;
-
-                if(mode == FormatMode::IN_BRACKETS &&
-                   new_mode == FormatMode::OUT_BRACKETS) {
+                if(prev == '\\' && c == '{')  outstr+=c; else
+                if(prev == '\\' && c == '\\') outstr+='\\'; else
+                if(prev != '\\' && c == '{' && mode == FormatMode::OUT_BRACKETS)  mode = FormatMode::IN_BRACKETS; else
+                if(prev != '\\' && c == '}' && mode == FormatMode::IN_BRACKETS) {
+                    mode = FormatMode::OUT_BRACKETS;
                     outstr += formatInBrackets(instr, &counter, list);
                     instr = "";
-                }
-                mode = new_mode;
+                } else
+                if(prev != '\\' && c == '}')
+                    outstr+= '}';
+
+                prev = c;
             }
 
             return outstr;
@@ -73,21 +76,12 @@ namespace r8ge {
             return list[index];
         }
 
-        FormatMode formatModeFromChar(FormatMode fm, char c) {
-            if(c == '}') return FormatMode::OUT_BRACKETS;
-            if(c == '{') return FormatMode::IN_BRACKETS;
-            if(c == '\\') return FormatMode::PROTECTED;
-
-            return fm == FormatMode::OUT_BRACKETS?
-            FormatMode::OUT_BRACKETS:
-            FormatMode::IN_BRACKETS;
-        }
-
         std::string typeToString(const StringFormat::ValidType &type) {
             if(const int* p = std::get_if<int>(&type)) return std::to_string(*p);
             if(const float* p = std::get_if<float>(&type)) return std::to_string(*p);
             if(const std::string* p = std::get_if<std::string>(&type)) return *p;
             if(const char* p = std::get_if<char>(&type)) return std::to_string(*p);
+            if(const unsigned long* p = std::get_if<unsigned long>(&type)) return std::to_string(*p);
 
             // TODO: Error or something
             return "";

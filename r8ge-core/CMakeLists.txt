@@ -33,6 +33,3 @@ if(BUILD_SHARED_LIBS)
 else()
         add_compile_definitions(R8GE_STATIC)
 endif()
-
-
-# Include subcomponents
