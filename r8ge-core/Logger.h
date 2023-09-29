@@ -48,6 +48,6 @@ namespace r8ge {
 #define R8GE_LOG_ERROR(str, ...) r8ge::mainLog(r8ge::Logger::Priority::ERROR, str,{__VA_ARGS__})
 #define R8GE_LOG_FATAL(str, ...) r8ge::mainLog(r8ge::Logger::Priority::FATAL, str,{__VA_ARGS__})
 
-//#define R8GE_LOG(...) R8GE_LOG_TRACE(__VA_ARGS__)z
+#define R8GE_LOG(...) R8GE_LOG_TRACE(__VA_ARGS__)
 
 #endif//!R8GE_LOGGER_H
