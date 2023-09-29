@@ -24,8 +24,10 @@ add_library(r8ge-core
         "EntryPoint.cpp"
         "EntryPoint.h"
         ${entryPointFile}
-        Logger.cpp
-        Logger.h
+        "Logger.cpp"
+        "Logger.h"
+        "utility/StringFormat.cpp"
+        "utility/StringFormat.h"
 )
 
 # Compile definitions
