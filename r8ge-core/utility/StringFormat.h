@@ -19,6 +19,7 @@ namespace r8ge {
          *  StringFormat("{}{}{}", {'a'}) -> "aaa"
          *  StringFormat("{0};{1};{2}", {10, 20}) -> "10;20;{missing_value}"
          *  StringFormat("{}, {}, {}, {}", {1,2}) -> "1, 2, 2, 2"
+         *  StringFormat("\\{{}, \\{{}-{}-{}, \\{{2}{1}\\{{2}+{}}}}}", {0,1,2,3,4}) -> "{0, {1-2-3, {21{2+4}}}}"
          */
 
         class StringFormat {
