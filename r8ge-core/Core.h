@@ -19,7 +19,15 @@
     #define R8GE_API extern
 #endif//!R8GE_WINDOWS
 
+#include <cassert>
 
+namespace r8ge {
+    R8GE_API void assertImpl(const char * expr, unsigned long line, const char * fun, const char *msg);
+    R8GE_API void assertImpl(const char * expr, unsigned long line, const char * fun);
+}
+
+#define R8GE_ASSERT(expr) if(!(expr)) r8ge::assertImpl(#expr, __LINE__, __PRETTY_FUNCTION__)
+#define R8GE_LOG_ASSERT(expr, msg) if(!(expr))  r8ge::assertImpl(#expr, __LINE__, __PRETTY_FUNCTION__, msg)
 
 
 #endif//!R8GE_CORE_H
