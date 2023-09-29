@@ -22,10 +22,6 @@ namespace r8ge {
             return m_str;
         }
 
-        StringFormat::operator std::string() {
-            return to_string();
-        }
-
         std::string format(const std::string &form, const StringFormat::ValidList &list) {
             std::vector<std::string> vec_list{};
 

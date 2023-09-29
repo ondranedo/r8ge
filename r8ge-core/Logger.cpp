@@ -25,10 +25,10 @@ namespace r8ge {
         mainLogger_mutex.lock();
         while(!m_queue.empty()) {
             Log& l = m_queue.front();
-            m_queue.pop();
-
             // TODO: Platform output
             std::cout << format(l) << std::endl;
+
+            m_queue.pop();
         }
         mainLogger_mutex.unlock();
     }

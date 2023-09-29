@@ -4,18 +4,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
-# Platform dependant code & entry point
-if(LINUX)
-        #add_subdirectory(platform/linux)
-        #target_link_libraries(r8ge-core PRIVATE r8ge-core-linux)
-        set(entryPointFile "platform/linux/EntryPoint.cpp")
-elseif(WIN32)
-        #add_subdirectory(platform/windows)
-        #target_link_libraries(r8ge-core PRIVATE r8ge-core-windows)
-else()
-        message(FATAL_ERROR "Unsupported platform")
-endif()
-
 
 # Build
 add_library(r8ge-core
@@ -23,12 +11,19 @@ add_library(r8ge-core
         "Core.cpp"
         "EntryPoint.cpp"
         "EntryPoint.h"
-        ${entryPointFile}
         "Logger.cpp"
         "Logger.h"
-        "utility/StringFormat.cpp"
-        "utility/StringFormat.h"
+        "platform/EntryPoint.cpp" # Main for each platform
 )
+
+
+# Subcomponents of `Core`
+add_subdirectory(utility)
+target_link_libraries(r8ge-core PRIVATE utility)
+
+add_subdirectory(platform)
+target_link_libraries(r8ge-core PRIVATE platform)
+
 
 # Compile definitions
 target_compile_definitions(r8ge-core PRIVATE R8GE_CORE_BUILD)
@@ -38,3 +33,6 @@ if(BUILD_SHARED_LIBS)
 else()
         add_compile_definitions(R8GE_STATIC)
 endif()
+
+
+# Include subcomponents

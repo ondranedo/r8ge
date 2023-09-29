@@ -33,7 +33,6 @@ namespace r8ge {
             StringFormat();
 
             [[nodiscard]] std::string to_string();
-            operator std::string();
 
         private:
             std::string m_str;

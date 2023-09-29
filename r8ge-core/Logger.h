@@ -25,6 +25,7 @@ namespace r8ge {
             //std::chrono::time_point<std::chrono::high_resolution_clock> time_point; // TODO: Add platform time
             std::string raw_data;
             Priority priority;
+
             Log(const std::string& raw, Priority p);
         };
 

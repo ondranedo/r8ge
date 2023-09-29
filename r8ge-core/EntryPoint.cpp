@@ -1,8 +1,5 @@
 #include "EntryPoint.h"
 
-#include <iostream>
-#include <ranges>
-
 #include "Logger.h"
 
 namespace r8ge {
