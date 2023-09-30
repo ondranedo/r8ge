@@ -21,10 +21,13 @@ add_library(r8ge-core
 
 # Subcomponents of `Core`
 add_subdirectory(utility)
-target_link_libraries(r8ge-core PRIVATE utility)
+target_link_libraries(r8ge-core PUBLIC utility)
 
 add_subdirectory(platform)
 target_link_libraries(r8ge-core PRIVATE platform)
+
+add_subdirectory(events)
+target_link_libraries(r8ge-core PUBLIC events)
 
 
 # Compile definitions
