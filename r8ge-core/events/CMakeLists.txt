@@ -5,4 +5,7 @@ add_library(events
         "EventPayload.h"
         "EventQueue.cpp"
         "EventQueue.h"
+        "KeyEvents.cpp"
+        "KeyEvents.h"
+        Strokes.h
 )
