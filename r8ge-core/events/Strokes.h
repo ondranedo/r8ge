@@ -2,7 +2,7 @@
 #define R8GE_STROKES_H
 
 namespace r8ge {
-    enum class IOCode : uint16_t /* Limited to 2^13 = 8192 */ {
+    enum class IOCode {
         //Mouse
         MBUTTON_1 = 0,
         MBUTTON_2 = 1,
