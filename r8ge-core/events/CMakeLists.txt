@@ -3,4 +3,6 @@ add_library(events
         "Event.h"
         "EventPayload.cpp"
         "EventPayload.h"
+        "EventQueue.cpp"
+        "EventQueue.h"
 )

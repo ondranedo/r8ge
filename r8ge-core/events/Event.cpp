@@ -4,7 +4,7 @@
 namespace r8ge {
 
 
-    Event::Event() : m_header({EventType::NONE, false}){}
+    Event::Event() : m_header(EventType::NONE, false){}
 
     Event::~Event() = default;
 
@@ -35,5 +35,6 @@ namespace r8ge {
             case EventType::MOUSE_MOVED:        return "MOUSE_MOVED";
             case EventType::MOUSE_SCROLLED:     return "MOUSE_SCROLLED";
         }
+        return "";
     }
 }
