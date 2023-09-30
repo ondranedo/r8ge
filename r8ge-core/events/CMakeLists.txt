@@ -7,5 +7,7 @@ add_library(events
         "EventQueue.h"
         "KeyEvents.cpp"
         "KeyEvents.h"
-        Strokes.h
+        "Strokes.h"
+        "MouseEvents.cpp"
+        "MouseEvents.h"
 )
