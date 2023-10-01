@@ -1,9 +1,10 @@
 # TODO
 
-- **Logger**
+- **~~Logger~~**
   - Time; Colours; Formats; Log thread
-- **Event System**
+- **~~Event System~~**
 - **System Time**
 - **file I/O**
 - **System Threads**
 - **Application types**
+- **Layers - instance r8ge**

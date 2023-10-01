@@ -10,6 +10,6 @@ add_library(events
         "Strokes.h"
         "MouseEvents.cpp"
         "MouseEvents.h"
-        WindowEvents.cpp
-        WindowEvents.h
+        "WindowEvents.cpp"
+        "WindowEvents.h"
 )
