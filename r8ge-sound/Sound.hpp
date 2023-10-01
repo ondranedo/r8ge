@@ -6,19 +6,24 @@
 #define R8GE_SOUND_HPP
 #include <audioclient.h>
 #include <chrono>
+#include <mmdeviceapi.h>
 
 namespace r8ge {
-    int soundtestfunc();
-
-    class MyAudioSource{
+    class AudioPusher{
     public:
-        HRESULT LoadData(UINT32 bufferFrameCount, BYTE *pData, DWORD* flags);
-        HRESULT SetFormat(WAVEFORMATEX *pwfx);
+        AudioPusher();
+        ~AudioPusher();
     private:
-        WAVEFORMATEX m_wfx = {};
+        WAVEFORMATEX* m_wfx = NULL;
         double m_generatedTime = 0.0;
+        IMMDeviceEnumerator *m_pEnumerator = NULL;
+        IMMDevice *m_pDevice = NULL;
+        IAudioClient *m_pAudioClient = NULL;
+        IAudioRenderClient *m_pRenderClient = NULL;
+        double (*m_generatorFunc)(double);
+
+        HRESULT LoadData(UINT32 bufferFrameCount, BYTE *pData, DWORD* flags);
     };
-    HRESULT PlayAudioStream(MyAudioSource *pMySource);
 }
 
 #endif //R8GE_SOUND_HPP

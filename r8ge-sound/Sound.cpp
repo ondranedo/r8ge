@@ -5,17 +5,10 @@
 #include "Sound.hpp"
 #include <iostream>
 #include <cmath>
-#include <mmdeviceapi.h>
 #include <cstdlib>
 #include <random>
 
-int r8ge::soundtestfunc() {
-    std::cout << " soudnTest succsesfzkt" << std::endl;
-    return 80085;
-}
-
-
-// totally not stolen code VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+// credit: someone on learn.microsoft
 //-----------------------------------------------------------
 // Play an audio stream on the default audio rendering
 // device. The PlayAudioStream function allocates a shared
@@ -28,8 +21,8 @@ int r8ge::soundtestfunc() {
 #define REFTIMES_PER_SEC  10000000
 #define REFTIMES_PER_MILLISEC  10000
 
-#define EXIT_ON_ERROR(hres)  \
-              if (FAILED(hres)) { goto Exit; }
+#define LOG_AND_EXIT_ON_ERROR(hres, text) \
+                        if(FAILED(hres)){ std::cout << (text) << std::endl; goto Exit;}
 #define SAFE_RELEASE(punk)  \
               if ((punk) != NULL)  \
                 { (punk)->Release(); (punk) = NULL; }
@@ -39,6 +32,123 @@ const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 const IID IID_IAudioClient = __uuidof(IAudioClient);
 const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
 
+r8ge::AudioPusher::AudioPusher() {
+    HRESULT hr;
+    REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC;
+    REFERENCE_TIME hnsActualDuration;
+    UINT32 bufferFrameCount;
+    UINT32 numFramesAvailable;
+    UINT32 numFramesPadding;
+    BYTE *pData;
+    DWORD flags = 0;
+
+    hr = CoInitialize(NULL);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to initialize the COM library")
+
+    hr = CoCreateInstance(
+            CLSID_MMDeviceEnumerator, NULL,
+            CLSCTX_ALL, IID_IMMDeviceEnumerator,
+            (void**)&m_pEnumerator);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to create a device enumerator")
+
+    hr = m_pEnumerator->GetDefaultAudioEndpoint(
+            eRender, eConsole, &m_pDevice);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to get the default audio output")
+
+    hr = m_pDevice->Activate(
+            IID_IAudioClient, CLSCTX_ALL,
+            NULL, (void**)&m_pAudioClient);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to create an audio client")
+
+    hr = m_pAudioClient->GetMixFormat(&m_wfx);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to gain information on the used format")
+
+    hr = m_pAudioClient->Initialize(
+            AUDCLNT_SHAREMODE_SHARED,
+            0,
+            hnsRequestedDuration,
+            0,
+            m_wfx,
+            NULL);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to initialize the audio client")
+
+    // Get the actual size of the allocated buffer.
+    hr = m_pAudioClient->GetBufferSize(&bufferFrameCount);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to get info about the allocated audio buffer")
+
+    hr = m_pAudioClient->GetService(
+            IID_IAudioRenderClient,
+            (void**)&m_pRenderClient);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to create the audio renderer")
+
+    // Calculate the actual duration of the allocated buffer.
+    hnsActualDuration = (double)REFTIMES_PER_SEC *
+                        bufferFrameCount / m_wfx->nSamplesPerSec;
+
+    hr = m_pAudioClient->Start();  // Start playing.
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to start playing audio")
+
+    // Each loop fills about half of the shared buffer.
+    while (flags != AUDCLNT_BUFFERFLAGS_SILENT)
+    {
+        // Sleep for half the buffer duration.
+        Sleep((DWORD)(hnsActualDuration/REFTIMES_PER_MILLISEC/2));
+
+        // See how much buffer space is available.
+        hr = m_pAudioClient->GetCurrentPadding(&numFramesPadding);
+        LOG_AND_EXIT_ON_ERROR(hr, "Failed to get information about the buffer padding")
+
+        numFramesAvailable = bufferFrameCount - numFramesPadding;
+
+        // Grab all the available space in the shared buffer.
+        hr = m_pRenderClient->GetBuffer(numFramesAvailable, &pData);
+        LOG_AND_EXIT_ON_ERROR(hr, "Failed to get the available audio buffer")
+
+        // Get next 1/2-second of data from the audio source.
+        hr = this->LoadData(numFramesAvailable, pData, &flags);
+        LOG_AND_EXIT_ON_ERROR(hr, "Failed to load data into the audio buffer")
+
+        hr = m_pRenderClient->ReleaseBuffer(numFramesAvailable, flags);
+        LOG_AND_EXIT_ON_ERROR(hr, "Failed to free the filled audio buffer")
+    }
+
+    // Wait for last data in buffer to play before stopping.
+    Sleep((DWORD)(hnsActualDuration/REFTIMES_PER_MILLISEC/2));
+
+    hr = m_pAudioClient->Stop();  // Stop playing.
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to stop playing audio for some reason")
+
+    Exit:
+}
+
+HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData, DWORD *flags) {
+    *flags &= ~AUDCLNT_BUFFERFLAGS_SILENT;
+    if(m_generatedTime > 10.0){
+        *flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+    }
+    switch(m_wfx->wBitsPerSample){
+        case 32:
+            for(int i = 0; i < bufferFrameCount; i++){
+                for(unsigned char j = 0; j < m_wfx->nChannels; j++) {
+                    *((float*)(pData) + (i * m_wfx->nChannels) + j) = (float)(std::sin(m_generatedTime * 440.0 * 2.0 * 3.14159) * 0.01);
+                }
+                m_generatedTime +=  1.0 / m_wfx->nSamplesPerSec;
+            }
+            break;
+        default: *flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+    }
+    return 0;
+}
+
+r8ge::AudioPusher::~AudioPusher() {
+    CoTaskMemFree(m_wfx);
+    SAFE_RELEASE(m_pEnumerator)
+    SAFE_RELEASE(m_pDevice)
+    SAFE_RELEASE(m_pAudioClient)
+    SAFE_RELEASE(m_pRenderClient)
+}
+
+/*
 HRESULT r8ge::PlayAudioStream(MyAudioSource *pMySource)
 {
     HRESULT hr;
@@ -155,28 +265,4 @@ HRESULT r8ge::PlayAudioStream(MyAudioSource *pMySource)
 
     return hr;
 }
-// totally not stolen code ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-HRESULT r8ge::MyAudioSource::LoadData(UINT32 bufferFrameCount, BYTE *pData, DWORD *flags) {
-    *flags &= ~AUDCLNT_BUFFERFLAGS_SILENT;
-    if(m_generatedTime > 10.0){
-        *flags |= AUDCLNT_BUFFERFLAGS_SILENT;
-    }
-    switch(m_wfx.wBitsPerSample){
-        case 32:
-            for(int i = 0; i < bufferFrameCount; i++){
-                for(unsigned char j = 0; j < m_wfx.nChannels; j++) {
-                    *((float*)(pData) + (i * m_wfx.nChannels) + j) = (float)(std::sin(m_generatedTime * 440.0 * 2.0 * 3.14159) * 0.01);
-                }
-                m_generatedTime +=  1.0 / m_wfx.nSamplesPerSec;
-            }
-            break;
-        default: *flags |= AUDCLNT_BUFFERFLAGS_SILENT;
-    }
-    return 0;
-}
-
-HRESULT r8ge::MyAudioSource::SetFormat(WAVEFORMATEX *pwfx) {
-    m_wfx = *pwfx;
-    return 0;
-}
+*/
