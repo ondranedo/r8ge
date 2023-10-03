@@ -1,5 +1,5 @@
 set(include-headers
-        "include/Time.h"
+        "Time.h"
 )
 
 if(LINUX)
