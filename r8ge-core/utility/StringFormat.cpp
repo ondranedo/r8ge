@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "../Logger.h"
+
 namespace r8ge {
     namespace utility{
         enum class FormatMode {IN_BRACKETS, OUT_BRACKETS, PROTECTED};
@@ -83,7 +85,6 @@ namespace r8ge {
             if(const char* p = std::get_if<char>(&type)) return std::to_string(*p);
             if(const unsigned long* p = std::get_if<unsigned long>(&type)) return std::to_string(*p);
 
-            // TODO: Error or something
             return "";
         }
     }
