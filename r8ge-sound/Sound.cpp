@@ -35,12 +35,6 @@ const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
 r8ge::AudioPusher::AudioPusher() {
     HRESULT hr;
     REFERENCE_TIME hnsRequestedDuration = REFTIMES_PER_SEC;
-    REFERENCE_TIME hnsActualDuration;
-    UINT32 bufferFrameCount;
-    UINT32 numFramesAvailable;
-    UINT32 numFramesPadding;
-    BYTE *pData;
-    DWORD flags = 0;
 
     hr = CoInitialize(NULL);
     LOG_AND_EXIT_ON_ERROR(hr, "Failed to initialize the COM library")
@@ -72,43 +66,55 @@ r8ge::AudioPusher::AudioPusher() {
             NULL);
     LOG_AND_EXIT_ON_ERROR(hr, "Failed to initialize the audio client")
 
-    // Get the actual size of the allocated buffer.
-    hr = m_pAudioClient->GetBufferSize(&bufferFrameCount);
-    LOG_AND_EXIT_ON_ERROR(hr, "Failed to get info about the allocated audio buffer")
-
     hr = m_pAudioClient->GetService(
             IID_IAudioRenderClient,
             (void**)&m_pRenderClient);
     LOG_AND_EXIT_ON_ERROR(hr, "Failed to create the audio renderer")
 
+    hr = m_pAudioClient->Start();  // Start playing.
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to start playing audio")
+
+    m_mainLoop = std::thread(&AudioPusher::mainLoop, this);
+
+    Exit:
+}
+
+void r8ge::AudioPusher::mainLoop() {
+    UINT32 numFramesAvailable;
+    UINT32 numFramesPadding;
+    BYTE *pData;
+    REFERENCE_TIME hnsActualDuration;
+    UINT32 bufferFrameCount;
+    HRESULT hr;
+
+    // Get the actual size of the allocated buffer.
+    hr = m_pAudioClient->GetBufferSize(&bufferFrameCount);
+    LOG_AND_EXIT_ON_ERROR(hr, "Failed to get info about the allocated audio buffer")
+
     // Calculate the actual duration of the allocated buffer.
     hnsActualDuration = (double)REFTIMES_PER_SEC *
                         bufferFrameCount / m_wfx->nSamplesPerSec;
 
-    hr = m_pAudioClient->Start();  // Start playing.
-    LOG_AND_EXIT_ON_ERROR(hr, "Failed to start playing audio")
-
     // Each loop fills about half of the shared buffer.
-    while (flags != AUDCLNT_BUFFERFLAGS_SILENT)
-    {
-        // Sleep for half the buffer duration.
-        Sleep((DWORD)(hnsActualDuration/REFTIMES_PER_MILLISEC/2));
+    while (m_flags != AUDCLNT_BUFFERFLAGS_SILENT) {
+// Sleep for half the buffer duration.
+        Sleep((DWORD) (hnsActualDuration / REFTIMES_PER_MILLISEC / 2));
 
-        // See how much buffer space is available.
+// See how much buffer space is available.
         hr = m_pAudioClient->GetCurrentPadding(&numFramesPadding);
         LOG_AND_EXIT_ON_ERROR(hr, "Failed to get information about the buffer padding")
 
         numFramesAvailable = bufferFrameCount - numFramesPadding;
 
-        // Grab all the available space in the shared buffer.
+// Grab all the available space in the shared buffer.
         hr = m_pRenderClient->GetBuffer(numFramesAvailable, &pData);
         LOG_AND_EXIT_ON_ERROR(hr, "Failed to get the available audio buffer")
 
-        // Get next 1/2-second of data from the audio source.
-        hr = this->LoadData(numFramesAvailable, pData, &flags);
+// Get next 1/2-second of data from the audio source.
+        hr = this->LoadData(numFramesAvailable, pData);
         LOG_AND_EXIT_ON_ERROR(hr, "Failed to load data into the audio buffer")
 
-        hr = m_pRenderClient->ReleaseBuffer(numFramesAvailable, flags);
+        hr = m_pRenderClient->ReleaseBuffer(numFramesAvailable, m_flags);
         LOG_AND_EXIT_ON_ERROR(hr, "Failed to free the filled audio buffer")
     }
 
@@ -121,31 +127,56 @@ r8ge::AudioPusher::AudioPusher() {
     Exit:
 }
 
-HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData, DWORD *flags) {
-    *flags &= ~AUDCLNT_BUFFERFLAGS_SILENT;
-    if(m_generatedTime > 10.0){
-        *flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+#define R8GE_MAIN_VOLUME 0.01
+// note to self: all this should do is load correct sound data to a buffer
+HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData) {
+    m_flags &= ~AUDCLNT_BUFFERFLAGS_SILENT;
+    if(m_generatedTime > 5.0){
+        m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
     }
     switch(m_wfx->wBitsPerSample){
         case 32:
-            for(int i = 0; i < bufferFrameCount; i++){
-                for(unsigned char j = 0; j < m_wfx->nChannels; j++) {
-                    *((float*)(pData) + (i * m_wfx->nChannels) + j) = (float)(std::sin(m_generatedTime * 440.0 * 2.0 * 3.14159) * 0.01);
-                }
-                m_generatedTime +=  1.0 / m_wfx->nSamplesPerSec;
+            switch(m_wfx->cbSize){
+                case 22:
+                    for(int i = 0; i < bufferFrameCount; i++){
+                        for(unsigned char j = 0; j < m_wfx->nChannels; j++) {
+                            *((float*)pData + (i * m_wfx->nChannels) + j) = (float)(sumSounds(j) * R8GE_MAIN_VOLUME);
+                        }
+                        m_generatedTime +=  1.0 / m_wfx->nSamplesPerSec;
+                    }
+                    break;
+                default:
+                    m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
             }
             break;
-        default: *flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+        default: m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
     }
     return 0;
 }
 
 r8ge::AudioPusher::~AudioPusher() {
+    m_mainLoop.join();
     CoTaskMemFree(m_wfx);
     SAFE_RELEASE(m_pEnumerator)
     SAFE_RELEASE(m_pDevice)
     SAFE_RELEASE(m_pAudioClient)
     SAFE_RELEASE(m_pRenderClient)
+}
+
+void r8ge::AudioPusher::stopSound() {
+    m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+}
+
+std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
+    return &m_activeSounds;
+}
+
+double r8ge::AudioPusher::sumSounds(unsigned char channel){
+    double res = 0.0;
+    for(auto& g : m_activeSounds){
+        res += g->generate(m_generatedTime, channel);
+    }
+    return res;
 }
 
 /*

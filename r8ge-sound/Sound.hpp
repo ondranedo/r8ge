@@ -7,12 +7,18 @@
 #include <audioclient.h>
 #include <chrono>
 #include <mmdeviceapi.h>
+#include "Generators.hpp"
+#include <thread>
 
 namespace r8ge {
     class AudioPusher{
     public:
         AudioPusher();
         ~AudioPusher();
+
+        void stopSound();
+        std::vector<Sound *> *getSoundVector();
+        double sumSounds(unsigned char channel);
     private:
         WAVEFORMATEX* m_wfx = NULL;
         double m_generatedTime = 0.0;
@@ -20,10 +26,17 @@ namespace r8ge {
         IMMDevice *m_pDevice = NULL;
         IAudioClient *m_pAudioClient = NULL;
         IAudioRenderClient *m_pRenderClient = NULL;
-        double (*m_generatorFunc)(double);
+        DWORD m_flags = 0;
+        std::vector<Sound*> m_activeSounds = {};
 
-        HRESULT LoadData(UINT32 bufferFrameCount, BYTE *pData, DWORD* flags);
+    private:
+
+        HRESULT LoadData(UINT32 bufferFrameCount, BYTE *pData);
+        void mainLoop();
+
+        std::thread m_mainLoop;
     };
+
 }
 
 #endif //R8GE_SOUND_HPP
