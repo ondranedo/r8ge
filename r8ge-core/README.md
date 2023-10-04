@@ -1,9 +1,9 @@
 # TODO
 
 - **~~Logger~~**
-  - Time; Colours; Formats; Log thread
+  - TimeStamp; Colours; Formats; Log thread
 - **~~Event System~~**
-- **System Time**
+- **~~System TimeStamp~~**
 - **file I/O**
 - **System Threads**
 - **Application types**
