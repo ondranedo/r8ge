@@ -131,16 +131,13 @@ void r8ge::AudioPusher::mainLoop() {
 // note to self: all this should do is load correct sound data to a buffer
 HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData) {
     m_flags &= ~AUDCLNT_BUFFERFLAGS_SILENT;
-    if(m_generatedTime > 5.0){
-        m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
-    }
     switch(m_wfx->wBitsPerSample){
         case 32:
             switch(m_wfx->cbSize){
                 case 22:
                     for(int i = 0; i < bufferFrameCount; i++){
                         for(unsigned char j = 0; j < m_wfx->nChannels; j++) {
-                            *((float*)pData + (i * m_wfx->nChannels) + j) = (float)(sumSounds(j) * R8GE_MAIN_VOLUME);
+                            *((float*)pData + (i * m_wfx->nChannels) + j) = (float)(sumSoundsAndRemove(j) * R8GE_MAIN_VOLUME);
                         }
                         m_generatedTime +=  1.0 / m_wfx->nSamplesPerSec;
                     }
@@ -171,12 +168,25 @@ std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
     return &m_activeSounds;
 }
 
-double r8ge::AudioPusher::sumSounds(unsigned char channel){
+double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
     double res = 0.0;
+    auto iter = m_activeSounds.begin();
+
+    const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
+
     for(auto& g : m_activeSounds){
         res += g->generate(m_generatedTime, channel);
+        if(g->getEndTime() < m_generatedTime){
+            delete m_activeSounds.at(iter - m_activeSounds.begin());
+            m_activeSounds.erase(iter);
+        }
+        iter++;
     }
     return res;
+}
+
+double r8ge::AudioPusher::getGeneratedTime() const {
+    return m_generatedTime;
 }
 
 /*

@@ -18,7 +18,7 @@ namespace r8ge {
 
         void stopSound();
         std::vector<Sound *> *getSoundVector();
-        double sumSounds(unsigned char channel);
+        [[nodiscard]] double getGeneratedTime() const;
     private:
         WAVEFORMATEX* m_wfx = NULL;
         double m_generatedTime = 0.0;
@@ -28,11 +28,13 @@ namespace r8ge {
         IAudioRenderClient *m_pRenderClient = NULL;
         DWORD m_flags = 0;
         std::vector<Sound*> m_activeSounds = {};
+        std::mutex m_soundVectorGuard;
 
     private:
 
         HRESULT LoadData(UINT32 bufferFrameCount, BYTE *pData);
         void mainLoop();
+        double sumSoundsAndRemove(unsigned char channel);
 
         std::thread m_mainLoop;
     };
