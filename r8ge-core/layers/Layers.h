@@ -12,9 +12,9 @@ namespace r8ge {
         explicit Layer(const std::string& name);
         virtual ~Layer();
 
-        virtual void update() = 0;
-        virtual void event(const std::shared_ptr<Event>& event) = 0;
-        virtual void render() = 0;
+        virtual void update() const = 0;
+        virtual void event(const std::shared_ptr<Event>& event) const = 0;
+        virtual void render() const = 0;
 
         [[nodiscard]] std::string getName() const;
 
