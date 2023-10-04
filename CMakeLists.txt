@@ -21,7 +21,6 @@ add_subdirectory(r8ge-video)
 # Executables
 add_subdirectory(testbed)
 
-
 # Installation
 install(TARGETS testbed r8ge-video
         RUNTIME DESTINATION ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
