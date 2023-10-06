@@ -1,8 +1,8 @@
 #ifndef R8GE_LAYERS_H
 #define R8GE_LAYERS_H
 
-#include "../Core.h"
-#include "../events/Event.h"
+#include "../../Core.h"
+#include "../../events/Event.h"
 
 #include <memory>
 

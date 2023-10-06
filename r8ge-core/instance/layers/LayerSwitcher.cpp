@@ -4,7 +4,7 @@
 #include <sstream>
 #include <ranges>
 
-#include "../Logger.h"
+#include "../../Logger.h"
 
 namespace r8ge {
 

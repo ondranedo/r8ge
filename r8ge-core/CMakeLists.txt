@@ -29,8 +29,8 @@ target_link_libraries(r8ge-core PRIVATE platform)
 add_subdirectory(events)
 target_link_libraries(r8ge-core PUBLIC events)
 
-add_subdirectory(layers)
-target_link_libraries(r8ge-core PUBLIC layers)
+add_subdirectory(instance)
+target_link_libraries(r8ge-core PUBLIC instance)
 
 # Compile definitions
 target_compile_definitions(r8ge-core PRIVATE R8GE_CORE_BUILD)
