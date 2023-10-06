@@ -7,6 +7,7 @@
 #include <mutex>
 
 #include "utility/StringFormat.h"
+#include "utility/TimeStamp.h"
 
 namespace r8ge {
     class Logger;
@@ -22,7 +23,7 @@ namespace r8ge {
         };
 
         struct Log {
-            //std::chrono::time_point<std::chrono::high_resolution_clock> time_point; // TODO: Add platform time
+            TimeStamp times;
             std::string raw_data;
             Priority priority;
 

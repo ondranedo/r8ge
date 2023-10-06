@@ -35,6 +35,7 @@ namespace r8ge {
 
     std::string Logger::format(const Log& log) {
         std::string str;
+        str+= "[" + log.times.to_string("%X:%^{ms}") + "] "; // TODO: Log formats
         str+= "[";
         switch (log.priority) {
             case Priority::FATAL: str+= "fatal"; break;
