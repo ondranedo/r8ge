@@ -3,6 +3,7 @@
 
 #include "Core.h"
 #include "events/EventQueue.h"
+#include "instance/GameInstance.h"
 
 namespace r8ge {
     extern EventQueue::CallbackFn ar8geEventQueue;
@@ -12,12 +13,13 @@ namespace r8ge {
         Ar8ge();
         ~Ar8ge();
 
+        void init();
         void run();
-
-
+        void exit();
     private:
         bool m_running;
         EventQueue m_queue;
+        std::shared_ptr<GameInstance> m_game;
     };
 }
 

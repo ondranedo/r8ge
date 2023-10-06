@@ -9,8 +9,9 @@ namespace r8ge {
         mainLogger = new Logger;
         auto engine = new Ar8ge;
 
-
+        engine->init();
         engine->run();
+        engine->exit();
 
         delete engine;
         delete mainLogger;
