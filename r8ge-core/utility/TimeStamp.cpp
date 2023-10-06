@@ -3,6 +3,7 @@
 #include <time.h>
 #include <chrono>
 #include <sstream>
+#include <algorithm>
 #include "../Core.h"
 
 #define NS_TO_SEC 1000000000
@@ -21,7 +22,7 @@ namespace r8ge {
     std::size_t TimeStamp::sinceEpoch(TimeStamp::_point timePoint) const {
         R8GE_ASSERT(!m_subtracted, "Can't convert TimeStamp() to string after it has been compared with other TimeStamp() objects");
 
-        std::time_t epoch = static_cast<std::time_t>(m_nanoseconds/NS_TO_SEC);
+        auto epoch = static_cast<std::time_t>(m_nanoseconds/NS_TO_SEC);
         std::tm* local = std::localtime(&epoch);
 
         switch (timePoint) {
@@ -56,12 +57,48 @@ namespace r8ge {
         return 0;
     }
 
+    std::string strtftime(const std::string& format, std::tm* localtime)
+    {
+        char buff[80];
+        std::strftime(buff, 80, format.c_str(), localtime);
+        return buff;
+    }
+
+    std::string TimeStamp::customFormat(const std::string &format) const {
+        std::string out = format;
+
+        struct listi {
+            std::string s;
+            TimeStamp::_point p;
+        };
+
+        listi list[3] = {
+                {"%^{ms}", MILLISECOND},
+                {"%^{us}", MICROSECOND},
+                {"%^{ns}", NANOSECONDS}};
+
+        size_t check = 0;
+
+        for(auto & i : list) {
+            do {
+                if ((check = out.find(i.s)) != std::string::npos) {
+                    out.erase(check, i.s.length());
+                    out.insert(check, std::to_string(sinceEpoch(i.p)));
+                }
+            } while (check != std::string::npos);
+        }
+
+        return out;
+    }
+
     std::string TimeStamp::to_string(const std::string &format) const {
         R8GE_ASSERT(!m_subtracted, "Can't convert TimeStamp() to string after it has been compared with other TimeStamp() objects");
 
-        char buff[80];
-        auto epoch_s = static_cast<std::time_t>(m_nanoseconds/NS_TO_SEC);
-        std::strftime(buff, 80, format.c_str(), std::localtime(&epoch_s));
-        return buff;
+        auto epoch = static_cast<std::time_t>(m_nanoseconds/NS_TO_SEC);
+        std::tm* local = std::localtime(&epoch);
+
+        std::string strt = strtftime(format, local);
+
+        return customFormat(strt);
     }
 }

@@ -43,6 +43,9 @@ namespace r8ge {
         TimeStamp& operator-(const TimeStamp&);
 
     private:
+        [[nodiscard]] std::string customFormat(const std::string& format) const;
+
+    private:
         // Used for measuring time
         std::size_t m_nanoseconds; // Since epoch
         bool m_subtracted;
