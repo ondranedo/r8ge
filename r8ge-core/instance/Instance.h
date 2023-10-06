@@ -8,6 +8,8 @@ namespace r8ge {
     class Instance {
     public:
         Instance();
+        virtual ~Instance();
+
         void eventReceiver(const std::shared_ptr<Event>& event);
 
         void update();

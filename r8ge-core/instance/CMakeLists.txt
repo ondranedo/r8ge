@@ -1,6 +1,8 @@
 add_library(instance
         "Instance.cpp"
         "Instance.h"
+        "GameInstance.cpp"
+        "GameInstance.h"
 )
 
 add_subdirectory(layers)

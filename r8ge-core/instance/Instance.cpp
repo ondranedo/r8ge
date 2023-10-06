@@ -2,6 +2,7 @@
 
 namespace r8ge {
     Instance::Instance() : m_layerSwitecher() {}
+    Instance::~Instance() = default;
 
     void Instance::eventReceiver(const std::shared_ptr<Event>& event)
     {
