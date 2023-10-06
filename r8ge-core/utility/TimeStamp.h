@@ -13,9 +13,9 @@ namespace r8ge {
         TimeStamp();
 
         TimeStamp& operator-(const TimeStamp&);
-        [[nodiscard]] std::size_t sinceEpoch(TimeStamp::_point timePoint);
-        [[nodiscard]] std::size_t count(TimeStamp::_point timePoint);
-        [[nodiscard]] std::string to_string(const std::string& format = "%Y:%m:%d %H:%M:%S");
+        [[nodiscard]] std::size_t sinceEpoch(TimeStamp::_point timePoint) const;
+        [[nodiscard]] std::size_t count(TimeStamp::_point timePoint) const;
+        [[nodiscard]] std::string to_string(const std::string& format = "%Y:%m:%d %H:%M:%S") const;
     private:
         // Used for measuring time
         std::size_t m_nanoseconds; // Since epoch

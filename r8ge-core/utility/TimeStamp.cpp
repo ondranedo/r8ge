@@ -18,7 +18,7 @@ namespace r8ge {
         return *this;
     }
 
-    std::size_t TimeStamp::sinceEpoch(TimeStamp::_point timePoint) {
+    std::size_t TimeStamp::sinceEpoch(TimeStamp::_point timePoint) const {
         R8GE_ASSERT(!m_subtracted, "Can't convert TimeStamp() to string after it has been compared with other TimeStamp() objects");
 
         std::time_t epoch = static_cast<std::time_t>(m_nanoseconds/NS_TO_SEC);
@@ -38,7 +38,7 @@ namespace r8ge {
         return 0;
     }
 
-    std::size_t TimeStamp::count(TimeStamp::_point timePoint) {
+    std::size_t TimeStamp::count(TimeStamp::_point timePoint) const {
         size_t seconds = m_nanoseconds/(1000000000);
 
         switch (timePoint) {
@@ -56,7 +56,7 @@ namespace r8ge {
         return 0;
     }
 
-    std::string TimeStamp::to_string(const std::string &format) {
+    std::string TimeStamp::to_string(const std::string &format) const {
         R8GE_ASSERT(!m_subtracted, "Can't convert TimeStamp() to string after it has been compared with other TimeStamp() objects");
 
         char buff[80];
