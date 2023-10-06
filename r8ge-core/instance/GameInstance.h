@@ -22,4 +22,6 @@ namespace r8ge {
     extern std::shared_ptr<r8ge::GameInstance> createGame();
 }
 
+#define R8GE_ADD_GAMEINSTANCE(x) namespace r8ge {std::shared_ptr<r8ge::GameInstance> createGame() {return std::make_shared<x>();}}
+
 #endif//!R8GE_GAMEINSTANCE_H
