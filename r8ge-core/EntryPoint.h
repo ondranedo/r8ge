@@ -11,6 +11,7 @@ namespace r8ge {
         std::vector<std::string_view> argv;
     };
 
+    // Engine's entry point, called by the platform layer
     int main(const EntryPointData& entry_data);
 }
 
