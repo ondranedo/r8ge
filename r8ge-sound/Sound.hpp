@@ -10,6 +10,7 @@
 #include "Generators.hpp"
 #include <thread>
 
+
 namespace r8ge {
     class AudioPusher{
     public:
@@ -19,6 +20,7 @@ namespace r8ge {
         void stopSound();
         std::vector<Sound *> *getSoundVector();
         [[nodiscard]] double getGeneratedTime() const;
+        void addSound(Sound* sound);
     private:
         WAVEFORMATEX* m_wfx = NULL;
         double m_generatedTime = 0.0;

@@ -97,8 +97,6 @@ void r8ge::AudioPusher::mainLoop() {
 
     // Each loop fills about half of the shared buffer.
     while (m_flags != AUDCLNT_BUFFERFLAGS_SILENT) {
-// Sleep for half the buffer duration.
-        Sleep((DWORD) (hnsActualDuration / REFTIMES_PER_MILLISEC / 2));
 
 // See how much buffer space is available.
         hr = m_pAudioClient->GetCurrentPadding(&numFramesPadding);
@@ -116,10 +114,9 @@ void r8ge::AudioPusher::mainLoop() {
 
         hr = m_pRenderClient->ReleaseBuffer(numFramesAvailable, m_flags);
         LOG_AND_EXIT_ON_ERROR(hr, "Failed to free the filled audio buffer")
-    }
 
-    // Wait for last data in buffer to play before stopping.
-    Sleep((DWORD)(hnsActualDuration/REFTIMES_PER_MILLISEC/2));
+        Sleep((DWORD) (hnsActualDuration / REFTIMES_PER_MILLISEC / 2));
+    }
 
     hr = m_pAudioClient->Stop();  // Stop playing.
     LOG_AND_EXIT_ON_ERROR(hr, "Failed to stop playing audio for some reason")
@@ -130,7 +127,6 @@ void r8ge::AudioPusher::mainLoop() {
 #define R8GE_MAIN_VOLUME 0.01
 // note to self: all this should do is load correct sound data to a buffer
 HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData) {
-    m_flags &= ~AUDCLNT_BUFFERFLAGS_SILENT;
     switch(m_wfx->wBitsPerSample){
         case 32:
             switch(m_wfx->cbSize){
@@ -169,24 +165,29 @@ std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
 }
 
 double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
-    double res = 0.0;
-    auto iter = m_activeSounds.begin();
-
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
+    double res = 0.0;
+    int i = 0;
 
     for(auto& g : m_activeSounds){
-        res += g->generate(m_generatedTime, channel);
-        if(g->getEndTime() < m_generatedTime){
-            delete m_activeSounds.at(iter - m_activeSounds.begin());
-            m_activeSounds.erase(iter);
+        if(g->getState()){
+            res += g->generate(m_generatedTime, channel);
+            i++;
         }
-        iter++;
+        else{
+            m_activeSounds.erase(m_activeSounds.begin() + i);
+        }
     }
     return res;
 }
 
 double r8ge::AudioPusher::getGeneratedTime() const {
     return m_generatedTime;
+}
+
+void r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
+    const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
+    m_activeSounds.push_back(sound);
 }
 
 /*
