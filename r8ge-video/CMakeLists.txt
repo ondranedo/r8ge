@@ -4,9 +4,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 add_library(r8ge-video
         Window.cpp
         Window.h
-        platform/Win32Window.h
-        platform/Win32Window.cpp)
+        platform/UniversalWindow.h
+        platform/UniversalWindow.cpp
+        WindowManager.hpp)
 
 target_include_directories(r8ge-video PRIVATE ../vendor/glew-cmake/include)
+target_include_directories(r8ge-video PRIVATE ../vendor/glad/include)
 target_link_libraries(r8ge-video PRIVATE glfw)
+target_link_libraries(r8ge-video PRIVATE glad)
+
+if(WIN32)
 target_link_libraries(r8ge-video PRIVATE opengl32)
+endif()

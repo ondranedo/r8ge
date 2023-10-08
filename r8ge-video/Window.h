@@ -5,6 +5,7 @@
 #ifndef R8GE_WINDOW_H
 #define R8GE_WINDOW_H
 
+#include <tuple>
 
 namespace r8ge
 {
@@ -13,12 +14,14 @@ namespace r8ge
     public:
         Window(int x, int y, const char* title)
             : m_x(x), m_y(y), m_title(title) {}
-        virtual void init() = 0;
         virtual void create() = 0;
         virtual void destroy() = 0;
-        void getDims();
-        //virtual void toggleVsync() = 0;
+        virtual std::tuple<int,int> getDims() = 0;
+        virtual void setVsync(bool vsync) = 0;
+        virtual void getReadyForRender() = 0;
+        virtual void swapBuffers() = 0;
         virtual ~Window();
+
     protected:
         int m_x{};
         int m_y{};
