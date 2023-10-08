@@ -11,7 +11,7 @@ public:
     ~TempalteGame() override = default;
 
     void onInit()  override {
-        R8GE_LOG("`{}` game initialization", getName());
+        R8GE_LOG("`{}` game initialization", getGameName());
     }
 
     void onUpdate() override {
@@ -19,7 +19,7 @@ public:
     }
 
     void onExit()  override {
-        R8GE_LOG("`{}` game exiting", getName());
+        R8GE_LOG("`{}` game exiting", getGameName());
     }
 };
 

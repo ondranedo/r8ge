@@ -22,7 +22,7 @@ namespace r8ge {
         // Called when the class is destroyed, not deleted!
         virtual void onExit() = 0;
 
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string getGameName() const;
 
     private:
         std::string m_name;
