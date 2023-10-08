@@ -3,6 +3,7 @@
 
 #include <queue>
 #include <thread>
+#include <mutex>
 
 #include "EventPayload.h"
 

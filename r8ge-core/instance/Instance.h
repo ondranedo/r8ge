@@ -3,6 +3,7 @@
 
 #include "../Core.h"
 #include "layers/LayerSwitcher.h"
+#include "../events/EventQueue.h"
 
 namespace r8ge {
     // The main game instance, handles the layers, and the logic,
@@ -17,10 +18,14 @@ namespace r8ge {
         // should handle the event to layer switcher
         void eventReceiver(const std::shared_ptr<Event>& event);
 
+        std::function<void(const std::shared_ptr<Event>&)> getEventReceiver();
+
         // Called every frame, this function should handle the update to layer switcher
         // and the logic, and the rendering
         void update();
 
+        // Returns the reference to the layer switcher, used to add/remove layers
+        [[nodiscard]] LayerSwitcher& layerSwitcher();
     private:
         LayerSwitcher m_layerSwitecher;
     };

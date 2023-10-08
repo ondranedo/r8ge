@@ -30,7 +30,9 @@ namespace r8ge {
     }
 
     Ar8ge::~Ar8ge() {
+        m_queue.emptyQueue();
         ar8geEventQueue = nullptr;
+
         R8GE_LOG("Ar8ge event queue set to nullptr");
 
         R8GE_LOG("Engine application destroyed");

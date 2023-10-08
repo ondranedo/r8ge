@@ -2,6 +2,8 @@
 #define R8GE_LAYERSWITCHER_H
 
 #include <vector>
+#include <concepts>
+
 #include "Layers.h"
 
 namespace r8ge {
@@ -30,6 +32,12 @@ namespace r8ge {
 
         // Pushes the layer to the back - last layer to receive the event, and the first to render
         void pushBack(const std::shared_ptr<Layer>& l);
+
+        // Pushes the layer to the front - first layer to receive the event, and the last to render
+        template <typename T>
+        void add () {
+            pushFront(std::make_shared<T>());
+        }
 
         // Pop according to the name
         void pop(const std::string& name);
