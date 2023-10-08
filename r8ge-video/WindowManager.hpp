@@ -22,7 +22,7 @@ namespace r8ge
 
         WindowManager &operator=(WindowManager const &) = delete;
 
-        ~WindowManager() {}
+        ~WindowManager() = default;
 
         void init()
         {
@@ -52,9 +52,7 @@ namespace r8ge
     private:
         inline static std::unique_ptr<WindowManager> instance{nullptr};
 
-        WindowManager() : m_value{0} {}
-
-        int m_value;
+        WindowManager() = default;
     };
 
 }

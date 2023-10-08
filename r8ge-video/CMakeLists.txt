@@ -13,6 +13,7 @@ target_include_directories(r8ge-video PRIVATE ../vendor/glad/include)
 target_link_libraries(r8ge-video PRIVATE glfw)
 target_link_libraries(r8ge-video PRIVATE glad)
 
+#TODO Replace for R8GE variable
 if(WIN32)
 target_link_libraries(r8ge-video PRIVATE opengl32)
 endif()

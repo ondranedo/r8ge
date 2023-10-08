@@ -32,7 +32,7 @@ namespace r8ge
 
     private:
         GLFWwindow *m_window{};
-        bool m_isCreated;
+        bool m_isCreated{};
     };
 
 }

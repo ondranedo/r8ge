@@ -10,7 +10,7 @@ namespace r8ge
 
     void UniversalWindow::create()
     {
-        m_window = glfwCreateWindow(m_x, m_y, m_title, NULL, NULL);
+        m_window = glfwCreateWindow(m_x, m_y, m_title, nullptr, nullptr);
         m_isCreated = true;
 
     }
