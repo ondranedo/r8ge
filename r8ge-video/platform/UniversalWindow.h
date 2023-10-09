@@ -28,7 +28,10 @@ namespace r8ge
         std::tuple<int, int> getDims() override;
 
         void getReadyForRender() override;
+
         void swapBuffers() override;
+
+        void pollEvents() override;
 
     private:
         GLFWwindow *m_window{};

@@ -20,6 +20,7 @@ namespace r8ge
         virtual void setVsync(bool vsync) = 0;
         virtual void getReadyForRender() = 0;
         virtual void swapBuffers() = 0;
+        virtual void pollEvents() = 0;
         virtual ~Window();
 
     protected:

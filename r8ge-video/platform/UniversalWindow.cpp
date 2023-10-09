@@ -61,8 +61,24 @@ namespace r8ge
 
     void UniversalWindow::swapBuffers()
     {
-        glfwSwapBuffers(m_window);
+        if (!m_isCreated)
+        {
+            printf("Window needs to be created\n");
+        } else
+        {
+            glfwSwapBuffers(m_window);
+        }
     }
+
+    void UniversalWindow::pollEvents()
+    {
+        if (!m_isCreated)
+        {
+            printf("Window needs to be created\n");
+        } else
+            glfwPollEvents();
+    }
+}
 
 
 }
