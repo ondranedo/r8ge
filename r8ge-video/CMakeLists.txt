@@ -6,7 +6,7 @@ add_library(r8ge-video
         Window.h
         platform/UniversalWindow.h
         platform/UniversalWindow.cpp
-        WindowManager.hpp)
+        platform/UniversalWindowManager.hpp)
 
 target_include_directories(r8ge-video PRIVATE ../vendor/glew-cmake/include)
 target_include_directories(r8ge-video PRIVATE ../vendor/glad/include)

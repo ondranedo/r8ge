@@ -2,10 +2,10 @@
 // Created by Vojta on 04.10.2023.
 //
 
-#ifndef R8GE_WINDOWMANAGER_HPP
-#define R8GE_WINDOWMANAGER_HPP
+#ifndef R8GE_UNIVERSALWINDOWMANAGER_HPP
+#define R8GE_UNIVERSALWINDOWMANAGER_HPP
 
-#include "../vendor/glfw/include/GLFW/glfw3.h"
+#include "../../vendor/glfw/include/GLFW/glfw3.h"
 #include <memory>
 #include <mutex>
 
@@ -15,14 +15,14 @@ namespace r8ge
 
     std::mutex WindowManager_mutex;
 
-    class WindowManager
+    class UniversalWindowManager
     {
     public:
-        WindowManager(WindowManager const &) = delete;
+        UniversalWindowManager(UniversalWindowManager const &) = delete;
 
-        WindowManager &operator=(WindowManager const &) = delete;
+        UniversalWindowManager &operator=(UniversalWindowManager const &) = delete;
 
-        ~WindowManager() = default;
+        ~UniversalWindowManager() = default;
 
         void init()
         {
@@ -39,22 +39,22 @@ namespace r8ge
             glfwTerminate();
         }
 
-        static WindowManager *get_instance()
+        static UniversalWindowManager *get_instance()
         {
             std::lock_guard<std::mutex> lock(WindowManager_mutex);
             if (!instance)
             {
-                instance = std::unique_ptr<WindowManager>(new WindowManager());
+                instance = std::unique_ptr<UniversalWindowManager>(new UniversalWindowManager());
             }
             return instance.get();
         }
 
     private:
-        inline static std::unique_ptr<WindowManager> instance{nullptr};
+        inline static std::unique_ptr<UniversalWindowManager> instance{nullptr};
 
-        WindowManager() = default;
+        UniversalWindowManager() = default;
     };
 
 }
 
-#endif //R8GE_WINDOWMANAGER_HPP
+#endif //R8GE_UNIVERSALWINDOWMANAGER_HPP

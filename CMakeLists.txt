@@ -15,6 +15,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 # Libraries
 add_subdirectory(vendor/glfw)
+add_subdirectory(vendor/glad)
 #add_subdirectory(r8ge-core)
 add_subdirectory(r8ge-video)
 
