@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.2)
 
+#Package manager
+include(vendor/gate/cmake/HunterGate.cmake)
+HunterGate(
+    URL "https://github.com/cpp-pm/hunter/archive/v0.25.0.tar.gz"
+    SHA1 "a1296b351dbfaf036c92d85c1bdb461f615849fa"
+)
+
 project(r8ge LANGUAGES C CXX)
 
 # Variables
@@ -9,13 +16,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${INSTALL_DIR}/lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${INSTALL_DIR}/slib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${INSTALL_DIR}")
 
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-# Libraries
-add_subdirectory(vendor/glfw)
-add_subdirectory(vendor/glad)
+
 #add_subdirectory(r8ge-core)
 add_subdirectory(r8ge-video)
 

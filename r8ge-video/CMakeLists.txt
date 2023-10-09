@@ -1,6 +1,15 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
+hunter_add_package(glfw)
+find_package(glfw3 REQUIRED)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+hunter_add_package(glew)
+find_package(glew CONFIG REQUIRED)
+
 add_library(r8ge-video
         Window.cpp
         Window.h
@@ -8,10 +17,9 @@ add_library(r8ge-video
         platform/UniversalWindow.cpp
         platform/UniversalWindowManager.hpp)
 
-target_include_directories(r8ge-video PRIVATE ../vendor/glew-cmake/include)
-target_include_directories(r8ge-video PRIVATE ../vendor/glad/include)
-target_link_libraries(r8ge-video PRIVATE glfw)
-target_link_libraries(r8ge-video PRIVATE glad)
+
+target_link_libraries(r8ge-video INTERFACE glfw)
+target_link_libraries(r8ge-video PUBLIC glew::glew)
 
 #TODO Replace for R8GE variable
 if(WIN32)
