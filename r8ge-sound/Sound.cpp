@@ -168,15 +168,22 @@ double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
     double res = 0.0;
     int i = 0;
+    bool states[m_activeSounds.size()];
 
     for(auto& g : m_activeSounds){
-        if(g->getState()){
-            res += g->generate(m_generatedTime, channel);
-            i++;
+        res += g->generate(m_generatedTime, channel);
+        states[i] = g->getState();
+        i++;
+    }
+    i = 0;
+    for(auto iter = m_activeSounds.begin(); iter != m_activeSounds.end();){
+        if(!states[i]){
+            iter = m_activeSounds.erase(iter);
         }
         else{
-            m_activeSounds.erase(m_activeSounds.begin() + i);
+            iter++;
         }
+        i++;
     }
     return res;
 }

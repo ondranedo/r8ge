@@ -147,6 +147,9 @@ double r8ge::Wave::generate(double timeSecs, unsigned char channel) {
     }
     channel %= m_channels;
     double approxIndex = activeTime / m_timeStep;
+    if(approxIndex > m_sampleCount - 1){
+        approxIndex = m_sampleCount - 1;
+    }
     switch (m_format) {
         case 1:
             switch (m_blockAlign / m_channels) {
