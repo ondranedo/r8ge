@@ -7,8 +7,8 @@
 
 #define GLFW_INCLUDE_NONE
 
-#include "../../vendor/glad/include/glad/glad.h"
-#include "../../vendor/glfw/include/GLFW/glfw3.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include "../Window.h"
 
 
