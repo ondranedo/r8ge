@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
 
 // this will be refactored a lot and I will curse myself
 
@@ -28,6 +29,7 @@ namespace r8ge{
         virtual ~Sound() = default;
         void setVolumes(double left, double right);
         void setEndTime(double endTime);
+        void setState(bool state);
         [[nodiscard]] bool getState() const;
     protected:
         double m_left = 1.0;
@@ -53,6 +55,24 @@ namespace r8ge{
     double toneToFrequency(short note);
 
     double square(double time);
+
+    class Wave : public Sound{
+    public:
+        Wave(double startTime, const std::string& filename);
+        double generate(double timeSecs, unsigned char channel) override;
+        ~Wave() override;
+
+        double getDuration();
+    private:
+        unsigned short m_format{};
+        unsigned short m_channels{};
+        unsigned long m_sampleRate{};
+        unsigned short m_blockAlign{};
+        double m_timeStep;
+
+        unsigned long m_sampleCount;
+        char* m_data = nullptr; // takes up to megabytes but allows for instant skipping
+    };
 
 }
 
