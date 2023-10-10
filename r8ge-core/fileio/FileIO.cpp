@@ -48,19 +48,21 @@ namespace r8ge {
     void FileIO::save(const std::string &path) {
         if(!isFilePresent(path)) return;
 
-        m_mutex.lock();
         if(isBinary(path)) {
+            m_mutex.lock();
             std::ofstream file(path, std::ios::binary);
             file.write((char*)m_binFileMap[path].data(), m_binFileMap[path].size());
             file.close();
+            m_mutex.unlock();
         }
         else
         {
+            m_mutex.lock();
             std::ofstream file(path);
             file << m_txtFileMap[path];
             file.close();
+            m_mutex.unlock();
         }
-        m_mutex.unlock();
     }
 
     void FileIO::load(const std::string &path) {
@@ -195,5 +197,17 @@ namespace r8ge {
         for(auto& [path, _] : m_binFileMap)
             binFiles.push_back(path);
         return binFiles;
+    }
+
+    void FileIO::setTextData(const std::string &path, const std::string &data) {
+        if(!isFilePresent(path)) return;
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_txtFileMap[path] = data;
+    }
+
+    void FileIO::setBinaryData(const std::string &path, const std::vector<byte> &data) {
+        if(!isFilePresent(path)) return;
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_binFileMap[path] = data;
     }
 }

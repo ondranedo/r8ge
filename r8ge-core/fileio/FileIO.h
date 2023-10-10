@@ -30,8 +30,11 @@ namespace r8ge {
         [[nodiscard]] std::string getTextData(const std::string& path);
         [[nodiscard]] std::vector<byte> getBinaryData(const std::string& path);
 
-        [[nodiscard]] bool isText(const std::string& path);
+        void setTextData(const std::string& path, const std::string& data);
+        void setBinaryData(const std::string& path, const std::vector<byte>& data);
+
         [[nodiscard]] bool isBinary(const std::string& path);
+        [[nodiscard]] bool isText(const std::string& path);
 
         [[nodiscard]] std::vector<std::string> getTxtFiles();
         [[nodiscard]] std::vector<std::string> getBinFiles();
