@@ -11,7 +11,9 @@
 
 namespace r8ge {
     class Logger;
-    extern Logger* mainLogger;
+    namespace global {
+        extern Logger* logger;
+    }
 
     class Logger {
     public:

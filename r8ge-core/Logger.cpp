@@ -5,7 +5,9 @@
 
 namespace r8ge {
     std::mutex mainLogger_mutex;
-    Logger* mainLogger;
+    namespace global {
+        Logger* logger = nullptr;
+    }
 
     Logger::Logger() : m_queue{}{}
     Logger::~Logger() {
@@ -52,8 +54,8 @@ namespace r8ge {
 
     void mainLog(Logger::Priority p, const std::string &parser,
                  const std::initializer_list<utility::StringFormat::ValidType> &t) {
-        if(mainLogger)
-            mainLogger->log(p, utility::StringFormat(parser, t).to_string());
+        if(global::logger)
+            global::logger->log(p, utility::StringFormat(parser, t).to_string());
 
         // TODO: Some error output or smth
     }

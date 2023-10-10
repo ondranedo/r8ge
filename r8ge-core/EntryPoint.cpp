@@ -6,7 +6,7 @@
 namespace r8ge {
     int main(const EntryPointData& entry_data)
     {
-        mainLogger = new Logger;
+        global::logger = new Logger;
         auto engine = new Ar8ge;
 
         engine->init();
@@ -14,7 +14,7 @@ namespace r8ge {
         engine->exit();
 
         delete engine;
-        delete mainLogger;
+        delete global::logger;
 
         return 0;
     }
