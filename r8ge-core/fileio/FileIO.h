@@ -19,7 +19,7 @@ namespace r8ge {
         void add(const std::string& path, FileType ft);
         void save(const std::string& path);
         void load(const std::string& path);
-        void clear(const std::string& path);
+        void remove(const std::string& path);
 
         [[nodiscard]] size_t getFileCount();
         [[nodiscard]] size_t getFileLimit();
@@ -38,10 +38,12 @@ namespace r8ge {
 
         [[nodiscard]] std::vector<std::string> getTxtFiles();
         [[nodiscard]] std::vector<std::string> getBinFiles();
+
     private:
         std::unordered_map<std::string, std::string> m_txtFileMap;
         std::unordered_map<std::string, std::vector<byte>> m_binFileMap;
         std::unordered_map<std::string, FileType> m_fileTypeMap;
+        std::unordered_map<std::string, bool> m_modifiedMap;
 
         const size_t m_fileLimit;
         size_t m_fileCount;
@@ -49,7 +51,7 @@ namespace r8ge {
     };
 
     namespace global{
-        extern FileIO fileIO;
+        extern FileIO* fileIO;
     }
 }
 

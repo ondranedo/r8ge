@@ -3,20 +3,26 @@
 #include <fstream>
 
 #include "../Logger.h"
+#include "../Core.h"
 
 namespace r8ge {
     namespace global {
-        FileIO fileIO(512);
+        FileIO* fileIO = nullptr;
     }
 
     FileIO::FileIO(size_t filelimit) : m_fileCount(0), m_fileLimit(filelimit) {}
 
     FileIO::~FileIO() {
-        m_mutex.lock();
-        m_txtFileMap.clear();
-        m_binFileMap.clear();
-        m_fileTypeMap.clear();
-        m_mutex.unlock();
+        R8GE_LOG_WARNI("FileIO is being destroyed, {} files were not removed", m_fileCount);
+
+        auto txt = getTxtFiles();
+        for(auto& path : txt)
+            remove(path);
+
+        auto bin = getBinFiles();
+        for(auto& path : bin)
+            remove(path);
+        R8GE_ASSERT(m_fileCount==0, "FileIO is not empty on destruction");
     }
 
     void FileIO::add(const std::string &path, FileType ft) {
@@ -26,11 +32,14 @@ namespace r8ge {
             return;
         }
 
+        // TODO: Check file limit
+
         if(ft()==FileType::TEXT) {
             m_mutex.lock();
             m_txtFileMap[path] = "";
             m_fileTypeMap[path] = ft;
             m_fileCount++;
+            m_modifiedMap[path] = false;
             m_mutex.unlock();
         }
         else if(ft()==FileType::BINARY) {
@@ -38,6 +47,7 @@ namespace r8ge {
             m_binFileMap[path] = std::vector<byte>();
             m_fileTypeMap[path] = ft;
             m_fileCount++;
+            m_modifiedMap[path] = false;
             m_mutex.unlock();
         }
         else {
@@ -63,40 +73,54 @@ namespace r8ge {
             file.close();
             m_mutex.unlock();
         }
+
+        m_mutex.lock();
+        m_modifiedMap[path] = false;
+        m_mutex.unlock();
     }
 
     void FileIO::load(const std::string &path) {
         if(!isFilePresent(path)) return;
 
         if(isBinary(path)) {
+            m_mutex.lock();
             std::ifstream file(path, std::ios::binary);
             std::vector<byte> data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             m_binFileMap[path] = data;
+            m_modifiedMap[path] = false;
             file.close();
+            m_mutex.unlock();
         }
         else
         {
+            m_mutex.lock();
             std::ifstream file(path);
             std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             m_txtFileMap[path] = data;
+            m_modifiedMap[path] = false;
             file.close();
+            m_mutex.unlock();
         }
-        m_mutex.unlock();
     }
 
-    void FileIO::clear(const std::string &path) {
+    void FileIO::remove(const std::string &path) {
         if(!isFilePresent(path)) return;
 
-        m_mutex.lock();
-        if(m_txtFileMap.find(path) != m_txtFileMap.end()) {
+        if(isText(path)) {
+            m_mutex.lock();
+            m_fileCount--;
+            if(m_modifiedMap[path])
+                R8GE_LOG_WARNI("Text file {} was not saved", path);
             m_txtFileMap.erase(path);
+            m_mutex.unlock();
+        } else {
+            m_mutex.lock();
             m_fileCount--;
-        }
-        else if(m_binFileMap.find(path) != m_binFileMap.end()) {
+            if(m_modifiedMap[path])
+                R8GE_LOG_WARNI("Binary file {} was not saved", path);
             m_binFileMap.erase(path);
-            m_fileCount--;
+            m_mutex.unlock();
         }
-        m_mutex.unlock();
     }
 
     size_t FileIO::getFileCount() {
@@ -123,13 +147,13 @@ namespace r8ge {
     size_t FileIO::getFileSize(const std::string& path){
         if(!isFilePresent(path)) return 0;
 
-        std::lock_guard<std::mutex> lock(m_mutex);
-
-        if(m_txtFileMap.find(path) != m_txtFileMap.end()) {
+        if(isText(path)) {
+            std::lock_guard<std::mutex> lock(m_mutex);
             return m_txtFileMap[path].size();
         }
 
-        if(m_binFileMap.find(path) != m_binFileMap.end()) {
+        if(isBinary(path)) {
+            std::lock_guard<std::mutex> lock(m_mutex);
             return m_binFileMap[path].size();
         }
 
@@ -203,11 +227,13 @@ namespace r8ge {
         if(!isFilePresent(path)) return;
         std::lock_guard<std::mutex> lock(m_mutex);
         m_txtFileMap[path] = data;
+        m_modifiedMap[path] = true;
     }
 
     void FileIO::setBinaryData(const std::string &path, const std::vector<byte> &data) {
         if(!isFilePresent(path)) return;
         std::lock_guard<std::mutex> lock(m_mutex);
         m_binFileMap[path] = data;
+        m_modifiedMap[path] = true;
     }
 }
