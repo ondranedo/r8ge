@@ -1,9 +1,4 @@
-// Includes may cause problems, make sure to include them properly
-// one include file is not yet written
-
-#include "../r8ge-core/Core.h"
-#include "../r8ge-core/instance/GameInstance.h"
-#include "../r8ge-core/Logger.h"
+#include <r8ge/r8ge.h>
 
 class TempalteGame : public r8ge::GameInstance {
 public:

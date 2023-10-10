@@ -17,8 +17,11 @@ namespace r8ge {
         // Called when an event is sent to the instance, this function
         // should handle the event to layer switcher
         void eventReceiver(const std::shared_ptr<Event>& event);
-
         std::function<void(const std::shared_ptr<Event>&)> getEventReceiver();
+
+        // Called when an event is sent to the instance, this function
+        // should handle the event directly - it's not sent to the layer switcher
+        virtual void directEvent(const std::shared_ptr<Event>& event) = 0;
 
         // Called every frame, this function should handle the update to layer switcher
         // and the logic, and the rendering
