@@ -5,5 +5,7 @@
 - **~~Event System~~**
 - **~~System TimeStamp~~**
 - **file I/O**
-- **Application types**
-- **Layers - instance r8ge**
+  - Config files; 
+- **~~Application types~~**
+  - Editor app, Sound app
+- **~~Layers - instance r8ge~~**

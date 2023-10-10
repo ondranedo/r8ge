@@ -4,6 +4,8 @@
 #include <string>
 
 namespace r8ge {
+    // TimeStamp class, used for measuring time, and converting time to string.
+    // May be used for measuring time between two points.
     class TimeStamp {
     public:
         enum _point {
@@ -46,7 +48,6 @@ namespace r8ge {
         [[nodiscard]] std::string customFormat(const std::string& format) const;
 
     private:
-        // Used for measuring time
         std::size_t m_nanoseconds; // Since epoch
         bool m_subtracted;
     };

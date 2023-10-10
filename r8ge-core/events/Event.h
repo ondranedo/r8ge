@@ -4,6 +4,9 @@
 #include <string>
 
 namespace r8ge {
+    // TODO: Add support for event for the engine itself
+    // Event is used to send information across the engine.
+    // Mainly by the windows and instance classes.
     class Event {
     public:
         enum class EventType : unsigned char
@@ -21,10 +24,17 @@ namespace r8ge {
     public:
         Event();
         virtual ~Event();
+
+        // Type of the event, used to identify the event
         [[nodiscard]] EventType getType() const;
+
+        // Is the event handled? If so, it should be ignored by the dispatcher
         [[nodiscard]] bool isHandled() const;
+
+        // Set the event as handled, so it will be ignored by the next call of the dispatcher
         void setToHandled();
-        [[nodiscard]] std::string getTypeAsString() const;
+
+        [[nodiscard]] std::string to_string() const;
 
     protected:
         struct {

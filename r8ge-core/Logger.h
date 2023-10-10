@@ -22,6 +22,7 @@ namespace r8ge {
             TRACE, DEBUG, ERROR, WARNI, FATAL
         };
 
+    private:
         struct Log {
             TimeStamp times;
             std::string raw_data;
@@ -30,15 +31,21 @@ namespace r8ge {
             Log(const std::string& raw, Priority p);
         };
 
+    public:
+        // Sends a log to the queue, to be processed later by the logger
         void log(Priority p, const std::string& str);
+
+        // Empties the log queue, and writes all logs to the log file (stdout for now)
         void emptyLogQueue();
 
     private:
         std::string format(const Log& log);
-
         std::queue<Log> m_queue;
     };
 
+
+    // Main Logger function, takes StringFormat::ValidType as arguments (see utility/StringFormat.h),
+    // and call to the mainLogger (which is a global object)
     void mainLog(Logger::Priority p, const std::string& parser,
                  const std::initializer_list<utility::StringFormat::ValidType>& t);
 }

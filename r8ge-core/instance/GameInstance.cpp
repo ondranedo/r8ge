@@ -5,7 +5,7 @@ namespace r8ge {
 
     }
 
-    std::string GameInstance::getName() const {
+    std::string GameInstance::getGameName() const {
         return m_name;
     }
 }

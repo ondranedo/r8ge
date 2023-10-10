@@ -8,7 +8,7 @@ namespace r8ge {
     }
 
     Layer::~Layer() {
-        R8GE_LOG("Layer `{}` destryoed", m_name);
+        R8GE_LOG("Layer `{}` destroyed", m_name);
     }
     std::string Layer::getName() const {
         return m_name;

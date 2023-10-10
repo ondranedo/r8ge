@@ -20,7 +20,7 @@ namespace r8ge {
         m_header.handled = true;
     }
 
-    std::string Event::getTypeAsString() const {
+    std::string Event::to_string() const {
         switch (m_header.type) {
             case EventType::NONE:               return "NONE";
             case EventType::WINDOW_RESIZED:     return "WINDOW_RESIZED";

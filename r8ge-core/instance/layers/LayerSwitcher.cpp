@@ -48,13 +48,16 @@ namespace r8ge {
     }
 
     void LayerSwitcher::sendEvent(const std::shared_ptr<Event> &e) const {
-        for(size_t i = m_layers.size()-1;i;--i)
+        for(size_t i = m_layers.size(); i > 0; --i)
         {
             if(!e->isHandled())
-                m_layers[i]->event(e);
-            else
+                m_layers[i-1]->event(e);
+            else // TODO: If so handled - log to event_log_handled file
                 return;
         }
+
+        if(!e->isHandled())
+            R8GE_LOG("Event `{}` was not handled", e->to_string()); // TODO: log to event_log_unhandled file
     }
 
     void LayerSwitcher::updateAll() const {
