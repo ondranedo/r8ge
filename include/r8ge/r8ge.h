@@ -59,7 +59,7 @@ namespace r8ge {
         public:
             // Data types that can be formatted into string
             using ValidType = std::variant<
-                    int, float, std::string, char, unsigned long
+                    int, float, std::string, char, unsigned long, std::vector<std::string>
             >;
             using ValidList = std::initializer_list<ValidType>;
             StringFormat(const std::string& form, const ValidList& list);

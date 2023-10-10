@@ -1,12 +1,13 @@
 #include "StringFormat.h"
 
 #include <vector>
+#include <ranges>
 
 #include "../Logger.h"
 
 namespace r8ge {
     namespace utility{
-        enum class FormatMode {IN_BRACKETS, OUT_BRACKETS, PROTECTED};
+        enum class FormatMode {IN_BRACKETS, OUT_BRACKETS};
 
         static std::string typeToString(const StringFormat::ValidType &type);
         static std::string formatLoop(const std::string &form, const std::vector<std::string>& list);
@@ -78,13 +79,19 @@ namespace r8ge {
             return list[index];
         }
 
-        std::string typeToString(const StringFormat::ValidType &type) {
+        std::string typeToString(const StringFormat::ValidType &type){
             if(const int* p = std::get_if<int>(&type)) return std::to_string(*p);
             if(const float* p = std::get_if<float>(&type)) return std::to_string(*p);
             if(const std::string* p = std::get_if<std::string>(&type)) return *p;
             if(const char* p = std::get_if<char>(&type)) return std::to_string(*p);
             if(const unsigned long* p = std::get_if<unsigned long>(&type)) return std::to_string(*p);
-
+            if(const std::vector<std::string>* p = std::get_if<std::vector<std::string>>(&type))
+            {
+                std::string str = "[";
+                for(size_t i = 0; i < p->size(); ++i)
+                    str += (*p)[i] + (i==p->size()-1 ? "" : ", ");
+                return str + "]";
+            }
             return "";
         }
     }
