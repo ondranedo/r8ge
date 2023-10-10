@@ -8,7 +8,7 @@ namespace r8ge {
 
         }
 
-        void Text::load() const {
+        void Text::load() {
 
         }
 
@@ -19,6 +19,11 @@ namespace r8ge {
         std::string Text::readFile() const {
             //return std::string();
             return "whole_file";
+        }
+
+        std::vector<std::string> Text::readLines() const {
+            //return std::vector<std::string>();
+            return {"line1", "line2"};
         }
     }
 }

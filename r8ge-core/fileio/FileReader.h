@@ -9,10 +9,11 @@ namespace r8ge {
         virtual ~FileReader() = 0;
 
         virtual void save() const = 0;
-        virtual void load() const = 0;
+        virtual void load() = 0;
 
     public:
         static std::unique_ptr<FileReader> create(const FileType& ft);
+
     };
 
     template <typename T>

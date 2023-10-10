@@ -3,6 +3,8 @@
 
 #include "../FileReader.h"
 
+#include <vector>
+
 namespace r8ge {
     namespace Reader {
         class Text : public FileReader {
@@ -10,9 +12,10 @@ namespace r8ge {
             ~Text() override;
 
             void save() const override;
-            void load() const override;
+            void load() override;
 
-            std::string readFile() const;
+            [[nodiscard]] std::string readFile() const;
+            [[nodiscard]] std::vector<std::string> readLines() const;
 
             static FileType getType();
         };
