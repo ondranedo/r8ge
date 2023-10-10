@@ -2,9 +2,10 @@
 #define R8GE_FILETYPE_H
 
 #include <string>
+#include <memory>
 
 namespace r8ge {
-    class fileType final {
+    class FileType final {
     public:
         enum _type {
             JSON,
@@ -12,12 +13,12 @@ namespace r8ge {
             BINARY
         };
 
-        fileType();
-        fileType(fileType::_type ft);
+        FileType();
+        FileType(FileType::_type ft);
+
+        _type operator()() const;
 
         [[nodiscard]] std::string toString() const;
-
-
     private:
         _type m_type;
     };

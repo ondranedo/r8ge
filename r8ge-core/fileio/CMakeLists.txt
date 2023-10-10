@@ -1,8 +1,10 @@
 add_library(fileio
-        "file.cpp"
-        "file.h"
-        "fileReader.cpp"
-        "fileReader.h"
-        "fileType.cpp"
-        "fileType.h"
+        "File.cpp"
+        "File.h"
+        "FileReader.cpp"
+        "FileReader.h"
+        "FileType.cpp"
+        "FileType.h"
+        "fileReaders/TextReader.cpp"
+        "fileReaders/TextReader.h"
 )
