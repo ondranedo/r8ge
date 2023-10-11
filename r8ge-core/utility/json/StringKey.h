@@ -4,18 +4,20 @@
 #include <string>
 
 namespace r8ge {
-    class StringKey {
-    public:
-        StringKey(const std::string& str);
-        StringKey(const char* str);
+    namespace utility {
+        class StringKey {
+        public:
+            StringKey(const std::string& str);
+            StringKey(const char* str);
 
-        std::string get() const;
-    private:
-        std::string m_string;
-    };
+            std::string get() const;
+        private:
+            std::string m_string;
+        };
 
-    namespace literals {
-        StringKey operator"" _k(const char* str, size_t);
+        namespace literals {
+            StringKey operator"" _k(const char* str, size_t);
+        }
     }
 }
 
