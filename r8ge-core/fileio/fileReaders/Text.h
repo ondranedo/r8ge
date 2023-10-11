@@ -1,5 +1,5 @@
-#ifndef R8GE_TEXTREADER_H
-#define R8GE_TEXTREADER_H
+#ifndef R8GE_TEXT_H
+#define R8GE_TEXT_H
 
 #include "../FileReader.h"
 
@@ -12,15 +12,13 @@ namespace r8ge {
             Text(const std::string& path);
             ~Text() override;
 
-            void save() const override;
-            void load() override;
-
             [[nodiscard]] std::string readFile() const;
             [[nodiscard]] std::vector<std::string> readLines() const;
+            [[nodiscard]] size_t lineNumber() const;
 
             static FileType getType();
         };
     }
 }
 
-#endif//!R8GE_TEXTREADER_H
+#endif//!R8GE_TEXT_H

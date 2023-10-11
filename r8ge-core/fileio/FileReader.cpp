@@ -2,7 +2,8 @@
 
 #include "../Core.h"
 
-#include "fileReaders/TextReader.h"
+#include "fileReaders/Text.h"
+#include "FileIO.h"
 
 namespace r8ge {
     FileReader::FileReader(const std::string& path) : m_path(path) {}
@@ -22,7 +23,15 @@ namespace r8ge {
         return nullptr;
     }
 
-    std::string FileReader::getPath() const {
-        return m_path;
+    void FileReader::save() const {
+        global::fileIO->save(m_path);
+    }
+
+    void FileReader::load() const {
+        global::fileIO->load(m_path);
+    }
+
+    size_t FileReader::size() const {
+        return global::fileIO->getFileSize(m_path);
     }
 }

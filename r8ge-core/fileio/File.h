@@ -11,7 +11,7 @@
 #include "FileType.h"
 #include "../Logger.h"
 
-#include "fileReaders/TextReader.h"
+#include "fileReaders/Text.h"
 
 #include <concepts>
 

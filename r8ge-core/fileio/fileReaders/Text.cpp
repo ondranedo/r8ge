@@ -1,4 +1,4 @@
-#include "TextReader.h"
+#include "Text.h"
 
 #include "../FileIO.h"
 
@@ -10,14 +10,6 @@ namespace r8ge {
 
         Text::~Text() {
             global::fileIO->remove(m_path);
-        }
-
-        void Text::save() const {
-            global::fileIO->save(m_path);
-        }
-
-        void Text::load() {
-            global::fileIO->load(m_path);
         }
 
         FileType Text::getType() {
@@ -43,6 +35,10 @@ namespace r8ge {
             }
 
             return retliner;
+        }
+
+        size_t Text::lineNumber() const {
+            return readLines().size()-1;
         }
     }
 }
