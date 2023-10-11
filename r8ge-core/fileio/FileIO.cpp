@@ -216,6 +216,11 @@ namespace r8ge {
 
     void FileIO::setTextData(const std::string &path, const std::string &data) {
         if(!isFilePresent(path)) return;
+        if(isBinary(path))
+        {
+            R8GE_LOG_ERROR("Trying to set text data to a binary file: {}", path);
+            return;
+        }
         std::lock_guard<std::mutex> lock(m_mutex);
         m_txtFileMap[path] = data;
         m_modifiedMap[path] = true;
@@ -223,8 +228,43 @@ namespace r8ge {
 
     void FileIO::setBinaryData(const std::string &path, const std::vector<byte> &data) {
         if(!isFilePresent(path)) return;
+        if(isText(path))
+        {
+            R8GE_LOG_ERROR("Trying to set binary data to a text file: {}", path);
+            return;
+        }
         std::lock_guard<std::mutex> lock(m_mutex);
         m_binFileMap[path] = data;
         m_modifiedMap[path] = true;
+    }
+
+    void FileIO::appendTextData(const std::string &path, const std::string &data) {
+        if(!isFilePresent(path)) return;
+        if(isBinary(path))
+        {
+            R8GE_LOG_ERROR("Trying to append text data to a binary file: {}", path);
+            return;
+        }
+
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_txtFileMap[path] += data;
+        m_modifiedMap[path] = true;
+    }
+
+    void FileIO::appendBinaryData(const std::string &path, const std::vector<byte> &data) {
+        if(!isFilePresent(path)) return;
+        if(isText(path))
+        {
+            R8GE_LOG_ERROR("Trying to append binary data to a text file: {}", path);
+            return;
+        }
+
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_binFileMap[path].insert(m_binFileMap[path].end(), data.begin(), data.end());
+        m_modifiedMap[path] = true;
+    }
+
+    bool FileIO::isModified(const std::string &path) {
+        return m_modifiedMap[path];
     }
 }

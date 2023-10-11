@@ -13,7 +13,7 @@ namespace r8ge {
 
     class FileIO final {
     public:
-        FileIO(size_t filelimit);
+        explicit FileIO(size_t filelimit);
         ~FileIO();
 
         void add(const std::string& path, FileType ft);
@@ -32,6 +32,11 @@ namespace r8ge {
 
         void setTextData(const std::string& path, const std::string& data);
         void setBinaryData(const std::string& path, const std::vector<byte>& data);
+
+        void appendTextData(const std::string& path, const std::string& data);
+        void appendBinaryData(const std::string& path, const std::vector<byte>& data);
+
+        [[nodiscard]] bool isModified(const std::string& path);
 
         [[nodiscard]] bool isBinary(const std::string& path);
         [[nodiscard]] bool isText(const std::string& path);
