@@ -3,4 +3,12 @@ add_library(utility
         "StringFormat.cpp"
         "TimeStamp.h"
         "TimeStamp.cpp"
+        "json/Json.cpp"
+        "json/Json.h"
+        "json/StringKey.cpp"
+        "json/StringKey.h"
+        "json/Object.cpp"
+        "json/Object.h"
+        "json/Array.cpp"
+        "json/Array.h"
 )
