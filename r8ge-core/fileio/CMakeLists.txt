@@ -9,4 +9,6 @@ add_library(fileio
         "fileReaders/Text.h"
         "FileIO.cpp"
         "FileIO.h"
+        "fileReaders/Binary.cpp"
+        "fileReaders/Binary.h"
 )
