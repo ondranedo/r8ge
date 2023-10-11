@@ -38,8 +38,8 @@ namespace r8ge {
 
         [[nodiscard]] std::vector<std::string> getTxtFiles();
         [[nodiscard]] std::vector<std::string> getBinFiles();
-
     private:
+
         std::unordered_map<std::string, std::string> m_txtFileMap;
         std::unordered_map<std::string, std::vector<byte>> m_binFileMap;
         std::unordered_map<std::string, FileType> m_fileTypeMap;

@@ -18,113 +18,95 @@ namespace r8ge {
             R8GE_LOG_WARNI("FileIO is being destroyed, {} files were not removed", m_fileCount);
         }
 
-        auto txt = getTxtFiles();
-        for(auto& path : txt)
+        for(auto& path : getTxtFiles())
             remove(path);
 
-        auto bin = getBinFiles();
-        for(auto& path : bin)
+        for(auto& path : getBinFiles())
             remove(path);
 
         R8GE_ASSERT(m_fileCount==0, "FileIO is not empty on destruction");
     }
 
     void FileIO::add(const std::string &path, FileType ft) {
-        if(m_txtFileMap.find(path) != m_txtFileMap.end() || m_binFileMap.find(path) != m_binFileMap.end())
-        {
+        if(m_txtFileMap.find(path) != m_txtFileMap.end() || m_binFileMap.find(path) != m_binFileMap.end()) {
             R8GE_LOG_WARNI("file {} is already present in FileIO", path);
+            return;
+        }
+
+        if(ft()!=FileType::TEXT && ft()!=FileType::BINARY) {
+            R8GE_LOG_ERROR("Trying to add file {} with invalid FileType {}", path, ft.toString());
             return;
         }
 
         // TODO: Check file limit
 
-        if(ft()==FileType::TEXT) {
-            m_mutex.lock();
+        m_mutex.lock();
+
+        if(ft()==FileType::TEXT)
             m_txtFileMap[path] = "";
-            m_fileTypeMap[path] = ft;
-            m_fileCount++;
-            m_modifiedMap[path] = false;
-            m_mutex.unlock();
-        }
-        else if(ft()==FileType::BINARY) {
-            m_mutex.lock();
+        if(ft()==FileType::BINARY)
             m_binFileMap[path] = std::vector<byte>();
-            m_fileTypeMap[path] = ft;
-            m_fileCount++;
-            m_modifiedMap[path] = false;
-            m_mutex.unlock();
-        }
-        else {
-            R8GE_LOG_ERROR("Other than [FileType::BINARY/FileType::TEXT] file type passed to FileIO::save()");
-        }
+        m_fileCount++;
+        m_modifiedMap[path] = false;
+        m_fileTypeMap[path] = ft;
+
+        m_mutex.unlock();
     }
 
     void FileIO::save(const std::string &path) {
         if(!isFilePresent(path)) return;
+        auto isbin = isBinary(path);
 
-        if(isBinary(path)) {
-            m_mutex.lock();
+        m_mutex.lock();
+        if(isbin) {
             std::ofstream file(path, std::ios::binary);
             file.write((char*)m_binFileMap[path].data(), m_binFileMap[path].size());
             file.close();
-            m_mutex.unlock();
-        }
-        else
-        {
-            m_mutex.lock();
+        } else {
             std::ofstream file(path);
             file << m_txtFileMap[path];
             file.close();
-            m_mutex.unlock();
         }
 
-        m_mutex.lock();
         m_modifiedMap[path] = false;
         m_mutex.unlock();
     }
 
     void FileIO::load(const std::string &path) {
         if(!isFilePresent(path)) return;
+        auto isbin = isBinary(path);
 
-        if(isBinary(path)) {
-            m_mutex.lock();
+        m_mutex.lock();
+        if(isbin) {
             std::ifstream file(path, std::ios::binary);
             std::vector<byte> data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             m_binFileMap[path] = data;
-            m_modifiedMap[path] = false;
             file.close();
-            m_mutex.unlock();
-        }
-        else
-        {
-            m_mutex.lock();
+        } else {
             std::ifstream file(path);
             std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             m_txtFileMap[path] = data;
-            m_modifiedMap[path] = false;
             file.close();
-            m_mutex.unlock();
         }
+        m_modifiedMap[path] = false;
+        m_mutex.unlock();
     }
 
     void FileIO::remove(const std::string &path) {
         if(!isFilePresent(path)) return;
+        auto isbin = isBinary(path);
 
-        if(isText(path)) {
-            m_mutex.lock();
-            m_fileCount--;
-            if(m_modifiedMap[path])
-                R8GE_LOG_WARNI("Text file {} was not saved", path);
-            m_txtFileMap.erase(path);
-            m_mutex.unlock();
-        } else {
-            m_mutex.lock();
-            m_fileCount--;
-            if(m_modifiedMap[path])
-                R8GE_LOG_WARNI("Binary file {} was not saved", path);
+        m_mutex.lock();
+        m_fileCount--;
+        if(isbin)
             m_binFileMap.erase(path);
-            m_mutex.unlock();
-        }
+        else
+            m_txtFileMap.erase(path);
+
+        if(m_modifiedMap[path])
+            R8GE_LOG_WARNI("File {} was not saved", path);
+
+        m_mutex.unlock();
     }
 
     size_t FileIO::getFileCount() {
