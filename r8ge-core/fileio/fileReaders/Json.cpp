@@ -3,12 +3,27 @@
 namespace r8ge {
     namespace Reader {
 
-        FileType Value::getType() {
+        FileType Json::getType() {
             return FileType::JSON;
         }
 
-        Value::Value(const std::string &path) : Text(path) {}
+        Json::Json(const std::string &path) : Text(path) {
+            write("{}");
+        }
 
-        Value::~Value() {}
+        Json::~Json() {}
+
+        utility::Json &Json::json() {
+            return m_json;
+        }
+
+        void Json::save_json() {
+            write(m_json.to_string());
+            save();
+        }
+
+        void Json::load_json() {
+            load();
+        }
     }
 }
