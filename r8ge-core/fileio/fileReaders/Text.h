@@ -10,7 +10,7 @@ namespace r8ge {
         class Text : public FileReader {
         public:
             Text(const std::string& path);
-            ~Text() override;
+            virtual ~Text() override;
 
             [[nodiscard]] std::string readFile() const;
             [[nodiscard]] std::vector<std::string> readLines() const;
@@ -28,7 +28,6 @@ namespace r8ge {
             void appendNewLine(const std::string& buffer);
             void appendNewLine(const std::vector<std::string>& buffer);
             void appendNewLine(char c);
-
 
             static FileType getType();
         };
