@@ -69,7 +69,7 @@ namespace r8ge {
             file.close();
         } else {
             std::ofstream file(path);
-            file << m_txtFileMap[path];
+            file << m_txtFileMap[path] << '\n';
             file.close();
         }
 
