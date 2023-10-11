@@ -12,11 +12,15 @@ namespace r8ge {
             Binary(const std::string& path);
             ~Binary() override;
 
-            void copyTo(void* buffer, size_t buffer_size);
-            void copyTo(std::vector<unsigned char>& buffer);
+            void read(void* buffer, size_t buffer_size);
+            void read(std::vector<unsigned char>& buffer);
 
-            void copyFrom(const void* buffer, size_t buffer_size);
-            void copyFrom(const std::vector<unsigned char>& buffer);
+            void write(const void* buffer, size_t buffer_size);
+            void write(const std::vector<unsigned char>& buffer);
+
+            void append(const void* buffer, size_t buffer_size);
+            void append(const std::vector<unsigned char>& buffer);
+            void append(unsigned char c);
 
             static FileType getType();
         };

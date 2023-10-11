@@ -40,5 +40,56 @@ namespace r8ge {
         size_t Text::lineNumber() const {
             return readLines().size()-1;
         }
+
+        void Text::write(const std::string &buffer) {
+            global::fileIO->setTextData(m_path, buffer);
+        }
+
+        void Text::write(const std::vector<std::string> &buffer) {
+            std::string retliner{""};
+
+            for(auto &c : buffer) {
+                retliner += c + '\n';
+            }
+
+            global::fileIO->setTextData(m_path, retliner);
+        }
+
+        void Text::append(const std::string &buffer) {
+            global::fileIO->appendTextData(m_path, buffer);
+        }
+
+        void Text::append(const std::vector<std::string> &buffer) {
+            std::string retliner{""};
+
+            for(auto &c : buffer) {
+                retliner += c + '\n';
+            }
+
+            global::fileIO->appendTextData(m_path, retliner);
+        }
+
+        void Text::append(const char c) {
+            global::fileIO->appendTextData(m_path, {c});
+        }
+
+        void Text::appendNewLine() {
+            global::fileIO->appendTextData(m_path, {'\n'});
+        }
+
+        void Text::appendNewLine(const std::string &buffer) {
+            appendNewLine();
+            append(buffer);
+        }
+
+        void Text::appendNewLine(const std::vector<std::string> &buffer) {
+            appendNewLine();
+            append(buffer);
+        }
+
+        void Text::appendNewLine(char c) {
+            appendNewLine();
+            append(c);
+        }
     }
 }

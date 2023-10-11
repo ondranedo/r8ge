@@ -16,6 +16,20 @@ namespace r8ge {
             [[nodiscard]] std::vector<std::string> readLines() const;
             [[nodiscard]] size_t lineNumber() const;
 
+            void write(const std::string& buffer);
+            void write(const std::vector<std::string>& buffer);
+
+            void append(const std::string& buffer);
+            void append(const std::vector<std::string>& buffer);
+            void append(char c);
+
+            void appendNewLine();
+
+            void appendNewLine(const std::string& buffer);
+            void appendNewLine(const std::vector<std::string>& buffer);
+            void appendNewLine(char c);
+
+
             static FileType getType();
         };
     }
