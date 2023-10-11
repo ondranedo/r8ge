@@ -13,7 +13,10 @@ namespace r8ge {
     FileIO::FileIO(size_t filelimit) : m_fileCount(0), m_fileLimit(filelimit) {}
 
     FileIO::~FileIO() {
-        R8GE_LOG_WARNI("FileIO is being destroyed, {} files were not removed", m_fileCount);
+        if(m_fileCount)
+        {
+            R8GE_LOG_WARNI("FileIO is being destroyed, {} files were not removed", m_fileCount);
+        }
 
         auto txt = getTxtFiles();
         for(auto& path : txt)
@@ -22,6 +25,7 @@ namespace r8ge {
         auto bin = getBinFiles();
         for(auto& path : bin)
             remove(path);
+
         R8GE_ASSERT(m_fileCount==0, "FileIO is not empty on destruction");
     }
 
