@@ -6,4 +6,6 @@ add_library(r8ge-sound
         "Sound.cpp"
         "Generators.cpp"
         "Generators.hpp"
+        "Sequencer.cpp"
+        "Sequencer.hpp"
 )

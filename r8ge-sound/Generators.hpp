@@ -41,7 +41,7 @@ namespace r8ge{
 
     class Note : public Sound{
     public:
-        explicit Note(double startTime, double frequency = 440.0, double (*generator)(double) = &std::sin, Envelope envelope = {});
+        explicit Note(double startTime, short tone = 49, double (*generator)(double) = &std::sin, Envelope envelope = {});
         // converts frequency to angular velocity
         double generate(double timeSecs, unsigned char channel) override;
         ~Note() override;
@@ -52,7 +52,7 @@ namespace r8ge{
         Envelope m_envelope;
     };
 // 1 is a0, 40 is c4 and so on
-    double toneToFrequency(short note);
+    double toneToFrequency(short tone);
 
     double square(double time);
 

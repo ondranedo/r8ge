@@ -33,9 +33,9 @@ double r8ge::Note::generate(double timeSecs, unsigned char channel) {
     return m_generator(timeSecs * m_frequency * 6.2831853) * (channel == 1 ? m_right : m_left) * modifier;
 }
 
-r8ge::Note::Note(double startTime, double frequency, double (*generator)(double), Envelope envelope) : Sound(startTime) {
+r8ge::Note::Note(double startTime, short tone, double (*generator)(double), Envelope envelope) : Sound(startTime) {
     m_generator = generator;
-    m_frequency = frequency;
+    m_frequency = toneToFrequency(tone);
     m_envelope = envelope;
 }
 
