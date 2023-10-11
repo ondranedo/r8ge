@@ -9,6 +9,7 @@ namespace r8ge {
     namespace Reader {
         class Text : public FileReader {
         public:
+            Text(const std::string& path);
             ~Text() override;
 
             void save() const override;

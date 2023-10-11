@@ -28,35 +28,22 @@ namespace r8ge {
         FileType m_fileType;
     };
 
+    template<isFileReader T>
     class File final : public _File {
     public:
-        explicit File(const std::string& path, FileType ft = {});
-
-        template <isFileReader T>
-        [[nodiscard]] T& get() {
-            if(T::getType()() != getFileType()()) {
-                R8GE_LOG_ERROR("File type mismatch: expected `{}`, got `{}`", T::getType().toString(), getFileType().toString());
-            }
-
-            return *m_file;
-        }
-
-    private:
-        std::unique_ptr<FileReader> m_file;
-    };
-
-    template<isFileReader T>
-    class FileT final : public _File {
-    public:
-        explicit FileT(const std::string& path):
-        _File(path, T::getType()()), m_file(std::make_unique<T>())
+        explicit File(const std::string& path):
+        _File(path, T::getType()()), m_file(std::make_unique<T>(path))
         {}
 
         [[nodiscard]] T& get() {
             return *m_file;
         }
 
-        [[nodiscard]] T& operator()() {
+        [[nodiscard]] T* operator->() {
+            return m_file.get();
+        }
+
+        [[nodiscard]] T& operator*() {
             return *m_file;
         }
     private:

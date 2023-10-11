@@ -6,14 +6,18 @@
 namespace r8ge {
     class FileReader {
     public:
+        FileReader(const std::string& path);
         virtual ~FileReader() = 0;
-
         virtual void save() const = 0;
         virtual void load() = 0;
 
-    public:
-        static std::unique_ptr<FileReader> create(const FileType& ft);
+        [[nodiscard]] std::string getPath() const;
 
+    public:
+        static std::unique_ptr<FileReader> create(const FileType& ft, const std::string& path);
+
+    protected:
+        std::string m_path;
     };
 
     template <typename T>

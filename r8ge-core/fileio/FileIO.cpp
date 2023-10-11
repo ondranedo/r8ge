@@ -1,9 +1,11 @@
 #include "FileIO.h"
 
-#include <fstream>
 
 #include "../Logger.h"
 #include "../Core.h"
+
+#include <fstream>
+
 
 namespace r8ge {
     namespace global {
@@ -38,7 +40,10 @@ namespace r8ge {
             return;
         }
 
-        // TODO: Check file limit
+        if(m_fileCount >= m_fileLimit) {
+            R8GE_LOG_ERROR("File limit reached, cannot add file {}", path);
+            return;
+        }
 
         m_mutex.lock();
 

@@ -13,6 +13,4 @@ namespace r8ge {
     }
 
     _File::~_File() = default;
-
-    File::File(const std::string& path, FileType ft) : _File(path, ft), m_file(FileReader::create(ft)) {}
 }
