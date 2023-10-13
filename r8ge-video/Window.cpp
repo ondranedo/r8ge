@@ -2,6 +2,5 @@
 
 namespace r8ge
 {
-    Window::~Window() = default;
 
 }

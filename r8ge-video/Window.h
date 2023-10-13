@@ -14,19 +14,20 @@ namespace r8ge
     public:
         Window(int x, int y, const char* title)
             : m_x(x), m_y(y), m_title(title) {}
-        virtual void create() = 0;
-        virtual void destroy() = 0;
-        virtual std::tuple<int,int> getDims() = 0;
-        virtual void setVsync(bool vsync) = 0;
-        virtual void getReadyForRender() = 0;
-        virtual void swapBuffers() = 0;
-        virtual void pollEvents() = 0;
-        virtual ~Window();
+         void create();
+         void destroy();
+         std::tuple<int,int> getDims();
+         void setVsync(bool vsync);
+         void getReadyForRender();
+         void swapBuffers();
+         void pollEvents();
+         ~Window();
 
     protected:
         int m_x{};
         int m_y{};
         const char* m_title{};
+        bool m_isCreated{false};
     };
 }
 #endif //R8GE_WINDOW_H
