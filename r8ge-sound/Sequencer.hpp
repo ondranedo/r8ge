@@ -11,19 +11,19 @@
 namespace r8ge{
     struct Command{
         short m_tone;
-        long m_sixteenthBeatStart;
-        long m_sixteenthBeatCount;
-        short m_genIndex;
-        short m_envelopeIndex;
+        unsigned long m_tickStart;
+        unsigned long m_tickEnd;
+        unsigned short m_genIndex;
+        unsigned short m_envelopeIndex;
     };
-    class SimpleSequencer{
+    class MIDISequencer{
     public:
         void createAll();
-        void loadMIDI();
+        void loadMIDI(const std::string& filename);
         void setBPM(double bpm);
     private:
         double m_bpm;
-        double m_sixteenthBeatSecs;
+        double m_tickSecs;
         std::vector<Command> m_commands;
         std::vector<double(*)(double)> m_generators;
         std::vector<Envelope> m_envelopes;
