@@ -70,7 +70,7 @@ namespace r8ge {
 
 
         public:
-            [[nodiscard]] std::string to_string(bool format, size_t _count_of_indent = 0, bool _should_format = 1) const;
+            [[nodiscard]] std::string to_string(bool format, size_t _tab_spaces=4, size_t _count_of_indent = 0, bool _should_format = 1) const;
             [[nodiscard]] std::string to_string(Type t) const;
             [[nodiscard]] Type type() const;
             [[nodiscard]] bool is_integral() const;

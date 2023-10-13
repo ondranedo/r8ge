@@ -18,7 +18,7 @@ namespace r8ge {
 
             Json& operator[](const StringKey& key);
 
-            std::string to_string(bool format, size_t _count_of_indent = 0) const;
+            std::string to_string(bool format, size_t _tab_spaces = 4, size_t _count_of_indent = 0) const;
 
         private:
             std::unordered_map<std::string, Json> m_map;

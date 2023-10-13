@@ -19,13 +19,13 @@ namespace r8ge {
         }
 
 
-        std::string Object::to_string(bool format, size_t _count_of_indent) const {
+        std::string Object::to_string(bool format, size_t _tab_spaces, size_t _count_of_indent) const {
             std::string str = "{";
             str += format ? "\n" : "";
 
             size_t i = 0;
             for(auto&[key, value]: m_map) {
-                for(size_t c = 0; c < _count_of_indent*4; c++)
+                for(size_t c = 0; c < _count_of_indent*_tab_spaces; c++)
                     str += format ? " " : "";
 
                 str += "\"" + key + "\":" + (format?" ":"") + value.to_string(format, _count_of_indent, false);
@@ -33,7 +33,7 @@ namespace r8ge {
                     str += ",";
                 str+=format?"\n":"";
             }
-            for(size_t c = 0; c < (_count_of_indent-1)*4; c++)
+            for(size_t c = 0; c < (_count_of_indent-1)*_tab_spaces; c++)
                 str += format ? " " : "";
             return str + "}";
         }

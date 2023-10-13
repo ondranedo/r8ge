@@ -8,7 +8,7 @@ namespace r8ge {
             }
         }
 
-        std::string Array::to_string(bool format, size_t _count_of_indent) const {
+        std::string Array::to_string(bool format, size_t _tab_spaces, size_t _count_of_indent) const {
             std::string str = "[";
             str += format ? "\n" : "";
 
@@ -19,7 +19,7 @@ namespace r8ge {
                 str += format ? "\n" : "";
             }
 
-            for (size_t c = 0; c < (_count_of_indent-1) * 4 ; c++)
+            for (size_t c = 0; c < (_count_of_indent-1) * _tab_spaces ; c++)
                 str += format ? " " : "";
 
             str += "]";

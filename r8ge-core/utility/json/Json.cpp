@@ -68,15 +68,15 @@ namespace r8ge {
                 m_data = other.m_data;
         }
 
-        std::string Json::to_string(bool format, size_t _count_of_indent, bool _should_format) const {
+        std::string Json::to_string(bool format, size_t _tab_spaces, size_t _count_of_indent, bool _should_format) const {
             std::string str;
 
             if(_should_format)
-                for(size_t i = 0; i < _count_of_indent*4; i++)
-                    str += " ";
+                for (size_t c = 0; c < _count_of_indent * _tab_spaces; c++)
+                    str += format ? " " : "";
 
-            if (is_object()) str += m_data.o->to_string(format, _count_of_indent+1);
-            if (is_array()) str += m_data.a->to_string(format, _count_of_indent+1);
+            if (is_object()) str += m_data.o->to_string(format, _tab_spaces, _count_of_indent+1);
+            if (is_array()) str += m_data.a->to_string(format, _tab_spaces, _count_of_indent+1);
             if (is_string()) str += "\"" + *m_data.s + "\"";
             if (is_boolean()) str += m_data.b ? "true" : "false";
             if (is_integral())str += std::to_string(m_data.i);
