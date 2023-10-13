@@ -5,21 +5,20 @@
 
 namespace r8ge {
     namespace utility {
-        using boolean = bool;
-        template<class T> concept Boolean = std::is_same_v<T, boolean>;
-        using integral = long long int;
-        template<class T> concept Integral = std::integral<T> && std::is_convertible_v<T, integral> && !Boolean<T>;
-        using decimal = long double;
-        template<class T> concept Decimal = std::floating_point<T> && std::is_convertible_v<T, decimal>;
-        using string = std::string;
-        template<class T> concept String = std::is_convertible_v<T, string>;
-
         class Object;
-
         class Array;
 
+        using boolean = bool;
+        using integral = long long int;
+        using decimal = long double;
+        using string = std::string;
         using array = ::r8ge::utility::Array;
-        using object = Object;
+        using object = ::r8ge::utility::Object;
+
+        template<class T> concept Boolean = std::is_same_v<T, boolean>;
+        template<class T> concept Integral = std::integral<T> && std::is_convertible_v<T, integral> && !Boolean<T>;
+        template<class T> concept Decimal = std::floating_point<T> && std::is_convertible_v<T, decimal>;
+        template<class T> concept String = std::is_convertible_v<T, string>;
 
         union Data {
             integral i;
@@ -49,6 +48,7 @@ namespace r8ge {
             template<Decimal T> Json(T d) : m_type(Type::decimal) { m_data.d = d; }
             template<Boolean T> Json(T b) : m_type(Type::boolean) { m_data.b = b; }
             template<String T> Json(T s) : m_type(Type::string) { m_data.s = new string(s); }
+
             Json(const object &o);
             Json(const std::initializer_list<std::pair<StringKey, Json>> &list);
             Json(const array &a);
@@ -70,7 +70,7 @@ namespace r8ge {
 
 
         public:
-            [[nodiscard]] std::string to_string() const;
+            [[nodiscard]] std::string to_string(bool format, size_t _count_of_indent = 0, bool _should_format = 1) const;
             [[nodiscard]] std::string to_string(Type t) const;
             [[nodiscard]] Type type() const;
             [[nodiscard]] bool is_integral() const;
@@ -92,7 +92,6 @@ namespace r8ge {
                 operator long double() const;
                 operator bool() const;
                 operator std::string() const;
-
             private:
                 const Json &m_value;
             };
@@ -102,7 +101,7 @@ namespace r8ge {
             [[nodiscard]] integral as_integral() const;
             [[nodiscard]] decimal as_decimal() const;
             [[nodiscard]] boolean as_boolean() const;
-            [[nodiscard]] string as_string() const;
+            [[nodiscard]] string as_string(bool format) const;
 
         private:
             Data m_data{};

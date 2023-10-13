@@ -8,16 +8,22 @@ namespace r8ge {
             }
         }
 
-        std::string Array::to_string() const {
-            std::string retstr = "[";
+        std::string Array::to_string(bool format, size_t _count_of_indent) const {
+            std::string str = "[";
+            str += format ? "\n" : "";
+
             size_t i = 0;
             for (auto &v: m_vector) {
-                retstr += v.to_string();
-                if (i++ < m_vector.size() - 1)retstr += ",";
+                str += v.to_string(format, _count_of_indent);
+                if (i++ < m_vector.size() - 1)str += ",";
+                str += format ? "\n" : "";
             }
 
-            retstr += "]";
-            return retstr;
+            for (size_t c = 0; c < (_count_of_indent-1) * 4 ; c++)
+                str += format ? " " : "";
+
+            str += "]";
+            return str;
         }
 
         void Array::add(const Json &value) {

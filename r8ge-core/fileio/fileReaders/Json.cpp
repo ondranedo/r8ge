@@ -18,7 +18,7 @@ namespace r8ge {
         }
 
         void Json::save_json() {
-            write(m_json.to_string());
+            write(m_json.to_string(true));
             save();
         }
 
