@@ -30,10 +30,13 @@ namespace r8ge {
     }
 
     void FileIO::add(const std::string &path, FileType ft) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+
         if(m_txtFileMap.find(path) != m_txtFileMap.end() || m_binFileMap.find(path) != m_binFileMap.end()) {
             R8GE_LOG_WARNI("file {} is already present in FileIO", path);
             return;
         }
+
 
         if(ft()!=FileType::TEXT && ft()!=FileType::BINARY) {
             R8GE_LOG_ERROR("Trying to add file {} with invalid FileType {}", path, ft.toString());
@@ -45,8 +48,6 @@ namespace r8ge {
             return;
         }
 
-        m_mutex.lock();
-
         if(ft()==FileType::TEXT)
             m_txtFileMap[path] = "";
         if(ft()==FileType::BINARY)
@@ -54,8 +55,6 @@ namespace r8ge {
         m_fileCount++;
         m_modifiedMap[path] = false;
         m_fileTypeMap[path] = ft;
-
-        m_mutex.unlock();
     }
 
     void FileIO::save(const std::string &path) {
@@ -124,13 +123,14 @@ namespace r8ge {
         return m_fileLimit;
     }
 
-    bool FileIO::isFilePresent(const std::string &path) {
+    bool FileIO::isFilePresent(const std::string &path, bool log) {
         std::lock_guard<std::mutex> lock(m_mutex);
 
         if(m_txtFileMap.find(path) != m_txtFileMap.end()) return true;
         if(m_binFileMap.find(path) != m_binFileMap.end()) return true;
 
-        R8GE_LOG_WARNI("file {} is not present in FileIO", path);
+        if(log)
+            R8GE_LOG_WARNI("file {} is not present in FileIO", path);
 
         return false;
     }
@@ -266,5 +266,27 @@ namespace r8ge {
 
     bool FileIO::isModified(const std::string &path) {
         return m_modifiedMap[path];
+    }
+
+    void FileIO::copy(const std::string &path, const std::string &newPath) {
+        if(!isFilePresent(path)) return;
+        if(isFilePresent(newPath, false))
+        {
+            R8GE_LOG_ERROR("Trying to copy file {} to {} but {} already exists", path, newPath, newPath);
+            return;
+        }
+
+        auto isbin = isBinary(path);
+
+        if(isbin) {
+            add(newPath, FileType::BINARY);
+            setBinaryData(newPath, getBinaryData(path));
+        }
+        else {
+            add(newPath, FileType::TEXT);
+            setTextData(newPath, getTextData(path));
+        }
+        save(newPath);
+        remove(newPath);
     }
 }

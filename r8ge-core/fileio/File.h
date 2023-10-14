@@ -23,6 +23,7 @@ namespace r8ge {
         [[nodiscard]] std::string getPath() const;
         [[nodiscard]] FileType getFileType() const;
 
+        void copy(const std::string& path);
     private:
         std::string m_path;
         FileType m_fileType;

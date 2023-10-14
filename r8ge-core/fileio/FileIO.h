@@ -23,7 +23,7 @@ namespace r8ge {
 
         [[nodiscard]] size_t getFileCount();
         [[nodiscard]] size_t getFileLimit();
-        [[nodiscard]] bool isFilePresent(const std::string& path);
+        [[nodiscard]] bool isFilePresent(const std::string& path, bool log = 1);
         [[nodiscard]] size_t getFileSize(const std::string& path);
         [[nodiscard]] size_t getTotalSize();
 
@@ -43,6 +43,8 @@ namespace r8ge {
 
         [[nodiscard]] std::vector<std::string> getTxtFiles();
         [[nodiscard]] std::vector<std::string> getBinFiles();
+
+        void copy(const std::string& path, const std::string& newPath);
     private:
 
         std::unordered_map<std::string, std::string> m_txtFileMap;
