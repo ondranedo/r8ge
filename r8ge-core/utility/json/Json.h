@@ -44,6 +44,8 @@ namespace r8ge {
             Json();
             ~Json();
 
+            size_t from_string(const std::string &str, size_t _index = 0);
+
             template<Integral T> Json(T i) : m_type(Type::integral) { m_data.i = i; }
             template<Decimal T> Json(T d) : m_type(Type::decimal) { m_data.d = d; }
             template<Boolean T> Json(T b) : m_type(Type::boolean) { m_data.b = b; }
@@ -67,7 +69,6 @@ namespace r8ge {
 
         private:
             void copy(const Json &other);
-
 
         public:
             [[nodiscard]] std::string to_string(bool format, size_t _tab_spaces=4, size_t _count_of_indent = 0, bool _should_format = 1) const;

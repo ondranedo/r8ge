@@ -1,5 +1,7 @@
 #include "Object.h"
 
+#include "../../Logger.h"
+
 namespace r8ge {
     namespace utility {
         void Object::add(const StringKey &key, const Json &value) {
@@ -28,7 +30,7 @@ namespace r8ge {
                 for(size_t c = 0; c < _count_of_indent*_tab_spaces; c++)
                     str += format ? " " : "";
 
-                str += "\"" + key + "\":" + (format?" ":"") + value.to_string(format, _count_of_indent, false);
+                str += "\"" + key + "\":" + (format?" ":"") + value.to_string(format, _tab_spaces, _count_of_indent, false);
                 if(i++ < m_map.size()-1)
                     str += ",";
                 str+=format?"\n":"";
@@ -44,6 +46,40 @@ namespace r8ge {
 
         Json &Object::operator[](const StringKey &key) {
             return m_map[key.get()];
+        }
+
+        static std::pair<string, Json> generateEntry(const string &str, const string& key, size_t& index) {
+            Json j;
+            index = j.from_string(str, index);
+            char c = str[index];
+            return {key, j};
+        }
+
+        static string getKey(const string &str, size_t& index)
+        {
+            if(str[index] == ',') index++;
+
+            string key;
+            size_t last = str.find(':', index);
+            char c = str[index];
+            key = str.substr(index+1, last - index-2);
+
+            index = last + 1; // +1 for ':'
+
+            return key;
+        }
+
+        size_t Object::from_string(const string &str, size_t _index) {
+            size_t i = _index + 1;    // 1 for '{'
+            size_t bracket_count = 1; // 1 for '{'
+
+            while(bracket_count) {
+                m_map.emplace(generateEntry(str, getKey(str, i), i));
+
+                if(str[i] == '}') bracket_count--;
+            }
+
+            return i+1;
         }
     }
 }

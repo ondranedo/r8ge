@@ -14,7 +14,7 @@ namespace r8ge {
 
             size_t i = 0;
             for (auto &v: m_vector) {
-                str += v.to_string(format, _count_of_indent);
+                str += v.to_string(format, _tab_spaces, _count_of_indent);
                 if (i++ < m_vector.size() - 1)str += ",";
                 str += format ? "\n" : "";
             }
@@ -36,6 +36,28 @@ namespace r8ge {
             if (index >= m_vector.size())
                 index = m_vector.size() - 1;
             return m_vector[index];
+        }
+
+        Json generateEntry(const string& str, size_t& index, size_t& bracket_count)
+        {
+            if(str[index] == ',') index++;
+
+            Json j;
+            index = j.from_string(str, index);
+
+            return j;
+        }
+
+        size_t Array::from_string(const string &str, size_t _index) {
+            size_t i = _index + 1;    // 1 for '['
+            size_t bracket_count = 1; // 1 for '['
+
+            while(bracket_count) {
+                m_vector.push_back(generateEntry(str, i, bracket_count));
+                if(str[i] == ']') bracket_count--;
+            }
+
+            return i;
         }
     }
 }

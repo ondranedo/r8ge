@@ -24,8 +24,7 @@ namespace r8ge {
 
         void Json::load_json() {
             load();
-            std::string str = this->readFile();
-
+            m_json.from_string(readFile());
         }
     }
 }

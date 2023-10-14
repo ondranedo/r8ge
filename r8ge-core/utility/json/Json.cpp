@@ -5,6 +5,8 @@
 #include "Object.h"
 #include "Array.h"
 
+#include <algorithm>
+
 namespace r8ge {
     namespace utility {
         Json::Json() : m_type(Type::null) {}
@@ -201,6 +203,56 @@ namespace r8ge {
                     return "null";
             }
             return "unknown";
+        }
+
+         size_t Json::from_string(const string &str, size_t _index) {
+            // Remove all spaces, tabs, newlines
+            std::string s = str;
+            s.erase(std::remove_if(s.begin(), s.end(), [](unsigned char x) { return std::isspace(x); }), s.end());
+
+            if (s.empty()) {
+                m_type = Type::null;
+                return _index;
+            }
+
+            if (s[_index] == '{') {
+                m_type = Type::object;
+                m_data.o = new object;
+                return m_data.o->from_string(s, _index);
+            } else if (s[_index] == '[') {
+                m_type = Type::array;
+                m_data.a = new array;
+                return m_data.a->from_string(s, _index);
+            } else if (s[_index] == '"') {
+                m_type = Type::string;
+                size_t last_index = s.find('"', _index + 1);
+                auto str = s.substr(_index + 1, last_index - _index - 1);
+                m_data.s = new string(str);
+                return last_index + 1;
+            } else if (s[_index] == 't' || s[_index] == 'f') {
+                m_type = Type::boolean;
+                m_data.b = s[_index] == 't';
+                return _index + s[_index] == 't' ? _index+4 : _index+5;
+            } else if (s == "null") {
+                m_type = Type::null;
+                return _index;
+            } else {
+                size_t last_index_c = s.find(',', _index);
+                size_t last_index_b = s.find('}', _index);
+                size_t last_index_s = s.find(']', _index);
+                size_t last_index = std::min(last_index_c, std::min(last_index_b, last_index_s));
+                std::string num = s.substr(_index, last_index - _index);
+
+                if (num.find('.') != std::string::npos) {
+                    m_type = Type::decimal;
+                    m_data.d = std::stod(num);
+                } else {
+                    m_type = Type::integral;
+                    m_data.i = std::stoi(num);
+                }
+
+                return last_index;
+            }
         }
 
         Json::Convertor::Convertor(const Json &value) : m_value(value) {}

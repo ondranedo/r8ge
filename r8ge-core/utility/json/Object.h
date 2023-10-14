@@ -20,6 +20,7 @@ namespace r8ge {
 
             std::string to_string(bool format, size_t _tab_spaces = 4, size_t _count_of_indent = 0) const;
 
+            size_t from_string(const std::string &str, size_t _index = 0);
         private:
             std::unordered_map<std::string, Json> m_map;
         };
