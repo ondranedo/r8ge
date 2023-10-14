@@ -57,7 +57,9 @@ namespace r8ge {
                  const std::initializer_list<utility::StringFormat::ValidType> &t) {
         if(global::logger)
             global::logger->log(p, utility::StringFormat(parser, t).to_string());
-
-        // TODO: Some error output or smth
+        else {
+            global::fileIO->writeStderr("Error: Main logger not initialized\n");
+            global::fileIO->writeStdout(utility::StringFormat(parser, t).to_string() + "\n");
+        }
     }
 }

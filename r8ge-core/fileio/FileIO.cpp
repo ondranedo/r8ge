@@ -299,6 +299,13 @@ namespace r8ge {
         m_stdoutMutex.unlock();
     }
 
+
+    void FileIO::writeStderr(const std::string &data) {
+        m_stdoutMutex.lock();
+        std::cerr << data;
+        m_stdoutMutex.unlock();
+    }
+
     std::string FileIO::readStdin() {
         std::string data;
         m_stdinMutex.lock();

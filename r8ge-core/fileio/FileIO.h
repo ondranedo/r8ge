@@ -21,6 +21,7 @@ namespace r8ge {
         void load(const std::string& path);
         void remove(const std::string& path);
 
+        void writeStderr(const std::string& data);
         void writeStdout(const std::string& data);
         [[nodiscard]] std::string readStdin();
         [[nodiscard]] std::vector<std::string> readStdinVec();
