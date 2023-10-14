@@ -51,7 +51,6 @@ namespace r8ge {
         static std::pair<string, Json> generateEntry(const string &str, const string& key, size_t& index) {
             Json j;
             index = j.from_string(str, index);
-            char c = str[index];
             return {key, j};
         }
 
@@ -61,7 +60,6 @@ namespace r8ge {
 
             string key;
             size_t last = str.find(':', index);
-            char c = str[index];
             key = str.substr(index+1, last - index-2);
 
             index = last + 1; // +1 for ':'
@@ -79,7 +77,7 @@ namespace r8ge {
                 if(str[i] == '}') bracket_count--;
             }
 
-            return i+1;
+            return i + 1; // +1 for '}'
         }
     }
 }

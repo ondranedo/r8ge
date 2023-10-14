@@ -232,7 +232,7 @@ namespace r8ge {
             } else if (s[_index] == 't' || s[_index] == 'f') {
                 m_type = Type::boolean;
                 m_data.b = s[_index] == 't';
-                return _index + s[_index] == 't' ? _index+4 : _index+5;
+                return _index + (s[_index] == 't' ? 5 : 6);
             } else if (s == "null") {
                 m_type = Type::null;
                 return _index;

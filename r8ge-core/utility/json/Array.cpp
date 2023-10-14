@@ -57,7 +57,7 @@ namespace r8ge {
                 if(str[i] == ']') bracket_count--;
             }
 
-            return i;
+            return i + 1;  // 1 for ']'
         }
     }
 }
