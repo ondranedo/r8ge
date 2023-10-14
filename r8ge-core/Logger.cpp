@@ -6,34 +6,34 @@
 #include "fileio/FileIO.h"
 
 namespace r8ge {
-    std::mutex mainLogger_mutex;
     namespace global {
         Logger* logger = nullptr;
     }
 
-    Logger::Logger() : m_queue{}{}
+    Logger::Logger() : m_queue{},m_running(true){
+        m_thread = std::thread(&Logger::logLoop, this);
+    }
     Logger::~Logger() {
+        m_running = false;
+        m_thread.join();
         emptyLogQueue();
     }
 
     void Logger::log(Priority p, const std::string& raw) {
-        mainLogger_mutex.lock();
+        m_mutex.lock();
         m_queue.emplace(raw, p);
-        mainLogger_mutex.unlock();
-
-        if(p == Priority::FATAL)
-            emptyLogQueue();
+        m_mutex.unlock();
     }
 
     void Logger::emptyLogQueue() {
-        mainLogger_mutex.lock();
+        m_mutex.lock();
         while(!m_queue.empty()) {
             Log& l = m_queue.front();
             global::fileIO->writeStdout(format(l)+"\n");
 
             m_queue.pop();
         }
-        mainLogger_mutex.unlock();
+        m_mutex.unlock();
     }
 
     std::string Logger::format(const Log& log) {
@@ -51,7 +51,12 @@ namespace r8ge {
         return str;
     }
 
-    Logger::Log::Log(const std::string &raw, Logger::Priority p) : raw_data(raw), priority(p) {}
+    void Logger::logLoop() {
+        while(m_running) {
+            emptyLogQueue();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
 
     void mainLog(Logger::Priority p, const std::string &parser,
                  const std::initializer_list<utility::StringFormat::ValidType> &t) {
@@ -62,4 +67,6 @@ namespace r8ge {
             global::fileIO->writeStdout(utility::StringFormat(parser, t).to_string() + "\n");
         }
     }
+
+    Logger::Log::Log(const std::string &raw, Logger::Priority p) : raw_data(raw), priority(p), times(TimeStamp()){}
 }

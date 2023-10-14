@@ -5,6 +5,7 @@
 #include <chrono>
 #include <queue>
 #include <mutex>
+#include <thread>
 
 #include "utility/StringFormat.h"
 #include "utility/TimeStamp.h"
@@ -37,12 +38,17 @@ namespace r8ge {
         // Sends a log to the queue, to be processed later by the logger
         void log(Priority p, const std::string& str);
 
+    private:
         // Empties the log queue, and writes all logs to the log file (stdout for now)
         void emptyLogQueue();
 
+        void logLoop();
     private:
         std::string format(const Log& log);
         std::queue<Log> m_queue;
+        std::thread m_thread;
+        std::mutex m_mutex;
+        bool m_running;
     };
 
 
