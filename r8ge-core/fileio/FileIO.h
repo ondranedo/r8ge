@@ -21,6 +21,10 @@ namespace r8ge {
         void load(const std::string& path);
         void remove(const std::string& path);
 
+        void writeStdout(const std::string& data);
+        [[nodiscard]] std::string readStdin();
+        [[nodiscard]] std::vector<std::string> readStdinVec();
+
         [[nodiscard]] size_t getFileCount();
         [[nodiscard]] size_t getFileLimit();
         [[nodiscard]] bool isFilePresent(const std::string& path, bool log = 1);
@@ -55,6 +59,8 @@ namespace r8ge {
         const size_t m_fileLimit;
         size_t m_fileCount;
         std::mutex m_mutex;
+        std::mutex m_stdinMutex;
+        std::mutex m_stdoutMutex;
     };
 
     namespace global{

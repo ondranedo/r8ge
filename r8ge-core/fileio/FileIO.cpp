@@ -5,14 +5,17 @@
 #include "../Core.h"
 
 #include <fstream>
-
+#include <iostream>
+#include <istream>
 
 namespace r8ge {
     namespace global {
         FileIO* fileIO = nullptr;
     }
 
-    FileIO::FileIO(size_t filelimit) : m_fileCount(0), m_fileLimit(filelimit) {}
+    FileIO::FileIO(size_t filelimit) : m_fileCount(0), m_fileLimit(filelimit) {
+
+    }
 
     FileIO::~FileIO() {
         if(m_fileCount)
@@ -288,5 +291,38 @@ namespace r8ge {
         }
         save(newPath);
         remove(newPath);
+    }
+
+    void FileIO::writeStdout(const std::string &data) {
+        m_stdoutMutex.lock();
+        std::cout << data;
+        m_stdoutMutex.unlock();
+    }
+
+    std::string FileIO::readStdin() {
+        std::string data;
+        m_stdinMutex.lock();
+        std::getline(std::cin, data);
+        m_stdinMutex.unlock();
+        return data;
+    }
+
+    std::vector<std::string> FileIO::readStdinVec() {
+        auto raw = readStdin();
+        std::vector<std::string> data;
+
+        while(raw.size()){
+            int index = raw.find(' ');
+            if(index!=std::string::npos){
+                data.push_back(raw.substr(0,index));
+                raw = raw.substr(index+1);
+                if(raw.size()==0)data.push_back(raw);
+            }else{
+                data.push_back(raw);
+                raw = "";
+            }
+        }
+
+        return data;
     }
 }
