@@ -2,9 +2,9 @@
 
 - **Logger**
   - ~~TimeStamp~~
+  - ~~Log thread~~
   - Colours
   - Formats
-  - Log thread
   - Which system originated the log
 - **~~Event System~~**
 - **~~System TimeStamp~~**

@@ -9,6 +9,7 @@
 
 #include "utility/StringFormat.h"
 #include "utility/TimeStamp.h"
+#include "platform/Console.h"
 
 namespace r8ge {
     class Logger;
@@ -25,6 +26,7 @@ namespace r8ge {
             TRACE, DEBUG, ERROR, WARNI, FATAL
         };
 
+        std::string priorityToString(Priority p);
     private:
         struct Log {
             TimeStamp times;

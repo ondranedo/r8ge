@@ -1,9 +1,6 @@
 
 #include "Logger.h"
 
-#include <iostream>
-
-#include "fileio/FileIO.h"
 
 namespace r8ge {
     namespace global {
@@ -29,8 +26,7 @@ namespace r8ge {
         m_mutex.lock();
         while(!m_queue.empty()) {
             Log& l = m_queue.front();
-            global::fileIO->writeStdout(format(l)+"\n");
-
+            Console::log(format(l)+"\n");
             m_queue.pop();
         }
         m_mutex.unlock();
@@ -40,13 +36,7 @@ namespace r8ge {
         std::string str;
         str+= "[" + log.times.to_string("%X:%^{ms}") + "] "; // TODO: Log formats
         str+= "[";
-        switch (log.priority) {
-            case Priority::FATAL: str+= "fatal"; break;
-            case Priority::DEBUG: str+= "debug"; break;
-            case Priority::ERROR: str+= "error"; break;
-            case Priority::TRACE: str+= "trace"; break;
-            case Priority::WARNI: str+= "warni"; break;
-        }
+        str+= priorityToString(log.priority);
         str+= "] - " + log.raw_data;
         return str;
     }
@@ -58,13 +48,24 @@ namespace r8ge {
         }
     }
 
+    std::string Logger::priorityToString(Logger::Priority p) {
+        switch (p) {
+            case Priority::FATAL: return "fatal";
+            case Priority::DEBUG: return "debug";
+            case Priority::ERROR: return "error";
+            case Priority::TRACE: return "trace";
+            case Priority::WARNI: return "warni";
+        }
+        return "unknown";
+    }
+
     void mainLog(Logger::Priority p, const std::string &parser,
                  const std::initializer_list<utility::StringFormat::ValidType> &t) {
         if(global::logger)
             global::logger->log(p, utility::StringFormat(parser, t).to_string());
         else {
-            global::fileIO->writeStderr("Error: Main logger not initialized\n");
-            global::fileIO->writeStdout(utility::StringFormat(parser, t).to_string() + "\n");
+            Console::log("Error: Main logger not initialized\n");
+            Console::log(utility::StringFormat(parser, t).to_string() + "\n");
         }
     }
 
