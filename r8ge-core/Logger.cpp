@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "fileio/FileIO.h"
+
 namespace r8ge {
     std::mutex mainLogger_mutex;
     namespace global {
@@ -27,8 +29,7 @@ namespace r8ge {
         mainLogger_mutex.lock();
         while(!m_queue.empty()) {
             Log& l = m_queue.front();
-            // TODO: Platform output
-            std::cout << format(l) << std::endl;
+            global::fileIO->writeStdout(format(l)+"\n");
 
             m_queue.pop();
         }

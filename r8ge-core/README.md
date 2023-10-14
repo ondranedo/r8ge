@@ -8,17 +8,17 @@
   - Which system originated the log
 - **~~Event System~~**
 - **~~System TimeStamp~~**
-- **File I/O**
+- **~~File I/O~~**
   - ~~Binary files~~
   - ~~Refactor FileIO class (check file limit)~~
   - ~~link fileReaders to FileIO~~
-  - Config files(JSON)
-  - Dump to new file
+  - ~~Config files(JSON)~~
+  - ~~Dump to new file~~
 - **Application types**
   - Editor app
   - Sound app
 - **~~Layers - instance r8ge~~**
 - **~~One header File~~**
-- **JSON**
+- **~~JSON~~**
   - ~~Write with spacing~~
   - ~~Read JSON from file~~
