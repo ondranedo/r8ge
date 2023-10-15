@@ -21,7 +21,7 @@ namespace r8ge {
     // Logger class, used to log messages to a file (or stdout for now)
     class Logger {
     public:
-        Logger(const std::string& format = "[%X %m:%u] %l"); // TODO: specify log file (default STDOUT)
+        Logger(const std::string& format = "[%X %m:%u]%c %l"); // TODO: specify log file (default STDOUT)
         ~Logger();
 
         enum class Priority {
@@ -62,42 +62,42 @@ namespace r8ge {
         //
         //      %U - All next characters will be uppercase
         //      %D - All next characters will be lowercase
+        //      %< - All next characters will be default case
         //
         //      Output styles:
         //      %C - Set to specified log level color
         //      %c - Reset colors
-        //      %r - Reset all styles, colors to default for log level
-        //      %R - Reset all styles, colors to default
-        //      %<f#RRGGBB> - Set foreground color to 0xRRGGBB
-        //      %<b#RRGGBB> - Set background color to 0xRRGGBB
-        //      %<rb> - Reset foreground color
-        //      %<rf> - Reset background color
-        //      %<q1> - Set bold onn
-        //      %<q0> - Set bold off
-        //      %<i1> - Set italic on
-        //      %<i0> - Set italic off
-        //      %<u1> - Set underline on
-        //      %<u0> - Set underline off
-        //      %<F1> - Set blink on
-        //      %<F0> - Set blink off
+        //      ~~%r - Reset all styles, colors to default for log level~~
+        //      ~~%R - Reset all styles, colors to default~~
+        //      ~~%<f#RRGGBB> - Set foreground color to 0xRRGGBB~~
+        //      ~~%<b#RRGGBB> - Set background color to 0xRRGGBB~~
+        //      ~~%<rb> - Reset foreground color~~
+        //      ~~%<rf> - Reset background color~~
+        //      ~~%<q1> - Set bold onn~~
+        //      ~~%<q0> - Set bold off~~
+        //      ~~%<i1> - Set italic on~~
+        //      ~~%<i0> - Set italic off~~
+        //      ~~%<u1> - Set underline on~~
+        //      ~~%<u0> - Set underline off~~
+        //      ~~%<F1> - Set blink on~~
+        //      ~~%<F0> - Set blink off~~
         //
         //      For output styles:
         //         Styled    - S
         //         Default   - D
         //
-        //         <------\ <-------\ <--------\ <------\
-        //             S  |     D   |     S    |     S  |
-        //        "[data] %C [data] %c [data] %C" ... "%C%c"
+        //         /-----> /-------> /--------> /------> /------>
+        //         |   D  |     S   |     D    |     S  |    D
+        //        "[data] %C [data] %c [data] %C" ... "%c"
         //
-        //        - Without de-specifier, the default style is used
+
         void setFormat(const std::string& format);
     private:
         // Empties the log queue, and writes all logs to the log file (stdout for now)
         void emptyLogQueue();
 
-        [[nodiscard]] std::string formatSpecifier(Console::ConsoleParam& param,const size_t index, const Log& log, size_t& countlock, bool& default_size, bool& uppercase, bool& log_next);
-        size_t formatSpecifierM(Console::ConsoleParam& param,const size_t index, const Log& log);
-        void FormatAndLog(Console::ConsoleParam& param, const Log& log);
+        [[nodiscard]] std::string formatSpecifier(size_t index, const Log& log, size_t& countlock, bool& default_size, bool& uppercase, bool& log_next);
+        void FormatAndLog( const Log& log);
 
         // Main loop of the logger, called by the constructor
         void logLoop();
@@ -111,7 +111,7 @@ namespace r8ge {
             bool bold;
             bool italic;
             bool blink;
-        } m_current_style[6] = {
+        } const m_default_style[6] = {
                 // LEVEL          FOREGROUND    BACKGROUND   DE_F   DE_B  BOLD   ITALIC BLINK
                 {Priority::TRACE,{ 73, 73, 73},{255,255,255},false, true ,false, true , false},
                 {Priority::INFOR,{116,165, 73},{255,255,255},false, true ,false, false, false},
@@ -120,6 +120,7 @@ namespace r8ge {
                 {Priority::WARNI,{165,122, 73},{255,255,255},false, true ,false, false, true},
                 {Priority::FATAL,{215,197,229},{122, 73,165},false, false,true , false, false}
         };
+
         Console::ConsoleParam makeStyle(const Style& style);
 
     private:

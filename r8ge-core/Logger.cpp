@@ -1,13 +1,15 @@
 
 #include "Logger.h"
 #include <ranges>
+#include <cstring>
 
 namespace r8ge {
     namespace global {
         Logger* logger = nullptr;
     }
 
-    Logger::Logger(const std::string& format) : m_queue{},m_running(true), m_format(format+"%C%c"){
+    Logger::Logger(const std::string& format) : m_queue{},m_running(true), m_format(format+"%c")
+    {
         m_thread = std::thread(&Logger::logLoop, this);
     }
 
@@ -27,26 +29,25 @@ namespace r8ge {
         m_mutex.lock();
         while(!m_queue.empty()) {
             Log& raw_l = m_queue.front();
-            Console::ConsoleParam param = makeStyle(m_current_style[static_cast<int>(raw_l.priority)]);;
-            FormatAndLog(param, raw_l);
+            FormatAndLog(raw_l);
             Console::log("\n");
             m_queue.pop();
         }
         m_mutex.unlock();
     }
 
-    void Logger::FormatAndLog(Console::ConsoleParam& param, const Log& log) {
+    void Logger::FormatAndLog(const Log& log) {
         std::string str;
         size_t countlock = 0;
         bool default_size = true;
         bool uppercase = false;
-        bool log_next = false;
+        bool log_style = false;
 
         for(auto [i, c] : log.format | std::views::enumerate)
         {
             if(c == '%')
             {
-                std::string fromSpec = formatSpecifier(param, i+1, log, countlock, default_size, uppercase, log_next);
+                std::string fromSpec = formatSpecifier(i+1, log, countlock, default_size, uppercase, log_style);
 
                 if(default_size)
                     str+=fromSpec;
@@ -61,18 +62,20 @@ namespace r8ge {
             else
                 if(!(countlock>0?countlock--:countlock)) str+=c;
 
-            if(log_next) {
-                Console::set(param);
-                Console::log(str);
-                log_next = false;
-                str="";
-            }
+
+            if(log_style)
+                Console::set(makeStyle(m_default_style[static_cast<int>(log.priority)]));
+            else
+                Console::setDefault();
+
+            Console::log(str);
+            str="";
         }
 
         Console::log(str);
     }
 
-    std::string Logger::formatSpecifier(Console::ConsoleParam& param, const size_t index, const Logger::Log &log, size_t &countlock, bool& default_size, bool& uppercase, bool& log_next) {
+    std::string Logger::formatSpecifier(const size_t index, const Logger::Log &log, size_t &countlock, bool& default_size, bool& uppercase, bool& log_style) {
         switch (log.format[index]) {
             case '%': countlock+=1; return "%";
             case 'H': countlock+=1; return log.times.to_string("%H");
@@ -89,19 +92,16 @@ namespace r8ge {
             case 't': countlock+=1; return "unknown"; // TODO: thread id
             case 'U': countlock+=1; default_size=false; uppercase=true; return "";
             case 'D': countlock+=1; default_size=false; uppercase=false; return "";
+            case '<': countlock+=1; default_size=true; uppercase=false; return "";
+            // ConsoleParams
             case 'C':{ countlock+=1;
-                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
-                param.useDefaultBackgroundColor = s.useDefaultBackgroundColor;
-                param.useDefaultForegroundColor = s.useDefaultForegroundColor;
-                log_next = true;
+                log_style = true;
             return "";}
             case 'c': countlock+=1;
-                param.useDefaultBackgroundColor = true;
-                param.useDefaultForegroundColor = true;
-                log_next = true;
+                log_style = false;
             return "";
-            case '<':
-                countlock+=formatSpecifierM(param, index+1, log);
+            /*case '<':
+                countlock+=formatSpecifierM(index+1, log);
                 log_next = true;
                 return "";
             case 'r': countlock+=1;
@@ -116,12 +116,12 @@ namespace r8ge {
                 param.bold = false;
                 param.underline = Console::NOT_UNDERLINED;
                 log_next = true;
-            return "";
+            return "";*/
         }
         return "";
     }
 
-    size_t Logger::formatSpecifierM(Console::ConsoleParam& param, const size_t index, const Logger::Log &log) {
+    /*size_t Logger::formatSpecifierM(const size_t index, const Logger::Log &log) {
         char sw = log.format[index];
         std::string data = log.format.substr(index+1, log.format.find('>')-index-1);
         auto hexToColor = [&](const std::string& hex) -> Console::Color{
@@ -145,25 +145,21 @@ namespace r8ge {
                 break;
             }
             case 'q': {
-                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
                 if(data == "1") param.bold = true;
                 if(data == "0") param.bold = false;
                 break;
             }
             case 'i': {
-                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
                 if(data == "1") param.italic = true;
                 if(data == "0") param.italic = false;
                 break;
             }
             case 'u': {
-                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
                 if(data == "1") param.underline = Console::NOT_UNDERLINED;
                 if(data == "0") param.underline = Console::NOT_UNDERLINED;
                 break;
             }
             case 'F': {
-                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
                 if(data == "1") param.blink = true;
                 if(data == "0") param.blink = false;
                 break;
@@ -171,7 +167,7 @@ namespace r8ge {
         }
 
         return 3 + data.size();
-    }
+    }*/
 
     void Logger::logLoop() {
         while(m_running) {
@@ -207,7 +203,7 @@ namespace r8ge {
     }
 
     void Logger::setFormat(const std::string &format) {
-        m_format = format + "%C%c";
+        m_format = format+"%c";
     }
 
     void mainLog(Logger::Priority p, const std::string &parser,

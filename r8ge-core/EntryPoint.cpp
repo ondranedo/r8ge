@@ -7,7 +7,7 @@
 namespace r8ge {
     int main(const EntryPointData& entry_data)
     {
-        global::logger = new Logger;
+        global::logger = new Logger("%C[%X %m:%u] %l");
         global::fileIO = new FileIO(256);
         auto engine = new Ar8ge;
 
