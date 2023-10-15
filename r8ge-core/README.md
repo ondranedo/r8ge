@@ -3,7 +3,7 @@
 - **Logger**
   - ~~TimeStamp~~
   - ~~Log thread~~
-  - Colours
+  - ~~Colours~~
   - Formats
   - Which system originated the log
 - **~~Event System~~**
@@ -22,3 +22,6 @@
 - **~~JSON~~**
   - ~~Write with spacing~~
   - ~~Read JSON from file~~
+- **Utility, basic types**
+  - Colors
+  - Math
