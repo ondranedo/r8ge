@@ -1,41 +1,89 @@
 // Created by vojta on 03.10.2023.
 //
 
+#include <GL/glew.h>
 #include <GL/glx.h>
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>
 #include "../Window.h"
 #include <stdio.h>
 
-static Window m_window;
-static Display *m_display;
-static GLXContext m_glContext;
-
+Window m_window;
+Display *m_display;
+GLXContext m_glContext;
+Colormap m_colormap;
+XVisualInfo *m_visual;
+int m_screen;
 
 namespace r8ge {
 
-    void Window::create() {
+    void Window::init() {
         m_display = XOpenDisplay(nullptr);
         if (!m_display) {
             printf("Failed to create X11window\n");
             return;
         }
+        else {
+            printf("x11 window ok\n");
+        }
 
-        int m_screen = DefaultScreen(m_display);
-        int visualAttributes[] = {GLX_RGBA, GLX_DEPTH_SIZE, 32, None};
-        XVisualInfo *m_visual = glXChooseVisual(m_display, m_screen, visualAttributes);
+        m_screen = DefaultScreen(m_display);
+        //TODO get supported depth from driver somwehow
+        int visualAttributes[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, None};
+        m_visual = glXChooseVisual(m_display, m_screen, visualAttributes);
+        if (!m_visual) {
+            printf("Failed to create X11Visual\n");
+            return;
+        }
+        else {
+            printf("x11 visual ok\n");
+        }
 
-        Colormap m_colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), m_visual->visual, AllocNone);
+        m_colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), m_visual->visual, AllocNone);
+        if (!m_colormap) {
+            printf("Failed to create Colormap");
+            return;
+        }
+        else {
+            printf("colormap ok\n");
+        }
+    }
+
+    void Window::create() {
         XSetWindowAttributes m_windowAttributes;
         m_windowAttributes.colormap = m_colormap;
         m_windowAttributes.event_mask = ExposureMask;
-        m_window = XCreateWindow(m_display, RootWindow(m_display, m_screen), 0, 0, m_x, m_y, 0,
-                                   m_visual->depth, InputOutput, m_visual->visual, CWColormap | CWEventMask, &m_windowAttributes);
+        m_window = XCreateWindow(m_display, RootWindow(m_display, m_screen),0, 0, m_x, m_y, 0,
+                                 m_visual->depth, InputOutput, m_visual->visual, CWColormap | CWEventMask,
+                                 &m_windowAttributes);
         XStoreName(m_display, m_window, m_title);
         XMapWindow(m_display, m_window);
 
         m_glContext = glXCreateContext(m_display, m_visual, nullptr, GL_TRUE);
+
+        if (!m_glContext) {
+            printf("Failed to create glXContext");
+            return;
+        }
+        else {
+            printf("glXContext ok\n");
+        }
+
+        glXMakeCurrent(m_display, m_window, m_glContext);
+
+
+        GLenum glewInitResult = glewInit();
+        if (glewInitResult != GLEW_OK) {
+            fprintf(stderr, "Failed to initialize GLEW: %s\n", glewGetErrorString(glewInitResult));
+
+        }
+        else {
+            printf("Glew OK");
+        }
+
         m_isCreated = true;
+        printf("Window %s has been created\n", m_title);
+
     }
 
     void Window::destroy() {
@@ -62,7 +110,7 @@ namespace r8ge {
     }
 
 
-    void Window::getReadyForRender() {
+    void Window::makeContext() {
         if (!m_isCreated) {
             printf("Window needs to be created\n");
         }
