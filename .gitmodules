@@ -1,3 +1,0 @@
-[submodule "r8ge-video/vendor/glew-cmake"]
-	path = r8ge-video/vendor/glew-cmake
-	url = https://github.com/Perlmint/glew-cmake
