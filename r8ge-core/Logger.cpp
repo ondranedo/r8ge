@@ -1,15 +1,16 @@
 
 #include "Logger.h"
-
+#include <ranges>
 
 namespace r8ge {
     namespace global {
         Logger* logger = nullptr;
     }
 
-    Logger::Logger() : m_queue{},m_running(true){
+    Logger::Logger(const std::string& format) : m_queue{},m_running(true), m_format(format+"%C%c"){
         m_thread = std::thread(&Logger::logLoop, this);
     }
+
     Logger::~Logger() {
         m_running = false;
         m_thread.join();
@@ -18,27 +19,158 @@ namespace r8ge {
 
     void Logger::log(Priority p, const std::string& raw) {
         m_mutex.lock();
-        m_queue.emplace(raw, p);
+        m_queue.emplace(raw, p, m_format);
         m_mutex.unlock();
     }
 
     void Logger::emptyLogQueue() {
         m_mutex.lock();
         while(!m_queue.empty()) {
-            Log& l = m_queue.front();
-            Console::log(format(l)+"\n");
+            Log& raw_l = m_queue.front();
+            Console::ConsoleParam param = makeStyle(m_current_style[static_cast<int>(raw_l.priority)]);;
+            FormatAndLog(param, raw_l);
+            Console::log("\n");
             m_queue.pop();
         }
         m_mutex.unlock();
     }
 
-    std::string Logger::format(const Log& log) {
+    void Logger::FormatAndLog(Console::ConsoleParam& param, const Log& log) {
         std::string str;
-        str+= "[" + log.times.to_string("%X:%^{ms}") + "] "; // TODO: Log formats
-        str+= "[";
-        str+= priorityToString(log.priority);
-        str+= "] - " + log.raw_data;
-        return str;
+        size_t countlock = 0;
+        bool default_size = true;
+        bool uppercase = false;
+        bool log_next = false;
+
+        for(auto [i, c] : log.format | std::views::enumerate)
+        {
+            if(c == '%')
+            {
+                std::string fromSpec = formatSpecifier(param, i+1, log, countlock, default_size, uppercase, log_next);
+
+                if(default_size)
+                    str+=fromSpec;
+                else
+                {
+                    uppercase ?
+                        std::transform(fromSpec.begin(), fromSpec.end(), fromSpec.begin(), ::toupper):
+                        std::transform(fromSpec.begin(), fromSpec.end(), fromSpec.begin(), ::tolower);
+                    str+=fromSpec;
+                }
+            }
+            else
+                if(!(countlock>0?countlock--:countlock)) str+=c;
+
+            if(log_next) {
+                Console::set(param);
+                Console::log(str);
+                log_next = false;
+                str="";
+            }
+        }
+
+        Console::log(str);
+    }
+
+    std::string Logger::formatSpecifier(Console::ConsoleParam& param, const size_t index, const Logger::Log &log, size_t &countlock, bool& default_size, bool& uppercase, bool& log_next) {
+        switch (log.format[index]) {
+            case '%': countlock+=1; return "%";
+            case 'H': countlock+=1; return log.times.to_string("%H");
+            case 'M': countlock+=1; return log.times.to_string("%M");
+            case 'S': countlock+=1; return log.times.to_string("%S");
+            case 'm': countlock+=1; return log.times.to_string("%^{ms}");
+            case 'u': countlock+=1; return log.times.to_string("%^{us}");
+            case 'n': countlock+=1; return log.times.to_string("%^{ns}");
+            case 'X': countlock+=1; return log.times.to_string("%X");
+            case '^': countlock+=1; return log.times.to_string("%^{ms}:%^{us}:%^{ns}");
+            case 'l': countlock+=1; return log.raw_data;
+            case 'L': countlock+=1; return priorityToString(log.priority);
+            case 'o': // TODO: originated from
+            case 't': countlock+=1; return "unknown"; // TODO: thread id
+            case 'U': countlock+=1; default_size=false; uppercase=true; return "";
+            case 'D': countlock+=1; default_size=false; uppercase=false; return "";
+            case 'C':{ countlock+=1;
+                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                param.useDefaultBackgroundColor = s.useDefaultBackgroundColor;
+                param.useDefaultForegroundColor = s.useDefaultForegroundColor;
+                log_next = true;
+            return "";}
+            case 'c': countlock+=1;
+                param.useDefaultBackgroundColor = true;
+                param.useDefaultForegroundColor = true;
+                log_next = true;
+            return "";
+            case '<':
+                countlock+=formatSpecifierM(param, index+1, log);
+                log_next = true;
+                return "";
+            case 'r': countlock+=1;
+                param = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                log_next = true;
+            return "";
+            case 'R': countlock+=1;
+                param.useDefaultBackgroundColor = true;
+                param.useDefaultForegroundColor = true;
+                param.blink = false;
+                param.italic = false;
+                param.bold = false;
+                param.underline = Console::NOT_UNDERLINED;
+                log_next = true;
+            return "";
+        }
+        return "";
+    }
+
+    size_t Logger::formatSpecifierM(Console::ConsoleParam& param, const size_t index, const Logger::Log &log) {
+        char sw = log.format[index];
+        std::string data = log.format.substr(index+1, log.format.find('>')-index-1);
+        auto hexToColor = [&](const std::string& hex) -> Console::Color{
+            uint8_t r = std::stoi(hex.substr(0, 2), nullptr, 16);
+            uint8_t g = std::stoi(hex.substr(2, 2), nullptr, 16);
+            uint8_t b = std::stoi(hex.substr(4, 2), nullptr, 16);
+            return {r,g,b};
+        };
+
+        switch (sw) {
+            case 'f':
+                param.foregroundColor=hexToColor(data.substr(1, 6));
+            break;
+            case 'b':
+                param.backgroundColor=hexToColor(data.substr(1, 6));
+            break;
+            case 'r': {
+                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                if(data == "f") param.foregroundColor = s.foregroundColor;
+                if(data == "b") param.backgroundColor = s.backgroundColor;
+                break;
+            }
+            case 'q': {
+                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                if(data == "1") param.bold = true;
+                if(data == "0") param.bold = false;
+                break;
+            }
+            case 'i': {
+                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                if(data == "1") param.italic = true;
+                if(data == "0") param.italic = false;
+                break;
+            }
+            case 'u': {
+                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                if(data == "1") param.underline = Console::NOT_UNDERLINED;
+                if(data == "0") param.underline = Console::NOT_UNDERLINED;
+                break;
+            }
+            case 'F': {
+                Console::ConsoleParam s = makeStyle(m_current_style[static_cast<int>(log.priority)]);
+                if(data == "1") param.blink = true;
+                if(data == "0") param.blink = false;
+                break;
+            }
+        }
+
+        return 3 + data.size();
     }
 
     void Logger::logLoop() {
@@ -55,8 +187,27 @@ namespace r8ge {
             case Priority::ERROR: return "error";
             case Priority::TRACE: return "trace";
             case Priority::WARNI: return "warni";
+            case Priority::INFOR: return "infor";
         }
         return "unknown";
+    }
+
+    Console::ConsoleParam Logger::makeStyle(const Style &style) {
+        Console::ConsoleParam param;
+        param.useDefaultBackgroundColor = style.db;
+        param.useDefaultForegroundColor = style.df;
+        param.foregroundColor = style.f;
+        param.backgroundColor = style.b;
+        param.bold = style.bold;
+        param.italic = style.italic;
+        param.blink = style.blink;
+        param.underline = Console::NOT_UNDERLINED;
+
+        return param;
+    }
+
+    void Logger::setFormat(const std::string &format) {
+        m_format = format + "%C%c";
     }
 
     void mainLog(Logger::Priority p, const std::string &parser,
@@ -69,5 +220,6 @@ namespace r8ge {
         }
     }
 
-    Logger::Log::Log(const std::string &raw, Logger::Priority p) : raw_data(raw), priority(p), times(TimeStamp()){}
+    Logger::Log::Log(const std::string &raw, Logger::Priority p, const std::string& f) :
+    raw_data(raw), priority(p), times(TimeStamp()), format(f){}
 }
