@@ -83,7 +83,8 @@ namespace r8ge {
             do {
                 if ((check = out.find(i.s)) != std::string::npos) {
                     out.erase(check, i.s.length());
-                    out.insert(check, std::to_string(sinceEpoch(i.p)));
+                    std::string s = std::to_string(sinceEpoch(i.p));
+                    out.insert(check, s.length()==3?s:s.length()==2?"0"+s:s.length()==1?"00"+s:s);
                 }
             } while (check != std::string::npos);
         }
