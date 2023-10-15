@@ -87,7 +87,25 @@ void r8ge::MIDISequencer::loadMIDI(const std::string& filename) {
             PITCH_BEND = 0xE0,
             SYSEX_MSG = 0xF0,
             ESCAPE_SEQUENCE = 0xF7,
-            META_EVENT = 0xFF
+            META_EVENT = 0xFF,
+            META_SEQUENCE_NUM = 0x00,
+            META_TEXT = 0x01,
+            META_COPYRIGHT = 0x02,
+            META_TRACK_NAME = 0x03,
+            META_INSTRUMENT_NAME = 0x04,
+            META_LYRIC = 0x05,
+            META_MARKER = 0x06,
+            META_CUE_POINT = 0x07,
+            META_PROGRAM_NAME = 0x08,
+            META_DEVICE_NAME = 0x09,
+            META_MIDI_CHANNEL_PREFIX = 0x20,
+            META_MIDI_PORT = 0x21,
+            META_END_OF_TRACK = 0x2F,
+            META_TEMPO = 0x51,
+            META_SMPTE_OFFSET = 0x54,
+            META_TIME_SIGNATURE = 0x58,
+            META_KEY_SIGNATURE = 0x59,
+            META_SEQ_SP_EVENT = 0x7F
         } state = READING_TIME;
         State previous = NOTE_OFF;
         ticks = 0;
@@ -130,10 +148,13 @@ void r8ge::MIDISequencer::loadMIDI(const std::string& filename) {
                     }
                     break;
                 case NOTE_OFF:
+                    // todo
                     break;
                 case NOTE_ON:
+                    // todo
                     break;
                 case POLYPHONIC_PRESSURE:
+                    // don need yet
                     break;
                 case CONTROLLER:
                     break;
@@ -148,6 +169,38 @@ void r8ge::MIDISequencer::loadMIDI(const std::string& filename) {
                 case ESCAPE_SEQUENCE:
                     break;
                 case META_EVENT:
+                    break;
+                case META_COPYRIGHT:
+                    break;
+                case META_TRACK_NAME:
+                    break;
+                case META_INSTRUMENT_NAME:
+                    break;
+                case META_LYRIC:
+                    break;
+                case META_MARKER:
+                    break;
+                case META_CUE_POINT:
+                    break;
+                case META_PROGRAM_NAME:
+                    break;
+                case META_DEVICE_NAME:
+                    break;
+                case META_MIDI_CHANNEL_PREFIX:
+                    break;
+                case META_MIDI_PORT:
+                    break;
+                case META_END_OF_TRACK:
+                    break;
+                case META_TEMPO:
+                    break;
+                case META_SMPTE_OFFSET:
+                    break;
+                case META_TIME_SIGNATURE:
+                    break;
+                case META_KEY_SIGNATURE:
+                    break;
+                case META_SEQ_SP_EVENT:
                     break;
             }
         }
