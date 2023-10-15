@@ -11,8 +11,8 @@ void r8ge::MIDISequencer::createAll() {
     for(auto& command : m_commands){
         noteptr = new Note(m_tickSecs * command.m_tickStart,
                            command.m_tone,
-                           m_generators.at(command.m_genIndex),
-                           m_envelopes.at(command.m_envelopeIndex));
+                           m_channels.at(command.m_channelIndex).m_gen,
+                           m_channels.at(command.m_channelIndex).m_env);
         noteptr->setEndTime(m_tickSecs * command.m_tickEnd);
         m_pusher->addSound(noteptr);
     }

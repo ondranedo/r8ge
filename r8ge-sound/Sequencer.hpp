@@ -13,8 +13,11 @@ namespace r8ge{
         short m_tone;
         unsigned long m_tickStart;
         unsigned long m_tickEnd;
-        unsigned short m_genIndex;
-        unsigned short m_envelopeIndex;
+        unsigned short m_channelIndex;
+    };
+    struct Channel{
+        double (*m_gen)(double){};
+        Envelope m_env;
     };
     class MIDISequencer{
     public:
@@ -25,8 +28,7 @@ namespace r8ge{
         double m_bpm;
         double m_tickSecs;
         std::vector<Command> m_commands;
-        std::vector<double(*)(double)> m_generators;
-        std::vector<Envelope> m_envelopes;
+        std::vector<Channel> m_channels;
 
         AudioPusher* m_pusher;
     };
