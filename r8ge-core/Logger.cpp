@@ -8,8 +8,9 @@ namespace r8ge {
         Logger* logger = nullptr;
     }
 
-    Logger::Logger(const std::string& format) : m_queue{},m_running(true), m_format(format+"%c")
-    {
+    Logger::Logger(const std::string& format) :
+    m_queue{},m_running(true), m_format(format+"%c"), m_min_priority(Priority::TRACE), m_list_priority(Priority::TRACE, Priority::INFOR, Priority::DEBUG, Priority::ERROR, Priority::WARNI, Priority::FATAL)
+    ,m_list_priority_size(sizeof(m_list_priority)/sizeof(Priority)) {
         m_thread = std::thread(&Logger::logLoop, this);
     }
 
@@ -29,8 +30,11 @@ namespace r8ge {
         m_mutex.lock();
         while(!m_queue.empty()) {
             Log& raw_l = m_queue.front();
-            FormatAndLog(raw_l);
-            Console::log("\n");
+            if(raw_l.priority >= m_min_priority && std::find(m_list_priority, m_list_priority+m_list_priority_size, raw_l.priority) != m_list_priority+m_list_priority_size)
+            {
+                FormatAndLog(raw_l);
+                Console::log("\n");
+            }
             m_queue.pop();
         }
         m_mutex.unlock();
@@ -204,6 +208,19 @@ namespace r8ge {
 
     void Logger::setFormat(const std::string &format) {
         m_format = format+"%c";
+    }
+
+    void Logger::setLevels(const std::initializer_list<Priority> &levels) {
+        emptyLogQueue();
+        m_list_priority_size = levels.size();
+
+        for(auto [i, p] : levels | std::views::enumerate)
+            m_list_priority[i] = p;
+    }
+
+    void Logger::setMinLevel(Logger::Priority p) {
+        emptyLogQueue();
+        m_min_priority = p;
     }
 
     void mainLog(Logger::Priority p, const std::string &parser,

@@ -43,7 +43,6 @@ namespace r8ge {
     public:
         // Sends a log to the queue, to be processed later by the logger
         void log(Priority p, const std::string& str);
-
         //      %% - outputs `%`
         //
         //      %H - Hours (0;24]
@@ -90,8 +89,10 @@ namespace r8ge {
         //         |   D  |     S   |     D    |     S  |    D
         //        "[data] %C [data] %c [data] %C" ... "%c"
         //
-
         void setFormat(const std::string& format);
+
+        void setLevels(const std::initializer_list<Priority>& levels);
+        void setMinLevel(Priority p);
     private:
         // Empties the log queue, and writes all logs to the log file (stdout for now)
         void emptyLogQueue();
@@ -124,14 +125,15 @@ namespace r8ge {
         Console::ConsoleParam makeStyle(const Style& style);
 
     private:
-
+        Priority m_min_priority;
+        Priority m_list_priority[6];
+        size_t m_list_priority_size;
         std::string m_format;
         std::queue<Log> m_queue;
         std::thread m_thread;
         std::mutex m_mutex;
         bool m_running;
     };
-
 
     // Main Logger function, takes StringFormat::ValidType as arguments (see utility/StringFormat.h),
     // and call to the mainLogger (which is a global object)
