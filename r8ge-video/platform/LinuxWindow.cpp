@@ -1,23 +1,16 @@
 // Created by vojta on 03.10.2023.
 //
 
-#include <GL/glew.h>
-#include <GL/glx.h>
-#include <X11/Xutil.h>
-#include <X11/Xlib.h>
-#include "../Window.h"
+
+#include "../WindowClass.h"
 #include <stdio.h>
 
-Window m_window;
-Display *m_display;
-GLXContext m_glContext;
-Colormap m_colormap;
-XVisualInfo *m_visual;
-int m_screen;
+
 
 namespace r8ge {
 
-    void Window::init() {
+
+    void WindowClass::init() {
         m_display = XOpenDisplay(nullptr);
         if (!m_display) {
             printf("Failed to create X11window\n");
@@ -49,7 +42,7 @@ namespace r8ge {
         }
     }
 
-    void Window::create() {
+    void WindowClass::create() {
         XSetWindowAttributes m_windowAttributes;
         m_windowAttributes.colormap = m_colormap;
         m_windowAttributes.event_mask = ExposureMask;
@@ -86,7 +79,7 @@ namespace r8ge {
 
     }
 
-    void Window::destroy() {
+    void WindowClass::destroy() {
         glXMakeCurrent(m_display, None, nullptr);
         glXDestroyContext(m_display, m_glContext);
         XDestroyWindow(m_display, m_window);
@@ -94,11 +87,11 @@ namespace r8ge {
         m_isCreated = false;
     }
 
-    std::tuple<int, int> Window::getDims() {
+    std::tuple<int, int> WindowClass::getDims() {
         return std::make_tuple(m_x, m_y);
     }
 
-    void Window::setVsync(bool vsync) {
+    void WindowClass::setVsync(bool vsync) {
         if (!m_isCreated) {
             printf("Window needs to be created\n");
         }
@@ -110,7 +103,7 @@ namespace r8ge {
     }
 
 
-    void Window::makeContext() {
+    void WindowClass::makeContext() {
         if (!m_isCreated) {
             printf("Window needs to be created\n");
         }
@@ -119,7 +112,7 @@ namespace r8ge {
         }
     }
 
-    void Window::swapBuffers() {
+    void WindowClass::swapBuffers() {
         if (!m_isCreated) {
             printf("Window needs to be created\n");
         }
@@ -128,7 +121,7 @@ namespace r8ge {
         }
     }
 
-    void Window::pollEvents() {
+    void WindowClass::pollEvents() {
         if (!m_isCreated) {
             printf("Window needs to be created\n");
         }

@@ -2,7 +2,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 add_library(r8ge-video
-        Window.h
+        WindowClass.h
         platform/LinuxWindow.cpp
         )
 
