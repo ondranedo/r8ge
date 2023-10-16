@@ -1,4 +1,5 @@
 #include "EntryPoint.h"
+#include "fileio/FileIO.h"
 
 #include "Logger.h"
 #include "Ar8ge.h"
@@ -6,7 +7,8 @@
 namespace r8ge {
     int main(const EntryPointData& entry_data)
     {
-        mainLogger = new Logger;
+        global::logger = new Logger("%C[%X %m:%u] %l");
+        global::fileIO = new FileIO(256);
         auto engine = new Ar8ge;
 
         engine->init();
@@ -14,7 +16,8 @@ namespace r8ge {
         engine->exit();
 
         delete engine;
-        delete mainLogger;
+        delete global::fileIO;
+        delete global::logger;
 
         return 0;
     }

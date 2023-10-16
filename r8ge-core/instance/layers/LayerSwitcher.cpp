@@ -19,7 +19,7 @@ namespace r8ge {
         std::rotate(m_layers.rbegin(), m_layers.rbegin() + 1, m_layers.rend());
     }
 
-    void LayerSwitcher::pop(const std::string &name) {
+    void LayerSwitcher::pop(std::string_view name) {
         R8GE_ASSERT(!m_layers.empty(), "Trying to pop() Layer `{}` from an empty LayerSwitcher", name);
 
         for(auto[i, l] : m_layers | std::views::enumerate)

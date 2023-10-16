@@ -1,10 +1,10 @@
 set(include-headers
-       "foo.h"
+       "Console.h"
 )
 
 if(LINUX)
     set(platform-code
-        "linux-impl/foo.cpp"
+            "linux-impl/Console.cpp"
     )
 endif()
 

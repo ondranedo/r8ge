@@ -9,9 +9,9 @@
 namespace r8ge {
     // One layer of Game/Editor/Sound Editor, used to separate the logic and rendering
     // This class should be defined by the user and registered in the GameInstance
-    R8GE_API class Layer {
+    class R8GE_API Layer {
     public:
-        explicit Layer(const std::string& name);
+        explicit Layer(std::string_view name);
         virtual ~Layer();
 
         // Used to update the layer, called every frame

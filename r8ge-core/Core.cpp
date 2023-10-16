@@ -3,13 +3,13 @@
 #include <iostream>
 
 #include "utility/StringFormat.h"
+#include "fileio/FileIO.h"
 
 namespace r8ge {
-    void assertImpl(const char *expr, unsigned long line, const char *fun, const char *msg,
+    void assertImpl(std::string_view expr, unsigned long line, std::string_view fun, std::string_view msg,
                           const utility::StringFormat::ValidList &list) {
-        //TODO: Add thread safety, fileI/O module
-        std::cerr <<
+        global::fileIO->writeStderr(
         utility::StringFormat("assertion[{}];line[{}];func[{}];msg[{}]",
-                              {expr,line,fun,utility::StringFormat(msg, list).to_string()}).to_string() << std::endl;
+                              {expr,line,fun,utility::StringFormat(msg, list).to_string()}).to_string() + "\n");
     }
 }

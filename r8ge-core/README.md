@@ -1,11 +1,27 @@
 # TODO
 
-- **~~Logger~~**
-  - ~~TimeStamp~~; Colours; Formats; Log thread
+- **Logger**
+  - ~~TimeStamp~~
+  - ~~Log thread~~
+  - ~~Colours~~
+  - Formats
+  - Which system originated the log
 - **~~Event System~~**
 - **~~System TimeStamp~~**
-- **file I/O**
-  - Config files; 
-- **~~Application types~~**
-  - Editor app, Sound app
+- **~~File I/O~~**
+  - ~~Binary files~~
+  - ~~Refactor FileIO class (check file limit)~~
+  - ~~link fileReaders to FileIO~~
+  - ~~Config files(JSON)~~
+  - ~~Dump to new file~~
+- **Application types**
+  - Editor app
+  - Sound app
 - **~~Layers - instance r8ge~~**
+- **~~One header File~~**
+- **~~JSON~~**
+  - ~~Write with spacing~~
+  - ~~Read JSON from file~~
+- **Utility, basic types**
+  - Colors
+  - Math
