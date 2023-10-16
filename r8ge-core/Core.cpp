@@ -6,7 +6,7 @@
 #include "fileio/FileIO.h"
 
 namespace r8ge {
-    void assertImpl(const char *expr, unsigned long line, const char *fun, const char *msg,
+    void assertImpl(std::string_view expr, unsigned long line, std::string_view fun, std::string_view msg,
                           const utility::StringFormat::ValidList &list) {
         global::fileIO->writeStderr(
         utility::StringFormat("assertion[{}];line[{}];func[{}];msg[{}]",
