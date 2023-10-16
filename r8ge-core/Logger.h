@@ -7,6 +7,7 @@
 #include <mutex>
 #include <thread>
 
+#include "Core.h"
 #include "utility/StringFormat.h"
 #include "utility/TimeStamp.h"
 #include "platform/Console.h"
@@ -14,12 +15,12 @@
 namespace r8ge {
     class Logger;
     namespace global {
-        extern Logger* logger;
+        R8GE_API extern Logger* logger;
     }
 
 
     // Logger class, used to log messages to a file (or stdout for now)
-    class Logger {
+    class R8GE_API Logger {
     public:
         Logger(std::string_view format = "[%X %m:%u]%c %l"); // TODO: specify log file (default STDOUT)
         ~Logger();
@@ -137,7 +138,7 @@ namespace r8ge {
 
     // Main Logger function, takes StringFormat::ValidType as arguments (see utility/StringFormat.h),
     // and call to the mainLogger (which is a global object)
-    void mainLog(Logger::Priority p, std::string_view parser,
+    R8GE_API void mainLog(Logger::Priority p, std::string_view parser,
                  const std::initializer_list<utility::StringFormat::ValidType>& t);
 }
 

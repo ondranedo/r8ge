@@ -9,7 +9,7 @@ namespace r8ge {
     // The main game instance, handles the layers, and the logic,
     // does not handle the main loop, or the event queue, or the window
     // This class should be registered to the Ar8ge class
-    class Instance {
+    class R8GE_API Instance {
     public:
         Instance();
         virtual ~Instance();
