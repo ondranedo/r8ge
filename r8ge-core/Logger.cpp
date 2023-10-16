@@ -8,8 +8,8 @@ namespace r8ge {
         Logger* logger = nullptr;
     }
 
-    Logger::Logger(const std::string& format) :
-    m_queue{},m_running(true), m_format(format+"%c"), m_min_priority(Priority::TRACE), m_list_priority(Priority::TRACE, Priority::INFOR, Priority::DEBUG, Priority::ERROR, Priority::WARNI, Priority::FATAL)
+    Logger::Logger(std::string_view format) :
+    m_queue{},m_running(true), m_format(std::move(std::string(format)+"%c")), m_min_priority(Priority::TRACE), m_list_priority(Priority::TRACE, Priority::INFOR, Priority::DEBUG, Priority::ERROR, Priority::WARNI, Priority::FATAL)
     ,m_list_priority_size(sizeof(m_list_priority)/sizeof(Priority)) {
         m_thread = std::thread(&Logger::logLoop, this);
     }
@@ -206,8 +206,8 @@ namespace r8ge {
         return param;
     }
 
-    void Logger::setFormat(const std::string &format) {
-        m_format = format+"%c";
+    void Logger::setFormat(std::string_view format) {
+        m_format = std::move(std::string(format)+"%c");
     }
 
     void Logger::setLevels(const std::initializer_list<Priority> &levels) {
@@ -223,8 +223,8 @@ namespace r8ge {
         m_min_priority = p;
     }
 
-    void mainLog(Logger::Priority p, const std::string &parser,
-                 const std::initializer_list<utility::StringFormat::ValidType> &t) {
+    void mainLog(Logger::Priority p, std::string_view parser,
+                 const std::initializer_list<utility::StringFormat::ValidType>& t) {
         if(global::logger)
             global::logger->log(p, utility::StringFormat(parser, t).to_string());
         else {
@@ -233,6 +233,6 @@ namespace r8ge {
         }
     }
 
-    Logger::Log::Log(const std::string &raw, Logger::Priority p, const std::string& f) :
+    Logger::Log::Log(std::string_view raw, Logger::Priority p, std::string_view f) :
     raw_data(raw), priority(p), times(TimeStamp()), format(f){}
 }

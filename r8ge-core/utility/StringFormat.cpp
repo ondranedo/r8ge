@@ -10,13 +10,13 @@ namespace r8ge {
         enum class FormatMode {IN_BRACKETS, OUT_BRACKETS};
 
         static std::string typeToString(const StringFormat::ValidType &type);
-        static std::string formatLoop(const std::string &form, const std::vector<std::string>& list);
-        static std::string format(const std::string &form, const StringFormat::ValidList &list);
-        static std::string formatInBrackets(const std::string&, size_t*, const std::vector<std::string>&);
+        static std::string formatLoop(std::string_view form, const std::vector<std::string>& list);
+        static std::string format(std::string_view form, const StringFormat::ValidList &list);
+        static std::string formatInBrackets(std::string_view, size_t*, const std::vector<std::string>&);
 
-        StringFormat::StringFormat(const std::string &form, const ValidList & list) : m_str(format(form, list)){}
+        StringFormat::StringFormat(std::string_view form, const ValidList & list) : m_str(format(form, list)){}
 
-        StringFormat::StringFormat(const std::string &str) : m_str{str}{}
+        StringFormat::StringFormat(std::string_view str) : m_str{str}{}
 
         StringFormat::StringFormat() : m_str{} {}
 
@@ -24,7 +24,7 @@ namespace r8ge {
             return m_str;
         }
 
-        std::string format(const std::string &form, const StringFormat::ValidList &list) {
+        std::string format(std::string_view form, const StringFormat::ValidList &list) {
             std::vector<std::string> vec_list{};
 
             for(auto& type : list)
@@ -33,7 +33,7 @@ namespace r8ge {
             return formatLoop(form, vec_list);
         }
 
-        std::string formatLoop(const std::string &form, const std::vector<std::string>& list){
+        std::string formatLoop(std::string_view form, const std::vector<std::string>& list){
             FormatMode mode = FormatMode::OUT_BRACKETS;
             std::string outstr{""},instr{""};
             size_t counter = 0;
@@ -66,10 +66,10 @@ namespace r8ge {
             return outstr;
         }
 
-        std::string formatInBrackets(const std::string& str, size_t* counter, const std::vector<std::string>& list) {
+        std::string formatInBrackets(std::string_view str, size_t* counter, const std::vector<std::string>& list) {
             if(list.empty()) return "{missing_value}";
             if(!str.empty()) {
-                size_t index = std::stoi(str);
+                size_t index = std::stoi(std::string(str));
                 if(index >= list.size()) return "{missing_value}";
                 return list[index];
             }
@@ -82,7 +82,7 @@ namespace r8ge {
         std::string typeToString(const StringFormat::ValidType &type){
             if(const int* p = std::get_if<int>(&type)) return std::to_string(*p);
             if(const float* p = std::get_if<float>(&type)) return std::to_string(*p);
-            if(const std::string* p = std::get_if<std::string>(&type)) return *p;
+            if(const std::string_view* p = std::get_if<std::string_view>(&type)) return std::string(*p);
             if(const char* p = std::get_if<char>(&type)) return std::to_string(*p);
             if(const unsigned long* p = std::get_if<unsigned long>(&type)) return std::to_string(*p);
             if(const std::vector<std::string>* p = std::get_if<std::vector<std::string>>(&type))

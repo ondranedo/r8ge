@@ -21,7 +21,7 @@ namespace r8ge {
     // Logger class, used to log messages to a file (or stdout for now)
     class Logger {
     public:
-        Logger(const std::string& format = "[%X %m:%u]%c %l"); // TODO: specify log file (default STDOUT)
+        Logger(std::string_view format = "[%X %m:%u]%c %l"); // TODO: specify log file (default STDOUT)
         ~Logger();
 
         enum class Priority {
@@ -37,7 +37,7 @@ namespace r8ge {
             Priority priority;
             std::string format;
 
-            Log(const std::string& raw, Priority p, const std::string& format);
+            Log(std::string_view raw, Priority p, std::string_view format);
         };
 
     public:
@@ -89,7 +89,7 @@ namespace r8ge {
         //         |   D  |     S   |     D    |     S  |    D
         //        "[data] %C [data] %c [data] %C" ... "%c"
         //
-        void setFormat(const std::string& format);
+        void setFormat(std::string_view format);
 
         void setLevels(const std::initializer_list<Priority>& levels);
         void setMinLevel(Priority p);
@@ -137,7 +137,7 @@ namespace r8ge {
 
     // Main Logger function, takes StringFormat::ValidType as arguments (see utility/StringFormat.h),
     // and call to the mainLogger (which is a global object)
-    void mainLog(Logger::Priority p, const std::string& parser,
+    void mainLog(Logger::Priority p, std::string_view parser,
                  const std::initializer_list<utility::StringFormat::ValidType>& t);
 }
 
