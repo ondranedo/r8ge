@@ -1,7 +1,7 @@
 #include "FileType.h"
 
 namespace r8ge {
-    std::string FileType::toString() const {
+    std::string FileType::to_string() const {
         switch (m_type) {
             case JSON:
                 return "JSON";

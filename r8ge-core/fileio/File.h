@@ -23,7 +23,7 @@ namespace r8ge {
         [[nodiscard]] std::string getPath() const;
         [[nodiscard]] FileType getFileType() const;
 
-        void copy(const std::string& path);
+        void copy(std::string_view path);
     private:
         std::string m_path;
         FileType m_fileType;
@@ -32,7 +32,7 @@ namespace r8ge {
     template<isFileReader T>
     class File final : public _File {
     public:
-        explicit File(const std::string& path):
+        explicit File(std::string_view path):
         _File(path, T::getType()()), m_file(std::make_unique<T>(path))
         {}
 

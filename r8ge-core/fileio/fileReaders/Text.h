@@ -9,24 +9,24 @@ namespace r8ge {
     namespace Reader {
         class Text : public FileReader {
         public:
-            Text(const std::string& path);
+            Text(std::string_view path);
             virtual ~Text() override;
 
             [[nodiscard]] std::string readFile() const;
             [[nodiscard]] std::vector<std::string> readLines() const;
             [[nodiscard]] size_t lineNumber() const;
 
-            void write(const std::string& buffer);
-            void write(const std::vector<std::string>& buffer);
+            void write(std::string_view buffer);
+            void write(const std::vector<std::string_view>& buffer);
 
-            void append(const std::string& buffer);
-            void append(const std::vector<std::string>& buffer);
+            void append(std::string_view  buffer);
+            void append(const std::vector<std::string_view>& buffer);
             void append(char c);
 
             void appendNewLine();
 
-            void appendNewLine(const std::string& buffer);
-            void appendNewLine(const std::vector<std::string>& buffer);
+            void appendNewLine(std::string_view  buffer);
+            void appendNewLine(const std::vector<std::string_view>& buffer);
             void appendNewLine(char c);
 
             static FileType getType();

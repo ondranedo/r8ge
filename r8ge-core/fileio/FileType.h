@@ -18,7 +18,7 @@ namespace r8ge {
 
         _type operator()() const;
 
-        [[nodiscard]] std::string toString() const;
+        [[nodiscard]] std::string to_string() const;
     private:
         _type m_type;
     };

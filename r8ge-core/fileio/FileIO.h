@@ -16,40 +16,40 @@ namespace r8ge {
         explicit FileIO(size_t filelimit);
         ~FileIO();
 
-        void add(const std::string& path, FileType ft);
-        void save(const std::string& path);
-        void load(const std::string& path);
-        void remove(const std::string& path);
+        void add(std::string_view path, FileType ft);
+        void save(std::string_view path);
+        void load(std::string_view path);
+        void remove(std::string_view path);
 
-        void writeStderr(const std::string& data);
-        void writeStdout(const std::string& data);
+        void writeStderr(std::string_view data);
+        void writeStdout(std::string_view data);
         [[nodiscard]] std::string readStdin();
         [[nodiscard]] std::vector<std::string> readStdinVec();
 
         [[nodiscard]] size_t getFileCount();
         [[nodiscard]] size_t getFileLimit();
-        [[nodiscard]] bool isFilePresent(const std::string& path, bool log = 1);
-        [[nodiscard]] size_t getFileSize(const std::string& path);
+        [[nodiscard]] bool isFilePresent(std::string_view path, bool log = 1);
+        [[nodiscard]] size_t getFileSize(std::string_view path);
         [[nodiscard]] size_t getTotalSize();
 
-        [[nodiscard]] std::string getTextData(const std::string& path);
-        [[nodiscard]] std::vector<byte> getBinaryData(const std::string& path);
+        [[nodiscard]] std::string getTextData(std::string_view path);
+        [[nodiscard]] std::vector<byte> getBinaryData(std::string_view path);
 
-        void setTextData(const std::string& path, const std::string& data);
-        void setBinaryData(const std::string& path, const std::vector<byte>& data);
+        void setTextData(std::string_view path, std::string_view data);
+        void setBinaryData(std::string_view path, const std::vector<byte>& data);
 
-        void appendTextData(const std::string& path, const std::string& data);
-        void appendBinaryData(const std::string& path, const std::vector<byte>& data);
+        void appendTextData(std::string_view path, std::string_view data);
+        void appendBinaryData(std::string_view path, const std::vector<byte>& data);
 
-        [[nodiscard]] bool isModified(const std::string& path);
+        [[nodiscard]] bool isModified(std::string_view path);
 
-        [[nodiscard]] bool isBinary(const std::string& path);
-        [[nodiscard]] bool isText(const std::string& path);
+        [[nodiscard]] bool isBinary(std::string_view path);
+        [[nodiscard]] bool isText(std::string_view path);
 
         [[nodiscard]] std::vector<std::string> getTxtFiles();
         [[nodiscard]] std::vector<std::string> getBinFiles();
 
-        void copy(const std::string& path, const std::string& newPath);
+        void copy(std::string_view path, std::string_view newPath);
     private:
 
         std::unordered_map<std::string, std::string> m_txtFileMap;

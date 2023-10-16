@@ -32,17 +32,19 @@ namespace r8ge {
         R8GE_ASSERT(m_fileCount==0, "FileIO is not empty on destruction");
     }
 
-    void FileIO::add(const std::string &path, FileType ft) {
+    void FileIO::add(std::string_view path, FileType ft) {
         std::lock_guard<std::mutex> lock(m_mutex);
 
-        if(m_txtFileMap.find(path) != m_txtFileMap.end() || m_binFileMap.find(path) != m_binFileMap.end()) {
+        if(
+                m_txtFileMap.find(path.data()) != m_txtFileMap.end() ||
+                m_binFileMap.find(path.data()) != m_binFileMap.end()) {
             R8GE_LOG_WARNI("file {} is already present in FileIO", path);
             return;
         }
 
 
         if(ft()!=FileType::TEXT && ft()!=FileType::BINARY) {
-            R8GE_LOG_ERROR("Trying to add file {} with invalid FileType {}", path, ft.toString());
+            R8GE_LOG_ERROR("Trying to add file {} with invalid FileType {}", path, ft.to_string());
             return;
         }
 
@@ -52,65 +54,65 @@ namespace r8ge {
         }
 
         if(ft()==FileType::TEXT)
-            m_txtFileMap[path] = "";
+            m_txtFileMap[path.data()] = "";
         if(ft()==FileType::BINARY)
-            m_binFileMap[path] = std::vector<byte>();
+            m_binFileMap[path.data()] = std::vector<byte>();
         m_fileCount++;
-        m_modifiedMap[path] = false;
-        m_fileTypeMap[path] = ft;
+        m_modifiedMap[path.data()] = false;
+        m_fileTypeMap[path.data()] = ft;
     }
 
-    void FileIO::save(const std::string &path) {
+    void FileIO::save(std::string_view path) {
         if(!isFilePresent(path)) return;
         auto isbin = isBinary(path);
 
         m_mutex.lock();
         if(isbin) {
-            std::ofstream file(path, std::ios::binary);
-            file.write((char*)m_binFileMap[path].data(), m_binFileMap[path].size());
+            std::ofstream file(path.data(), std::ios::binary);
+            file.write((char*)m_binFileMap[path.data()].data(), m_binFileMap[path.data()].size());
             file.close();
         } else {
-            std::ofstream file(path);
-            file << m_txtFileMap[path] << '\n';
+            std::ofstream file(path.data());
+            file << m_txtFileMap[path.data()] << '\n';
             file.close();
         }
 
-        m_modifiedMap[path] = false;
+        m_modifiedMap[path.data()] = false;
         m_mutex.unlock();
     }
 
-    void FileIO::load(const std::string &path) {
+    void FileIO::load(std::string_view path) {
         if(!isFilePresent(path)) return;
         auto isbin = isBinary(path);
 
         m_mutex.lock();
         if(isbin) {
-            std::ifstream file(path, std::ios::binary);
+            std::ifstream file(path.data(), std::ios::binary);
             std::vector<byte> data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            m_binFileMap[path] = data;
+            m_binFileMap[path.data()] = data;
             file.close();
         } else {
-            std::ifstream file(path);
+            std::ifstream file(path.data());
             std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            m_txtFileMap[path] = data;
+            m_txtFileMap[path.data()] = data;
             file.close();
         }
-        m_modifiedMap[path] = false;
+        m_modifiedMap[path.data()] = false;
         m_mutex.unlock();
     }
 
-    void FileIO::remove(const std::string &path) {
+    void FileIO::remove(std::string_view path) {
         if(!isFilePresent(path)) return;
         auto isbin = isBinary(path);
 
         m_mutex.lock();
         m_fileCount--;
         if(isbin)
-            m_binFileMap.erase(path);
+            m_binFileMap.erase(path.data());
         else
-            m_txtFileMap.erase(path);
+            m_txtFileMap.erase(path.data());
 
-        if(m_modifiedMap[path])
+        if(m_modifiedMap[path.data()])
             R8GE_LOG_WARNI("File {} was not saved", path);
 
         m_mutex.unlock();
@@ -126,11 +128,11 @@ namespace r8ge {
         return m_fileLimit;
     }
 
-    bool FileIO::isFilePresent(const std::string &path, bool log) {
+    bool FileIO::isFilePresent(std::string_view path, bool log) {
         std::lock_guard<std::mutex> lock(m_mutex);
 
-        if(m_txtFileMap.find(path) != m_txtFileMap.end()) return true;
-        if(m_binFileMap.find(path) != m_binFileMap.end()) return true;
+        if(m_txtFileMap.find(path.data()) != m_txtFileMap.end()) return true;
+        if(m_binFileMap.find(path.data()) != m_binFileMap.end()) return true;
 
         if(log)
             R8GE_LOG_WARNI("file {} is not present in FileIO", path);
@@ -138,17 +140,17 @@ namespace r8ge {
         return false;
     }
 
-    size_t FileIO::getFileSize(const std::string& path){
+    size_t FileIO::getFileSize(std::string_view path){
         if(!isFilePresent(path)) return 0;
 
         if(isText(path)) {
             std::lock_guard<std::mutex> lock(m_mutex);
-            return m_txtFileMap[path].size();
+            return m_txtFileMap[path.data()].size();
         }
 
         if(isBinary(path)) {
             std::lock_guard<std::mutex> lock(m_mutex);
-            return m_binFileMap[path].size();
+            return m_binFileMap[path.data()].size();
         }
 
         return 0;
@@ -167,13 +169,13 @@ namespace r8ge {
         return totalSize;
     }
 
-    bool FileIO::isBinary(const std::string &path) {
+    bool FileIO::isBinary(std::string_view path) {
         if(!isFilePresent(path)) return false;
         std::lock_guard<std::mutex> lock(m_mutex);
-        return m_fileTypeMap[path]() == FileType::BINARY;
+        return m_fileTypeMap[path.data()]() == FileType::BINARY;
     }
 
-    std::string FileIO::getTextData(const std::string &path) {
+    std::string FileIO::getTextData(std::string_view path) {
         if(!isFilePresent(path)) return "";
         if(!isText(path))
         {
@@ -182,10 +184,10 @@ namespace r8ge {
         }
 
         std::lock_guard<std::mutex> lock(m_mutex);
-        return m_txtFileMap[path];
+        return m_txtFileMap[path.data()];
     }
 
-    std::vector<byte> FileIO::getBinaryData(const std::string &path) {
+    std::vector<byte> FileIO::getBinaryData(std::string_view path) {
         if(!isFilePresent(path)) return{};
         if(!isBinary(path))
         {
@@ -194,10 +196,10 @@ namespace r8ge {
         }
 
         std::lock_guard<std::mutex> lock(m_mutex);
-        return m_binFileMap[path];
+        return m_binFileMap[path.data()];
     }
 
-    bool FileIO::isText(const std::string &path) {
+    bool FileIO::isText(std::string_view path) {
         return !isBinary(path);
     }
 
@@ -217,7 +219,7 @@ namespace r8ge {
         return binFiles;
     }
 
-    void FileIO::setTextData(const std::string &path, const std::string &data) {
+    void FileIO::setTextData(std::string_view path, std::string_view data) {
         if(!isFilePresent(path)) return;
         if(isBinary(path))
         {
@@ -225,11 +227,11 @@ namespace r8ge {
             return;
         }
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_txtFileMap[path] = data;
-        m_modifiedMap[path] = true;
+        m_txtFileMap[path.data()] = data;
+        m_modifiedMap[path.data()] = true;
     }
 
-    void FileIO::setBinaryData(const std::string &path, const std::vector<byte> &data) {
+    void FileIO::setBinaryData(std::string_view path, const std::vector<byte> &data) {
         if(!isFilePresent(path)) return;
         if(isText(path))
         {
@@ -237,11 +239,11 @@ namespace r8ge {
             return;
         }
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_binFileMap[path] = data;
-        m_modifiedMap[path] = true;
+        m_binFileMap[path.data()] = data;
+        m_modifiedMap[path.data()] = true;
     }
 
-    void FileIO::appendTextData(const std::string &path, const std::string &data) {
+    void FileIO::appendTextData(std::string_view path, std::string_view data) {
         if(!isFilePresent(path)) return;
         if(isBinary(path))
         {
@@ -250,11 +252,11 @@ namespace r8ge {
         }
 
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_txtFileMap[path] += data;
-        m_modifiedMap[path] = true;
+        m_txtFileMap[path.data()] += data;
+        m_modifiedMap[path.data()] = true;
     }
 
-    void FileIO::appendBinaryData(const std::string &path, const std::vector<byte> &data) {
+    void FileIO::appendBinaryData(std::string_view path, const std::vector<byte> &data) {
         if(!isFilePresent(path)) return;
         if(isText(path))
         {
@@ -263,15 +265,15 @@ namespace r8ge {
         }
 
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_binFileMap[path].insert(m_binFileMap[path].end(), data.begin(), data.end());
-        m_modifiedMap[path] = true;
+        m_binFileMap[path.data()].insert(m_binFileMap[path.data()].end(), data.begin(), data.end());
+        m_modifiedMap[path.data()] = true;
     }
 
-    bool FileIO::isModified(const std::string &path) {
-        return m_modifiedMap[path];
+    bool FileIO::isModified(std::string_view path) {
+        return m_modifiedMap[path.data()];
     }
 
-    void FileIO::copy(const std::string &path, const std::string &newPath) {
+    void FileIO::copy(std::string_view path, std::string_view newPath) {
         if(!isFilePresent(path)) return;
         if(isFilePresent(newPath, false))
         {
@@ -293,14 +295,14 @@ namespace r8ge {
         remove(newPath);
     }
 
-    void FileIO::writeStdout(const std::string &data) {
+    void FileIO::writeStdout(std::string_view data) {
         m_stdoutMutex.lock();
         std::cout << data;
         m_stdoutMutex.unlock();
     }
 
 
-    void FileIO::writeStderr(const std::string &data) {
+    void FileIO::writeStderr(std::string_view data) {
         m_stdoutMutex.lock();
         std::cerr << data;
         m_stdoutMutex.unlock();

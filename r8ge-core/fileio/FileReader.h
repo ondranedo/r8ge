@@ -6,7 +6,7 @@
 namespace r8ge {
     class FileReader {
     public:
-        FileReader(const std::string &path);
+        FileReader(std::string_view path);
 
         virtual ~FileReader() = 0;
 
@@ -16,7 +16,7 @@ namespace r8ge {
         [[nodiscard]] size_t size() const;
 
     public:
-        static std::unique_ptr<FileReader> create(const FileType& ft, const std::string& path);
+        static std::unique_ptr<FileReader> create(const FileType& ft, std::string_view path);
 
     protected:
         std::string m_path;
