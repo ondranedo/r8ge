@@ -18,7 +18,7 @@
 namespace r8ge {
     class _File {
     public:
-        _File(const std::string& path, FileType ft = {});
+        _File(std::string_view path, FileType ft = {});
         virtual ~_File();
         [[nodiscard]] std::string getPath() const;
         [[nodiscard]] FileType getFileType() const;

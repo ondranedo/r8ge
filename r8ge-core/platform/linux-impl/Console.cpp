@@ -6,7 +6,7 @@
 static void ANSISend(const std::vector<std::string>& str);
 
 namespace r8ge {
-    void Console::log(const std::string &str) {
+    void Console::log(std::string_view str) {
         global::fileIO->writeStdout(str);
     }
 

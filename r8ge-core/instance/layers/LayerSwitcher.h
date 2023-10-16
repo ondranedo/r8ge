@@ -40,7 +40,7 @@ namespace r8ge {
         }
 
         // Pop according to the name
-        void pop(const std::string& name);
+        void pop(std::string_view name);
 
         // Pop according to the index
         inline void pop(size_t index);

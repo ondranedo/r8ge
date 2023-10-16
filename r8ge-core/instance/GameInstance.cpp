@@ -1,7 +1,7 @@
 #include "GameInstance.h"
 
 namespace r8ge {
-    GameInstance::GameInstance(const std::string &name) : m_name(name) {
+    GameInstance::GameInstance(std::string_view name) : m_name(name) {
 
     }
 

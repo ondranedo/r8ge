@@ -11,7 +11,7 @@ namespace r8ge {
     // This class should be defined by the user and registered in the GameInstance
     R8GE_API class Layer {
     public:
-        explicit Layer(const std::string& name);
+        explicit Layer(std::string_view name);
         virtual ~Layer();
 
         // Used to update the layer, called every frame

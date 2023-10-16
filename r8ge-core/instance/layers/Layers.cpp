@@ -3,7 +3,7 @@
 #include "../../Logger.h"
 
 namespace r8ge {
-    Layer::Layer(const std::string &name) : m_name(name) {
+    Layer::Layer(std::string_view name) : m_name(name) {
         R8GE_LOG("Layer `{}` created", name);
     }
 

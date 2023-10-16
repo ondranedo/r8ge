@@ -28,7 +28,7 @@ namespace r8ge {
             bool useDefaultBackgroundColor;
         };
 
-        static void log(const std::string& str);
+        static void log(std::string_view str);
         static void set(const ConsoleParam& param);
         static void setDefault();
     };

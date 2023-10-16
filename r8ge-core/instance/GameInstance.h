@@ -9,7 +9,7 @@ namespace r8ge {
     // TODO: for now, there can be only one instance of the game, this will be changed in the future
     class GameInstance : public Instance {
     public:
-        explicit GameInstance(const std::string& name);
+        explicit GameInstance(std::string_view name);
         virtual ~GameInstance() override = default;
 
         // Called when class is initialized, not created!
