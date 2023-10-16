@@ -48,13 +48,13 @@ namespace r8ge {
             return m_map[key.get()];
         }
 
-        static std::pair<string, Json> generateEntry(const string &str, const string& key, size_t& index) {
+        static std::pair<std::string_view, Json> generateEntry(std::string_view str, std::string_view key, size_t& index) {
             Json j;
             index = j.from_string(str, index);
             return {key, j};
         }
 
-        static string getKey(const string &str, size_t& index)
+        static string getKey(std::string_view str, size_t& index)
         {
             if(str[index] == ',') index++;
 
@@ -67,7 +67,7 @@ namespace r8ge {
             return key;
         }
 
-        size_t Object::from_string(const string &str, size_t _index) {
+        size_t Object::from_string(std::string_view str, size_t _index) {
             size_t i = _index + 1;    // 1 for '{'
             size_t bracket_count = 1; // 1 for '{'
 

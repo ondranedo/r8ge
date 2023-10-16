@@ -44,7 +44,7 @@ namespace r8ge {
             Json();
             ~Json();
 
-            size_t from_string(const std::string &str, size_t _index = 0);
+            size_t from_string(std::string_view str, size_t _index = 0);
 
             template<Integral T> Json(T i) : m_type(Type::integral) { m_data.i = i; }
             template<Decimal T> Json(T d) : m_type(Type::decimal) { m_data.d = d; }

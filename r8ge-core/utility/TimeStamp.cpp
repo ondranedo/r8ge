@@ -64,8 +64,8 @@ namespace r8ge {
         return buff;
     }
 
-    std::string TimeStamp::customFormat(const std::string &format) const {
-        std::string out = format;
+    std::string TimeStamp::customFormat(std::string_view format) const {
+        std::string out{format};
 
         struct listi {
             std::string s;
@@ -92,13 +92,13 @@ namespace r8ge {
         return out;
     }
 
-    std::string TimeStamp::to_string(const std::string &format) const {
+    std::string TimeStamp::to_string(std::string_view format) const {
         R8GE_ASSERT(!m_subtracted, "Can't convert TimeStamp() to string after it has been compared with other TimeStamp() objects");
 
         auto epoch = static_cast<std::time_t>(m_nanoseconds/NS_TO_SEC);
         std::tm* local = std::localtime(&epoch);
 
-        std::string strt = strtftime(format, local);
+        std::string strt = strtftime(std::string(format), local);
 
         return customFormat(strt);
     }

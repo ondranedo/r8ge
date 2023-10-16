@@ -39,13 +39,13 @@ namespace r8ge {
         // milliseconds - %^{ms}
         // microseconds - %^{us}
         // nanoseconds  - %^{ns}
-        [[nodiscard]] std::string to_string(const std::string& format = "%Y:%m:%d %H:%M:%S") const;
+        [[nodiscard]] std::string to_string(std::string_view format = "%Y:%m:%d %H:%M:%S") const;
 
     public:
         TimeStamp& operator-(const TimeStamp&);
 
     private:
-        [[nodiscard]] std::string customFormat(const std::string& format) const;
+        [[nodiscard]] std::string customFormat(std::string_view format) const;
 
     private:
         std::size_t m_nanoseconds; // Since epoch

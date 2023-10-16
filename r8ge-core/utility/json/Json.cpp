@@ -205,9 +205,9 @@ namespace r8ge {
             return "unknown";
         }
 
-         size_t Json::from_string(const string &str, size_t _index) {
+         size_t Json::from_string(std::string_view str, size_t _index) {
             // Remove all spaces, tabs, newlines
-            std::string s = str;
+            std::string s{str};
             s.erase(std::remove_if(s.begin(), s.end(), [](unsigned char x) { return std::isspace(x); }), s.end());
 
             if (s.empty()) {

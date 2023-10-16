@@ -7,7 +7,7 @@ namespace r8ge {
     namespace utility {
         class StringKey {
         public:
-            StringKey(const std::string& str);
+            StringKey(std::string_view str);
             StringKey(const char* str);
 
             std::string get() const;

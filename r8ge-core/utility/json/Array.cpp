@@ -38,7 +38,7 @@ namespace r8ge {
             return m_vector[index];
         }
 
-        Json generateEntry(const string& str, size_t& index, size_t& bracket_count)
+        Json generateEntry(std::string_view str, size_t& index, size_t& bracket_count)
         {
             if(str[index] == ',') index++;
 
@@ -48,7 +48,7 @@ namespace r8ge {
             return j;
         }
 
-        size_t Array::from_string(const string &str, size_t _index) {
+        size_t Array::from_string(std::string_view str, size_t _index) {
             size_t i = _index + 1;    // 1 for '['
             size_t bracket_count = 1; // 1 for '['
 

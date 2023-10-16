@@ -15,7 +15,7 @@ namespace r8ge {
             Json& operator[](size_t index);
 
             [[nodiscard]] std::string to_string(bool format, size_t _tab_spaces, size_t _count_of_indent = 0) const;
-            size_t from_string(const std::string& str, size_t _index = 0);
+            size_t from_string(std::string_view str, size_t _index = 0);
         private:
             std::vector<Json> m_vector;
         };

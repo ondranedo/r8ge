@@ -2,7 +2,7 @@
 
 namespace r8ge {
     namespace utility {
-        StringKey::StringKey(const std::string &str) {
+        StringKey::StringKey(std::string_view str) {
             m_string = str;
         }
 
