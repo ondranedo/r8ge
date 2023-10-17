@@ -9,6 +9,8 @@ namespace r8ge {
                 return "TEXT";
             case BINARY:
                 return "BINARY";
+            case WAVE:
+                return "WAVE";
         }
         return "UNKNOWN";
     }

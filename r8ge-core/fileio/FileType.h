@@ -10,7 +10,8 @@ namespace r8ge {
         enum _type {
             JSON,
             TEXT,
-            BINARY
+            BINARY,
+            WAVE
         };
 
         FileType();
