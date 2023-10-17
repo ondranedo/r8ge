@@ -37,7 +37,7 @@ namespace r8ge {
         int m_x{};
         int m_y{};
         const char *m_title{};
-        bool m_isCreated{false};
+        bool m_isCreated{false},m_isInitialized{false};
     protected:
          inline static Display *m_display;
          inline static Colormap m_colormap;
