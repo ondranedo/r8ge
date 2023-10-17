@@ -1,0 +1,16 @@
+add_library(fileio
+        "File.cpp"
+        "File.h"
+        "FileReader.cpp"
+        "FileReader.h"
+        "FileType.cpp"
+        "FileType.h"
+        "fileReaders/Text.cpp"
+        "fileReaders/Text.h"
+        "FileIO.cpp"
+        "FileIO.h"
+        "fileReaders/Binary.cpp"
+        "fileReaders/Binary.h"
+        "fileReaders/Json.cpp"
+        "fileReaders/Json.h"
+)

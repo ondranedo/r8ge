@@ -1,7 +1,47 @@
+# Variables
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+
+
+# Build
 add_library(r8ge-core
-        "src/Core.h"
-        "src/Core.cpp"
-        )
+        "Core.h"
+
+        "Core.cpp"
+        "EntryPoint.cpp"
+        "EntryPoint.h"
+        "Logger.cpp"
+        "Logger.h"
+        "platform/EntryPoint.cpp"  # main() for each platform
+        "Ar8ge.cpp"
+        "Ar8ge.h"
+        "platform/Console.h"
+)
+
+
+# Subcomponents of `Core`
+add_subdirectory(utility)
+target_link_libraries(r8ge-core PUBLIC utility)
+
+add_subdirectory(platform)
+target_link_libraries(r8ge-core PRIVATE platform)
+
+add_subdirectory(events)
+target_link_libraries(r8ge-core PUBLIC events)
+
+add_subdirectory(instance)
+target_link_libraries(r8ge-core PUBLIC instance)
+
+add_subdirectory(fileio)
+target_link_libraries(r8ge-core PRIVATE fileio)
+
+# Compile definitions
+target_compile_definitions(r8ge-core PRIVATE R8GE_CORE_BUILD)
+
+if(BUILD_SHARED_LIBS)
+        add_compile_definitions(R8GE_SHARED)
+else()
+        add_compile_definitions(R8GE_STATIC)
+endif()

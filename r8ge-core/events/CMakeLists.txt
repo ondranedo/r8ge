@@ -1,0 +1,15 @@
+add_library(events
+        "Event.cpp"
+        "Event.h"
+        "EventPayload.cpp"
+        "EventPayload.h"
+        "EventQueue.cpp"
+        "EventQueue.h"
+        "KeyEvents.cpp"
+        "KeyEvents.h"
+        "Strokes.h"
+        "MouseEvents.cpp"
+        "MouseEvents.h"
+        "WindowEvents.cpp"
+        "WindowEvents.h"
+)
