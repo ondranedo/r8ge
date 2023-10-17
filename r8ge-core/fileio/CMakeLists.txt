@@ -13,4 +13,6 @@ add_library(fileio
         "fileReaders/Binary.h"
         "fileReaders/Json.cpp"
         "fileReaders/Json.h"
+        "fileReaders/Wave.cpp"
+        "fileReaders/Wave.hpp"
 )
