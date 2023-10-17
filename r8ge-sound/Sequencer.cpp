@@ -76,8 +76,8 @@ void r8ge::MIDISequencer::loadMIDI(const std::string& filename) {
 
     for(int i = 0; i < nTracks; i++){
         enum State{
-            READING_TIME,
-            READING_EVENT,
+            READING_TIME = 0x10,
+            READING_EVENT = 0x11,
             NOTE_OFF = 0x80,
             NOTE_ON = 0x90,
             POLYPHONIC_PRESSURE = 0xA0,
@@ -154,27 +154,33 @@ void r8ge::MIDISequencer::loadMIDI(const std::string& filename) {
                     // todo
                     break;
                 case POLYPHONIC_PRESSURE:
-                    // don need yet
                     break;
                 case CONTROLLER:
                     break;
                 case PROGRAM_CHANGE:
+                    // todo
                     break;
                 case CHANNEL_PRESSURE:
                     break;
                 case PITCH_BEND:
                     break;
                 case SYSEX_MSG:
+                    // don need yet
                     break;
                 case ESCAPE_SEQUENCE:
+                    // don need yet
                     break;
                 case META_EVENT:
+                    // todo
                     break;
                 case META_COPYRIGHT:
+                    // don need yet
                     break;
                 case META_TRACK_NAME:
+                    // todo
                     break;
                 case META_INSTRUMENT_NAME:
+                    // todo
                     break;
                 case META_LYRIC:
                     break;
@@ -191,16 +197,24 @@ void r8ge::MIDISequencer::loadMIDI(const std::string& filename) {
                 case META_MIDI_PORT:
                     break;
                 case META_END_OF_TRACK:
+                    // todo
                     break;
                 case META_TEMPO:
+                    // todo
                     break;
                 case META_SMPTE_OFFSET:
                     break;
                 case META_TIME_SIGNATURE:
+                    // todo
                     break;
                 case META_KEY_SIGNATURE:
+                    // todo
                     break;
                 case META_SEQ_SP_EVENT:
+                    break;
+                case META_SEQUENCE_NUM:
+                    break;
+                case META_TEXT:
                     break;
             }
         }
