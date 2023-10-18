@@ -3,7 +3,6 @@
 //
 
 #include "Generators.hpp"
-#include <fstream>
 #include <iostream>
 
 // should only output a value
@@ -72,72 +71,11 @@ void r8ge::Sound::setState(bool state) {
 }
 
 r8ge::Wave::Wave(double startTime, const std::string& filename) : Sound(startTime) {
-    char* cStringBuff = new char[5];
-    cStringBuff[4] = '\0';
-    std::string cmp;
-    unsigned long u32Buff;
 
-    std::ifstream file(filename, std::ios::binary);
-    if(!file.is_open()){
-        std::cout << "File not found" << std::endl;
-        goto Exit;
-    }
-
-    file.read(cStringBuff, 4);
-    cmp = cStringBuff;
-    if(cmp != "RIFF"){
-        std::cout << "File is not Wav" << std::endl;
-        goto Exit;
-    }
-
-    file.read(reinterpret_cast<char*>(&u32Buff), 4);
-    std::cout << "Size of file is " << u32Buff + 8 << " bytes" << std::endl;
-
-    file.read(cStringBuff, 4);
-    cmp = cStringBuff;
-    if(cmp != "WAVE"){
-        std::cout << "File is not Wav" << std::endl;
-        goto Exit;
-    }
-
-    file.read(cStringBuff, 4);
-    cmp = cStringBuff;
-    if(cmp != "fmt "){
-        std::cout << "File is corrupted" << std::endl;
-        goto Exit;
-    }
-
-    file.read(reinterpret_cast<char*>(&u32Buff), 4);
-    if(u32Buff != 16){
-        std::cout << "File is corrupted" << std::endl;
-        goto Exit;
-    }
-
-    file.read(reinterpret_cast<char*>(&m_format), 2);
-    file.read(reinterpret_cast<char*>(&m_channels), 2);
-    file.read(reinterpret_cast<char*>(&m_sampleRate), 4);
-    m_timeStep = 1.0 / m_sampleRate;
-    file.read(reinterpret_cast<char*>(&u32Buff), 4);
-    file.read(reinterpret_cast<char*>(&m_blockAlign), 2);
-    file.read(reinterpret_cast<char*>(&u32Buff), 2);
-
-    file.read(cStringBuff, 4);
-    cmp = cStringBuff;
-    if(cmp != "data"){
-        std::cout << "File is corrupted" << std::endl;
-        goto Exit;
-    }
-
-    file.read(reinterpret_cast<char*>(&u32Buff), 4);
-    m_sampleCount = u32Buff / m_blockAlign;
-    m_endTime = m_startTime + (m_timeStep * m_sampleCount);
-
-    m_data = new char[u32Buff];
-    file.read(m_data, u32Buff);
-
-    Exit:
-    delete[] cStringBuff;
-    file.close();
+    Reader::Wave f(filename);
+    f.load_wave();
+    m_data = f.wave();
+    m_endTime = m_startTime + (m_data.m_timeStep * m_data.m_sampleCount);
 }
 
 double r8ge::Wave::generate(double timeSecs, unsigned char channel) {
@@ -145,16 +83,16 @@ double r8ge::Wave::generate(double timeSecs, unsigned char channel) {
     if(activeTime < 0.0 || activeTime > m_endTime){
         return 0;
     }
-    channel %= m_channels;
-    double approxIndex = activeTime / m_timeStep;
-    if(approxIndex > m_sampleCount - 1){
-        approxIndex = m_sampleCount - 1;
+    channel %= m_data.m_channels;
+    double approxIndex = activeTime / m_data.m_timeStep;
+    if(approxIndex > m_data.m_sampleCount - 1){
+        approxIndex = m_data.m_sampleCount - 1;
     }
-    switch (m_format) {
+    switch (m_data.m_format) {
         case 1:
-            switch (m_blockAlign / m_channels) {
+            switch (m_data.m_blockAlign / m_data.m_channels) {
                 case 2:
-                    return (double)*((short*)(m_data) + ((long)approxIndex * m_channels) + channel) / SHRT_MAX;
+                    return (double)*((short*)(m_data.m_data) + ((long)approxIndex * m_data.m_channels) + channel) / (1 << 15);
                 default:
                     return 0;
             }
@@ -164,7 +102,7 @@ double r8ge::Wave::generate(double timeSecs, unsigned char channel) {
 }
 
 r8ge::Wave::~Wave() {
-    delete[] m_data;
+    delete[] m_data.m_data;
 }
 
 double r8ge::Wave::getDuration() {

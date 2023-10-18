@@ -9,9 +9,17 @@
 
 namespace r8ge {
 
-    // todo: move to sound once merged
-    struct Wave{
-        void fromVec();
+    // definition is in Generators; included here because I don't want
+    struct WaveData{
+        unsigned short m_format;
+        unsigned short m_channels;
+        unsigned long m_sampleRate;
+        unsigned short m_blockAlign;
+        double m_timeStep;
+
+        unsigned long m_sampleCount;
+        char* m_data; // takes up to megabytes but allows for instant skipping
+        void fromVec(std::vector<unsigned char> vec);
     };
 
     namespace Reader {
@@ -20,12 +28,12 @@ namespace r8ge {
             Wave(std::string_view path);
             ~Wave() override;
 
-            ::r8ge::Wave& wave();
+            WaveData& wave();
             void load_wave();
 
             static FileType getType();
         private:
-            ::r8ge::Wave m_wave;
+            WaveData m_wave{};
         };
     }
 }
