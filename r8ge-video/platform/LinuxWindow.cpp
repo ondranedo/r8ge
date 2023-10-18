@@ -45,7 +45,7 @@ namespace r8ge {
 
     void WindowClass::create() {
         if (!m_isInitialized) {
-            R8GE_LOG_ERROR("Window {} creation was called before init", m_title);
+            R8GE_LOG_ERROR("Window `{}` creation was called before init", m_title);
         }
 
         XSetWindowAttributes m_windowAttributes;
