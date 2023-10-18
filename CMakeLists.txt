@@ -12,6 +12,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${INSTALL_DIR}")
 
 # Libraries
 add_subdirectory(r8ge-core)
+add_subdirectory(r8ge-sound)
 
 
 # Executables
