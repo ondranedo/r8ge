@@ -1,6 +1,8 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
+set(OpenGL_GL_PREFERENCE "GLVND")
+
 add_library(r8ge-video
         WindowClass.h
         platform/LinuxWindow.cpp
