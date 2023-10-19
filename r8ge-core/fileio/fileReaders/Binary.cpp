@@ -7,7 +7,7 @@
 
 namespace r8ge {
 
-    Reader::Binary::Binary(const std::string &path) : FileReader(path) {
+    Reader::Binary::Binary(std::string_view path) : FileReader(path) {
         global::fileIO->add(m_path, FileType::BINARY);
     }
 

@@ -7,7 +7,11 @@
 
 namespace r8ge {
     // The global main event queue, every event is sent to this queue
-    extern EventQueue::CallbackFn ar8geEventQueue;
+    namespace global {
+        extern EventQueue::CallbackFn ar8geEventQueue;
+        extern bool ar8geRunning;
+        extern bool ar8geReady;
+    }
 
     // Main Application class, handles the main loop, the event queue, and the game instances
     class Ar8ge {
@@ -24,7 +28,6 @@ namespace r8ge {
         // Performs the necessary cleanup, and exits the engine
         void exit();
     private:
-        bool m_running;
         EventQueue m_queue;
         std::shared_ptr<GameInstance> m_game;
     };

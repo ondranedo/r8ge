@@ -9,7 +9,7 @@ namespace r8ge {
     namespace Reader {
         class Binary : public FileReader {
         public:
-            Binary(const std::string& path);
+            Binary(std::string_view path);
             ~Binary() override;
 
             void read(void* buffer, size_t buffer_size);
