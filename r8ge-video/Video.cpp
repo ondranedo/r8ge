@@ -29,9 +29,10 @@ namespace r8ge {
     }
 
     void Video::run() {
-        while(global::ar8geRunning) {
+        R8GE_LOG("Video starting to run main loop");
 
+        while(global::ar8geRunning) {
+            m_windowingService->updateWindows();
         }
-        R8GE_LOG_DEBUG("Video running");
     }
 }

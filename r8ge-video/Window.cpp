@@ -2,6 +2,8 @@
 
 #include "platform/WindowingService.h"
 
+#include <r8ge/r8ge.h>
+
 namespace r8ge {
     namespace video {
         Window::Window(const r8ge::video::Window::Dims &dims_w_h, std::string_view title)
@@ -13,14 +15,16 @@ namespace r8ge {
         void Window::show() {
             if(!m_isCreated)
                 create();
+            video::WindowingService::getService().setContextOfWindow(m_title);
         }
 
         void Window::hide() {
-
+            video::WindowingService::getService().hideWindow(m_title);
         }
 
         void Window::create() {
-
+            video::WindowingService::getService().createWindow(m_dims, m_title);
+            m_isCreated = true;
         }
     }
 }

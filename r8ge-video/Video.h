@@ -16,7 +16,6 @@ namespace r8ge {
 
     private:
         std::shared_ptr<video::WindowingService> m_windowingService;
-        std::mutex m_mutex;
         bool m_isRunning;
     };
 

@@ -26,7 +26,7 @@ target_include_directories(r8ge-video-platform PRIVATE "${CMAKE_SOURCE_DIR}/incl
 
 if (LINUX)
     find_package(GLEW REQUIRED)
-    #find_package(OpenGL REQUIRED)
+    find_package(OpenGL REQUIRED)
     find_package(X11 REQUIRED)
     include_directories(${X11_INCLUDE_DIR})
     include_directories(${GLEW_INCLUDE_DIRS})
@@ -36,7 +36,7 @@ if (LINUX)
             ${X11_LIBRARIES}
             ${OPENGL_LIBRARIES}
             GLEW::GLEW
-            #OpenGL::GL
+            OpenGL::GL
             X11::X11
     )
 endif ()

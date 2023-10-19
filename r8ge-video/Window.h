@@ -3,6 +3,7 @@
 
 #include <tuple>
 #include <string>
+#include <thread>
 
 namespace r8ge {
     namespace video {
