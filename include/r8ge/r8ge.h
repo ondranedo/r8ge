@@ -13,3 +13,4 @@
 #include "../r8ge-core/Logger.h"
 #include "../r8ge-core/instance/Instance.h"
 #include "../r8ge-core/instance/GameInstance.h"
+#include "../r8ge-core/Ar8ge.h"

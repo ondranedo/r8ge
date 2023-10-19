@@ -9,7 +9,7 @@ namespace r8ge {
     namespace Reader {
         class Json : protected Text {
         public:
-            Json(const std::string& path);
+            Json(std::string_view path);
             ~Json() override;
 
             utility::Json& json();
