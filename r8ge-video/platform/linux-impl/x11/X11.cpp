@@ -104,6 +104,20 @@ namespace r8ge {
             XEvent event;
             while (XPending(m_display) > 0) {
                 XNextEvent(m_display, &event);
+
+                switch (event.type) {
+                    case Expose:
+                        break;
+                    case KeyPress:
+                        if(XLookupKeysym(&event.xkey, 0)==65307) {
+                            global::ar8geRunning = false;
+                        }
+                        break;
+                    case KeyRelease:
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -129,7 +143,8 @@ namespace r8ge {
 
         void X11::updateWindows() {
             for(auto& [title, window] : m_windows) {
-                swapBuffersOfWindow(title);
+                if(window.second)
+                    swapBuffersOfWindow(title);
             }
 
             poolEvents();
