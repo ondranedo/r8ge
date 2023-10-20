@@ -32,8 +32,11 @@ namespace r8ge {
             bool isAltPressed() const;
             bool isSuperPressed() const;
 
-            bool isKeyPressed(const IOCode &code, Modulator modulator) const;
-            bool isKeyPressed(const IOCode &code) const;
+
+            // Returns true if all keys in the list are pressed and the modulator is satisfied
+            // F.e. isKeyPressed({IOCode::A, IOCode::B}, video::Input::Shift | video::Input::Ctrl) returns true if A and B are pressed and Shift and Ctrl are pressed
+            bool isKeyPressed(const std::initializer_list<IOCode>& code, Modulator modulator) const;
+            bool isKeyPressed(const std::initializer_list<IOCode>& code) const;
         private:
             std::unordered_map<r8ge::IOCode,bool> m_keyPressedMap;
 

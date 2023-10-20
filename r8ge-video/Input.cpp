@@ -1,6 +1,7 @@
 #include "Input.h"
 
 #include <utility>
+#include <r8ge/r8ge.h>
 
 namespace r8ge {
 
@@ -36,7 +37,7 @@ namespace r8ge {
         return m_superPressed;
     }
 
-    bool video::Input::isKeyPressed(const IOCode &code, video::Input::Modulator modulator) const {
+    bool video::Input::isKeyPressed(const std::initializer_list<IOCode>& code, video::Input::Modulator modulator) const {
         if(modulator & Modulator::Shift && !m_shiftPressed) return false;
         if(modulator & Modulator::Ctrl && !m_ctrlPressed) return false;
         if(modulator & Modulator::Alt && !m_altPressed) return false;
@@ -44,8 +45,16 @@ namespace r8ge {
         return isKeyPressed(code);
     }
 
-    bool video::Input::isKeyPressed(const IOCode &code) const {
-        if(m_keyPressedMap.find(code) == m_keyPressedMap.end())  return false;
-        return m_keyPressedMap.at(code);
+    bool video::Input::isKeyPressed(const std::initializer_list<IOCode>& code) const {
+        for(auto & c : code)
+        {
+            if(c == IOCode::RIGHT_SHIFT || c == IOCode::LEFT_SHIFT || c== IOCode::RIGHT_CONTROL || c == IOCode::LEFT_CONTROL || c == IOCode::RIGHT_ALT || c == IOCode::LEFT_ALT || c == IOCode::RIGHT_SUPER || c == IOCode::LEFT_SUPER ) {
+                R8GE_LOG_WARNI("Invalid key code, use Modulator instead");
+                return false;
+            }
+            if(m_keyPressedMap.find(c) == m_keyPressedMap.end()) return false;
+            if(!m_keyPressedMap.at(c)) return false;
+        }
+        return true;
     }
 }

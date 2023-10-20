@@ -28,11 +28,13 @@ namespace r8ge {
 
         while(Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
+
+            // TODO: Config file, key bindings
+            if(m_input.isKeyPressed({IOCode::ESCAPE}))
+                Ar8ge::stop(); // TODO: Send Kill event
+
             glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            if(m_input.isKeyPressed(IOCode::F1, video::Input::Shift | video::Input::Ctrl))
-                Ar8ge::stop();
 
             s_windowingService->swapBuffersOfMainWindow();
         }
