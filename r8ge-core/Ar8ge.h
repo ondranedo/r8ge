@@ -34,11 +34,16 @@ namespace r8ge {
         // Other modules may use this time to exit
         static bool isRunning();
 
+        // Stops the engine
+        static void stop();
+
         // Returns the main event queue
         static EventQueue::CallbackFn getEventQueue();
 
+        static std::function<void(std::shared_ptr<Event>)> getInstanceLayerSwitcherCallback();
     private:
         static EventQueue::CallbackFn s_eventQueue;
+        static std::function<void(std::shared_ptr<Event>)> m_layerSwitcherCallback;
         static bool s_running;
         static bool s_ready;
         static std::mutex s_mutex;

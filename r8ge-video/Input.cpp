@@ -15,6 +15,15 @@ namespace r8ge {
         if(code==IOCode::LEFT_SUPER||code==IOCode::RIGHT_SUPER) m_superPressed = (action == IOAction::PRESS);
 
         m_keyPressedMap[code] = (action == IOAction::PRESS);
+
+        EventPayload payload;
+        payload.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
+        IOStroke stroke = {code, m_shiftPressed, m_ctrlPressed, m_altPressed, m_superPressed};
+        if(action == IOAction::PRESS)
+            payload.setEvent(std::make_shared<KeyPressed>(stroke, false));
+        else
+            payload.setEvent(std::make_shared<KeyReleased>(stroke));
+        Ar8ge::getEventQueue()(payload);
     }
 
     std::function<void(const r8ge::IOCode &, IOAction)> video::Input::getKeyActionCallback() {

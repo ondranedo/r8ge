@@ -7,11 +7,11 @@
 #include "../r8ge-video/EntrytPoint.h"
 
 namespace r8ge {
-
+    std::function<void(std::shared_ptr<Event>)> Ar8ge::m_layerSwitcherCallback = nullptr;
     EventQueue::CallbackFn Ar8ge::s_eventQueue = nullptr;
     bool Ar8ge::s_running = true;
     bool Ar8ge::s_ready = false;
-    std::mutex Ar8ge::s_mutex;
+    std::mutex Ar8ge::s_mutex{};
 
     Ar8ge::Ar8ge(){
         s_mutex.lock();
@@ -31,6 +31,7 @@ namespace r8ge {
         // Other modules may use this time to initialize
         s_mutex.lock();
         s_ready = true;
+        m_layerSwitcherCallback = m_game->getEventReceiver();
         s_mutex.unlock();
     }
 
@@ -79,5 +80,16 @@ namespace r8ge {
     EventQueue::CallbackFn Ar8ge::getEventQueue() {
         std::lock_guard<std::mutex> lock(s_mutex);
         return s_eventQueue;
+    }
+
+    void Ar8ge::stop() {
+        std::lock_guard<std::mutex> lock(s_mutex);
+        s_running = false;
+        m_layerSwitcherCallback = nullptr;
+    }
+
+    std::function<void(std::shared_ptr<Event>)> Ar8ge::getInstanceLayerSwitcherCallback() {
+        std::lock_guard<std::mutex> lock(s_mutex);
+        return m_layerSwitcherCallback;
     }
 }
