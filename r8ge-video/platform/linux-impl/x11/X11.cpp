@@ -155,6 +155,8 @@ namespace r8ge {
                     case Expose:
                         break;
                     case KeyPress:
+                        if(event.xkey.keycode == 9)
+                            Ar8ge::stop(); // TODO: Add kill event
                         break;
                     case KeyRelease:
                         break;
@@ -198,19 +200,7 @@ namespace r8ge {
 
             //TODO: Create abstraction for rendering API
             glXMakeCurrent(m_display, m_windows[title].first, m_context);
-            //glXMakeContextCurrent(m_display, m_windows[title].first, m_windows[title].first, m_context);
-        }
-
-        void X11::updateWindows() {
-            for(auto& [title, window] : m_windows) {
-                if(window.second) { // Is created
-                    setContextOfWindow(title);
-                    swapBuffersOfWindow(title);
-                }
-            }
-
-            poolEvents();
-            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+            glXMakeContextCurrent(m_display, m_windows[title].first, m_windows[title].first, m_context);
         }
 
         X11::~X11() = default;

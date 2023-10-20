@@ -3,6 +3,7 @@
 #include "EntrytPoint.h"
 
 #include <r8ge/r8ge.h>
+#include <GL/glew.h>
 
 namespace r8ge {
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
@@ -27,7 +28,11 @@ namespace r8ge {
         s_windowingService->showWindow(m_title);
 
         while(Ar8ge::isRunning()) {
-            s_windowingService->updateWindows();
+            s_windowingService->poolEvents();
+            glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            s_windowingService->swapBuffersOfWindow(m_title);
         }
     }
 

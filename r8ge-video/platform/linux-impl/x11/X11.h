@@ -33,8 +33,6 @@ namespace r8ge {
 
             void setContextOfWindow(std::string_view title) override;
 
-            void updateWindows() override;
-
             bool isWindowPresent(std::string_view title) const;
         public:
             Display *m_display;

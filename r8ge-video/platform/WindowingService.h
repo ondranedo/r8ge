@@ -27,8 +27,6 @@ namespace r8ge {
             virtual bool destroyWindow(std::string_view title) = 0;
             virtual void setContextOfWindow(std::string_view title) = 0;
             virtual void setVSyncOnWindow(std::string_view title, bool enabled) = 0;
-            virtual void updateWindows() = 0;
-
             static std::shared_ptr<WindowingService> create();
         protected:
             size_t m_windowCount;
