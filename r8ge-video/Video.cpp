@@ -11,11 +11,7 @@ namespace r8ge {
 
     Video::Video() : m_title("R8GE-video Engine") {
         s_windowingService = video::WindowingService::create();
-        s_windowingService->setKeyPressedCallback([](const r8ge::IOCode& code, IOAction state) {
-            if(code == IOCode::ESCAPE && state == IOAction::PRESS)
-                Ar8ge::stop(); // TODO: Throw exit event
-        });
-
+        s_windowingService->setKeyPressedCallback(m_input.getKeyActionCallback());
     }
     Video::~Video() {}
 
@@ -34,6 +30,9 @@ namespace r8ge {
             s_windowingService->poolEvents();
             glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            if(m_input.isKeyPressed(IOCode::F1, video::Input::Shift | video::Input::Ctrl))
+                Ar8ge::stop();
 
             s_windowingService->swapBuffersOfMainWindow();
         }

@@ -3,6 +3,7 @@
 
 #include "platform/WindowingService.h"
 #include <memory>
+#include "Input.h"
 
 namespace r8ge {
     class Video {
@@ -15,10 +16,10 @@ namespace r8ge {
         void exit();
 
     public:
-        std::string m_title;
 
     private:
-
+        std::string m_title;
+        video::Input m_input;
 
     public:
         static std::shared_ptr<video::WindowingService> getWindowingService();
