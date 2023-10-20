@@ -168,81 +168,63 @@ r8ge::AudioPusher::~AudioPusher() {
 #define PCM_DEVICE "default"
 
 r8ge::AudioPusher::AudioPusher() {
-    unsigned int pcm, tmp, dir;
-    unsigned int rate, channels, seconds;
-    snd_pcm_t *pcm_handle;
-    snd_pcm_hw_params_t *params;
-    snd_pcm_uframes_t frames;
-    char *buff;
-    int buff_size, loops;
+    int err;
+
+    m_timeStep = 1.0 / m_rate;
 
     /* Open the PCM device in playback mode */
-    if (snd_pcm_open(&pcm_handle, PCM_DEVICE,SND_PCM_STREAM_PLAYBACK, 0) < 0){
+    if (snd_pcm_open(&m_pcmHandle, PCM_DEVICE,SND_PCM_STREAM_PLAYBACK, 0) < 0){
         std::cout << "ERROR: Can't open default PCM device." << std::endl;
         goto Exit;
     }
 
-    /* Allocate parameters object and fill it with default values*/
-    snd_pcm_hw_params_alloca(&params);
-
-    snd_pcm_hw_params_any(pcm_handle, params);
-
-    /* Resume information */
-    std::cout << "PCM name: " << snd_pcm_name(pcm_handle) << std::endl;
-    std::cout << "PCM state: " << snd_pcm_state_name(snd_pcm_state(pcm_handle)) << std::endl;
-    snd_pcm_hw_params_get_channels(params, &channels);
-    std::cout << "channels: " << channels << std::endl << (channels == 1 ? "(mono)" : channels == 2 ? "stereo" : "") << std::endl;
-    snd_pcm_hw_params_get_rate(params, &rate, NULL);
-    std::cout << "rate: " << rate << " bps" << std::endl;
-
-    /* Allocate buffer to hold single period */
-    snd_pcm_hw_params_get_period_size(params, &frames, NULL);
-
-    buff_size = frames * channels * 2 /* 2 -> sample size */;
-    buff = new char[buff_size];
-
-    snd_pcm_hw_params_get_period_time(params, &tmp, NULL);
-    snd_pcm_start(pcm_handle);
-
-    for (loops = (seconds * 1000000) / tmp; loops > 0; loops--) {
-
-        if (pcm = read(0, buff, buff_size) == 0) {
-            printf("Early end of file.\n");
-        }
-
-        if (snd_pcm_writei(pcm_handle, buff, frames) != -EPIPE) {
-            snd_pcm_prepare(pcm_handle);
-        } else {
-            std::cout << "ERROR. Can't write to PCM device." << std::endl;
-        }
-
+    err = snd_pcm_set_params(m_pcmHandle,
+                             SND_PCM_FORMAT_FLOAT,
+                             SND_PCM_ACCESS_RW_INTERLEAVED,
+                             m_channels,
+                             m_rate,
+                             1,
+                             1000000 * m_timeStep * m_nOfSamplesPerBuff * m_nOfBuffers);
+    if(err < 0){
+        std::cout << "Couldn't set parameters" << std::endl;
     }
 
+    m_mainLoop = std::thread(&AudioPusher::mainLoop, this);
+
+    snd_pcm_start(m_pcmHandle);
+
     Exit:
-
-    snd_pcm_drain(pcm_handle);
-    snd_pcm_close(pcm_handle);
-    delete[] buff;
-
 }
 
 r8ge::AudioPusher::~AudioPusher() {
-
+    m_mainLoop.join();
 }
 
 void r8ge::AudioPusher::stopSound() {
-
+    m_run = false;
 }
 
 void r8ge::AudioPusher::mainLoop() {
+    /* Allocate buffer to hold single period */
+    unsigned int buff_size = 4 /*float*/ * m_nOfSamplesPerBuff * m_channels;
+    char* buff = new char[buff_size];
 
+    while(m_run){
+        for (int i = 0; i < m_nOfSamplesPerBuff; i++) {
+            for (int j = 0; j < m_channels; j++) {
+                *((float*) buff + i * m_channels + j) = (float)(sumSoundsAndRemove(j) * R8GE_MAIN_VOLUME);
+            }
+            m_generatedTime += m_timeStep;
+        }
+        snd_pcm_writei(m_pcmHandle, buff, m_nOfSamplesPerBuff);
+    }
+
+    snd_pcm_drain(m_pcmHandle);
+    snd_pcm_close(m_pcmHandle);
+    delete[] buff;
 }
 
 #endif // R8GE_LINUX
-
-std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
-    return &m_activeSounds;
-}
 
 double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
