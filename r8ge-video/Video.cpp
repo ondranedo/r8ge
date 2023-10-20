@@ -11,6 +11,11 @@ namespace r8ge {
 
     Video::Video() : m_title("R8GE-video Engine") {
         s_windowingService = video::WindowingService::create();
+        s_windowingService->setKeyPressedCallback([](const r8ge::IOCode& code, IOAction state) {
+            if(code == IOCode::ESCAPE && state == IOAction::PRESS)
+                Ar8ge::stop(); // TODO: Throw exit event
+        });
+
     }
     Video::~Video() {}
 

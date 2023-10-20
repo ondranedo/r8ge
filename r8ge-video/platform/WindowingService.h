@@ -1,11 +1,13 @@
 #ifndef R8GE_WINDOWSINGSERVICE_H
 #define R8GE_WINDOWSINGSERVICE_H
 
+#include "../../r8ge-core/events/Strokes.h"
+
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <memory>
-
+#include <functional>
 
 namespace r8ge {
     namespace video {
@@ -26,8 +28,10 @@ namespace r8ge {
 
             static std::shared_ptr<WindowingService> create();
 
+            void setKeyPressedCallback(std::function<void(const r8ge::IOCode&, IOAction)> callback);
         protected:
             bool m_mainWindowCreated;
+            std::function<void(const r8ge::IOCode&, IOAction)> m_keyActionCallback;
         };
     }
 }

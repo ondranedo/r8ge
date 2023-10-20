@@ -1,6 +1,6 @@
 #include "X11.h"
 #include "../../WindowingService.h"
-
+#include "X11-convertor.h"
 
 #include <r8ge/r8ge.h>
 
@@ -11,6 +11,7 @@ namespace r8ge {
         }
 
         void X11::init() {
+
             m_display = XOpenDisplay(nullptr);
             R8GE_ASSERT(m_display, "X11 display was failed to open");
 
@@ -95,12 +96,15 @@ namespace r8ge {
                 XNextEvent(m_display, &event);
 
                 switch (event.type) {
-                    case KeyPress:
-                        if(event.xkey.keycode == 9)
-                            Ar8ge::stop(); // TODO: Add kill event
+                    case KeyPress: {
+                        IOCode code = X11Convertor::convertKeyCode(event.xkey.keycode);
+                        m_keyActionCallback(code, IOAction::PRESS);
                         break;
-                    case KeyRelease:
+                    } case KeyRelease: {
+                        IOCode code = X11Convertor::convertKeyCode(event.xkey.keycode);
+                        m_keyActionCallback(code, IOAction::RELEASE);
                         break;
+                    }
                     case Expose:
                         break;
                 }
