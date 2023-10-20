@@ -6,7 +6,6 @@
 #include <vector>
 #include <memory>
 
-#include "../Window.h"
 
 namespace r8ge {
     namespace video {
@@ -18,7 +17,7 @@ namespace r8ge {
             virtual void init() = 0;
             virtual void release() = 0;
 
-            virtual bool createWindow(const Window::Dims& dims, std::string_view title) = 0;
+            virtual bool createWindow(size_t width, size_t height, std::string_view title) = 0;
 
             virtual void poolEvents() = 0;
 

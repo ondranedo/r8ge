@@ -15,6 +15,12 @@ namespace r8ge {
         void exit();
 
     public:
+        std::string m_title;
+
+    private:
+
+
+    public:
         static std::shared_ptr<video::WindowingService> getWindowingService();
 
     private:

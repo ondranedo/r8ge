@@ -41,6 +41,7 @@ namespace r8ge {
         static EventQueue::CallbackFn s_eventQueue;
         static bool s_running;
         static bool s_ready;
+        static std::mutex s_mutex;
     };
 }
 

@@ -5,7 +5,6 @@
 #include <cstddef>
 #include <unordered_map>
 
-#include "../../../Window.h"
 #include "../../WindowingService.h"
 
 //  TODO: Move to RenderingAPI
@@ -23,7 +22,7 @@ namespace r8ge {
             virtual ~X11() override;
             void init() override;
             void release() override;
-            bool createWindow(const Window::Dims &dims, std::string_view title) override;
+            bool createWindow(size_t width, size_t height, std::string_view title) override;
             bool showWindow(std::string_view title) override;
             bool hideWindow(std::string_view title) override;
             bool destroyWindow(std::string_view title) override;
@@ -36,13 +35,13 @@ namespace r8ge {
 
             void updateWindows() override;
 
+            bool isWindowPresent(std::string_view title) const;
         public:
             Display *m_display;
             ::Window m_rootWindow;
             XVisualInfo* m_visual;
             Colormap m_colormap;
             XSetWindowAttributes m_windowAttributes;
-            uint8_t m_depth;
             std::unordered_map<std::string_view, std::pair<::Window, bool>> m_windows;
 
             //TODO: Move to RenderingAPI

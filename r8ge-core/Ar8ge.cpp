@@ -11,9 +11,13 @@ namespace r8ge {
     EventQueue::CallbackFn Ar8ge::s_eventQueue = nullptr;
     bool Ar8ge::s_running = true;
     bool Ar8ge::s_ready = false;
+    std::mutex Ar8ge::s_mutex;
 
     Ar8ge::Ar8ge(){
+        s_mutex.lock();
         s_eventQueue = m_queue.getCallbackFn();
+        s_mutex.unlock();
+
         R8GE_LOG("Ar8ge event queue set - events may be received");
 
         m_game = r8ge::createGame();
@@ -25,7 +29,9 @@ namespace r8ge {
         R8GE_LOG_INFOR("Ar8ge initialized");
 
         // Other modules may use this time to initialize
+        s_mutex.lock();
         s_ready = true;
+        s_mutex.unlock();
     }
 
     void Ar8ge::exit() {
@@ -35,7 +41,9 @@ namespace r8ge {
 
     Ar8ge::~Ar8ge() {
         m_queue.emptyQueue();
+        s_mutex.lock();
         s_eventQueue = nullptr;
+        s_mutex.unlock();
 
         R8GE_LOG("Ar8ge event queue set to nullptr");
 
@@ -50,25 +58,26 @@ namespace r8ge {
 
         R8GE_LOG("Engine application starting main loop");
 
-        while(s_running) {
+        while(isRunning()) {
             m_game->onUpdate();
             m_queue.emptyQueue();
-
-            s_running = false;
         }
 
         m_game->onExit();
     }
 
     bool Ar8ge::isReady() {
+        std::lock_guard<std::mutex> lock(s_mutex);
         return s_ready;
     }
 
     bool Ar8ge::isRunning() {
+        std::lock_guard<std::mutex> lock(s_mutex);
         return s_running;
     }
 
     EventQueue::CallbackFn Ar8ge::getEventQueue() {
+        std::lock_guard<std::mutex> lock(s_mutex);
         return s_eventQueue;
     }
 }
