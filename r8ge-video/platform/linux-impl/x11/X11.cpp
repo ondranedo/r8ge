@@ -33,15 +33,7 @@ namespace r8ge {
                 =   ExposureMask
                 |   KeyPressMask
                 |   KeyReleaseMask
-                //|   SubstructureNotifyMask
-                //|   StructureNotifyMask
-                //|   SubstructureRedirectMask
                 ;
-            //m_windowAttributes.do_not_propagate_mask = 0; // Do not propagate any events
-
-            XColor magenta = {0xFF, 0x00, 0xFF};
-            m_windowAttributes.background_pixel = magenta.pixel;
-
             R8GE_LOG("X11 windowing service initialized");
 
             //  TODO: Create context for rendering API
@@ -51,31 +43,15 @@ namespace r8ge {
         }
 
         void X11::release() {
-            for(auto& [title, window] : m_windows) {
-                    destroyWindow(title);
-                if(window.second)
-                R8GE_LOG_WARNI("X11 Window `{}` was not destroyed, destroying it now", title);
-            }
+            if(m_mainWindowCreated)
+                destroyMainWindow();
             R8GE_LOG("X11 windowing service released");
         }
 
-        bool X11::createWindow(size_t width, size_t height, std::string_view title) {
-            R8GE_LOG("Creating X11 Window `{}`", title);
+        bool X11::createMainWindow(size_t width, size_t height, std::string_view title) {
+            R8GE_LOG("X11 Window is being creating `{}`", title);
 
-            if(m_windows.size()>1)
-            {
-                R8GE_LOG_WARNI("X11 R8GE-VIDEO only supports 1 window");
-                return false;
-            }
-
-            if(isWindowPresent(title))
-            {
-                R8GE_LOG_WARNI("X11 Window `{}` already exists", title);
-                return false;
-            }
-
-
-            ::Window win = XCreateWindow(
+            m_mainWindow = XCreateWindow(
                     m_display, m_rootWindow,
                     0, 0,
                     width, height,
@@ -84,63 +60,30 @@ namespace r8ge {
                     CWColormap | CWEventMask,
                     &m_windowAttributes);
 
-            if(!win)
+            if(!m_mainWindow)
             {
-                R8GE_LOG_ERROR("X11 Window `{}` failed to create", title);
+                R8GE_LOG_ERROR("X11 Main window `{}` failed to create", title);
                 return false;
             }
 
-            XStoreName(m_display, win, title.data());
-
-            bool wasEmpty = m_windows.empty();
+            XStoreName(m_display, m_mainWindow, title.data());
+            XMapWindow(m_display, m_mainWindow);
+            m_mainWindowTitle = title;
+            m_mainWindowCreated = true;
 
             // TODO: Move to RenderingAPI
-            m_windows[title] = {win, false};
-            setContextOfWindow(title);
+            setContextOfMainWindow();
+
+            R8GE_LOG_INFOR("X11 Main window `{}` created", title.data());
 
             // TODO: Move to RenderingAPI
-            if(wasEmpty) {
-                auto res = glewInit();
-                R8GE_ASSERT(res == GLEW_OK, "Failed to initialize GLEW: `{}`", (char *) glewGetErrorString(res));
-            }
-
-
-            R8GE_LOG_INFOR("X11 Window `{}` created", title.data());
-
-            m_windowCount++;
-            m_windows[title].second =  true;
-            return true;
-        }
-
-        bool X11::showWindow(std::string_view title) {
-            if(!isWindowPresent(title))
-            {
-                R8GE_LOG_WARNI("X11 Window `{}` can't be found when showing it", title);
+            auto res = glewInit();
+            if(res != GLEW_OK) {
+                R8GE_LOG_ERROR("Failed to initialize GLEW: `{}`", (char *) glewGetErrorString(res));
                 return false;
             }
+            R8GE_LOG("GLEW initialized");
 
-            XMapWindow(m_display, m_windows[title].first);
-            return true;
-        }
-
-        bool X11::hideWindow(std::string_view title) {
-            if(!isWindowPresent(title))
-            {
-                R8GE_LOG_WARNI("X11 Window `{}` can't be found when hiding it", title);
-                return false;
-            }
-
-            return false;
-        }
-
-        bool X11::destroyWindow(std::string_view title) {
-            if(!isWindowPresent(title)) {
-                R8GE_LOG_WARNI("X11 Window `{}` can't be found when destroying it", title);
-                return false;
-            }
-            XDestroyWindow(m_display, m_windows[title].first);
-            m_windows.erase(title);
-            m_windowCount--;
             return true;
         }
 
@@ -152,32 +95,18 @@ namespace r8ge {
                 XNextEvent(m_display, &event);
 
                 switch (event.type) {
-                    case Expose:
-                        break;
                     case KeyPress:
                         if(event.xkey.keycode == 9)
                             Ar8ge::stop(); // TODO: Add kill event
                         break;
                     case KeyRelease:
                         break;
-                    default:
+                    case Expose:
                         break;
                 }
             }
         }
-
-        void X11::swapBuffersOfWindow(std::string_view title) {
-            if(!isWindowPresent(title))
-            {
-                R8GE_LOG_WARNI("X11 Window `{}` can't be found when swapping buffers", title);
-                return;
-            }
-
-            //TODO: Add double buffering option into settings,
-            //      Create abstraction for rendering API
-            glXSwapBuffers(m_display, m_windows[title].first);
-        }
-
+/*
         void X11::setVSyncOnWindow(std::string_view title, bool enabled) {
             if(!isWindowPresent(title))
             {
@@ -189,26 +118,33 @@ namespace r8ge {
             auto glXSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC) glXGetProcAddress(
                     (const GLubyte *) "glXSwapIntervalEXT");
             glXSwapIntervalEXT(m_display, m_windows[title].first, enabled);
-        }
-
-        void X11::setContextOfWindow(std::string_view title) {
-            if(!isWindowPresent(title))
-            {
-                R8GE_LOG_WARNI("X11 Window `{}` can't be found when setting context to current", title);
-                return;
-            }
-
-            //TODO: Create abstraction for rendering API
-            glXMakeCurrent(m_display, m_windows[title].first, m_context);
-            glXMakeContextCurrent(m_display, m_windows[title].first, m_windows[title].first, m_context);
-        }
+        }*/
 
         X11::~X11() = default;
 
-        bool X11::isWindowPresent(std::string_view title) const {
-            if(!m_windows.contains(title))
+        bool X11::destroyMainWindow() {
+            if(!m_mainWindowCreated)
                 return false;
+            XDestroyWindow(m_display, m_mainWindow);
+            m_mainWindowCreated = false;
             return true;
+        }
+
+        bool X11::setContextOfMainWindow() {
+            if(!m_mainWindowCreated)
+                return false;
+            glXMakeContextCurrent(m_display, m_mainWindow, m_mainWindow, m_context);
+            glXMakeCurrent(m_display, m_mainWindow, m_context);
+            return true;
+        }
+
+        void X11::swapBuffersOfMainWindow() {
+            if(!m_mainWindowCreated)
+                return;
+
+            //TODO: Add double buffering option into settings,
+            //      Create abstraction for rendering API
+            glXSwapBuffers(m_display, m_mainWindow);
         }
     }
 }

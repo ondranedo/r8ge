@@ -17,7 +17,7 @@ namespace r8ge {
     void Video::init() {
         s_windowingService->init();
 
-        s_windowingService->createWindow(800, 600, m_title);
+        s_windowingService->createMainWindow(800, 600, m_title);
 
         R8GE_LOG_INFOR("R8GE-Video initialized");
     }
@@ -25,19 +25,17 @@ namespace r8ge {
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
 
-        s_windowingService->showWindow(m_title);
-
         while(Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
             glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            s_windowingService->swapBuffersOfWindow(m_title);
+            s_windowingService->swapBuffersOfMainWindow();
         }
     }
 
     void Video::exit() {
-        s_windowingService->destroyWindow(m_title);
+        s_windowingService->destroyMainWindow();
 
         s_windowingService->release();
 

@@ -22,25 +22,25 @@ namespace r8ge {
             virtual ~X11() override;
             void init() override;
             void release() override;
-            bool createWindow(size_t width, size_t height, std::string_view title) override;
-            bool showWindow(std::string_view title) override;
-            bool hideWindow(std::string_view title) override;
-            bool destroyWindow(std::string_view title) override;
+            bool createMainWindow(size_t width, size_t height, std::string_view title) override;
+
+
+
             void poolEvents() override;
 
-            void swapBuffersOfWindow(std::string_view title) override;
-            void setVSyncOnWindow(std::string_view title, bool enabled) override;
+            bool destroyMainWindow() override;
 
-            void setContextOfWindow(std::string_view title) override;
+            bool setContextOfMainWindow() override;
 
-            bool isWindowPresent(std::string_view title) const;
+            void swapBuffersOfMainWindow() override;
+
         public:
             Display *m_display;
-            ::Window m_rootWindow;
+            ::Window m_rootWindow, m_mainWindow;
+            std::string m_mainWindowTitle;
             XVisualInfo* m_visual;
             Colormap m_colormap;
             XSetWindowAttributes m_windowAttributes;
-            std::unordered_map<std::string_view, std::pair<::Window, bool>> m_windows;
 
             //TODO: Move to RenderingAPI
             GLXContext m_context;

@@ -17,19 +17,17 @@ namespace r8ge {
             virtual void init() = 0;
             virtual void release() = 0;
 
-            virtual bool createWindow(size_t width, size_t height, std::string_view title) = 0;
+            virtual bool createMainWindow(size_t width, size_t height, std::string_view title) = 0;
+            virtual bool destroyMainWindow() = 0;
+            virtual bool setContextOfMainWindow() = 0;
+            virtual void swapBuffersOfMainWindow() = 0;
 
             virtual void poolEvents() = 0;
 
-            virtual void swapBuffersOfWindow(std::string_view title) = 0;
-            virtual bool showWindow(std::string_view title) = 0;
-            virtual bool hideWindow(std::string_view title) = 0;
-            virtual bool destroyWindow(std::string_view title) = 0;
-            virtual void setContextOfWindow(std::string_view title) = 0;
-            virtual void setVSyncOnWindow(std::string_view title, bool enabled) = 0;
             static std::shared_ptr<WindowingService> create();
+
         protected:
-            size_t m_windowCount;
+            bool m_mainWindowCreated;
         };
     }
 }
