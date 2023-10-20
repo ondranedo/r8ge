@@ -12,17 +12,9 @@ namespace r8ge {
             using Dims = std::pair<unsigned short, unsigned short>;
 
         public:
-            Window(const Dims& dims_w_h, std::string_view title);
-            ~Window();
-            void show();
-            void hide();
-        private:
-            void create();
-
-        public:
-            Dims m_dims;
-            std::string m_title;
-            bool m_isCreated;
+            static void show(std::string_view title);
+            static void hide(std::string_view title);
+            static void create(const Dims& dims_w_h, std::string_view title);
         };
     }
 }

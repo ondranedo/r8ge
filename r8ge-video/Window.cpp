@@ -4,27 +4,20 @@
 
 #include <r8ge/r8ge.h>
 
+#include "Video.h"
+
 namespace r8ge {
     namespace video {
-        Window::Window(const r8ge::video::Window::Dims &dims_w_h, std::string_view title)
-        : m_dims(dims_w_h), m_title(title), m_isCreated(false)
-        {}
-
-        Window::~Window() = default;
-
-        void Window::show() {
-            if(!m_isCreated)
-                create();
-            video::WindowingService::getService().setContextOfWindow(m_title);
+        void Window::show(std::string_view title) {
+            Video::getWindowingService()->showWindow(title);
         }
 
-        void Window::hide() {
-            video::WindowingService::getService().hideWindow(m_title);
+        void Window::hide(std::string_view title) {
+            Video::getWindowingService()->hideWindow(title);
         }
 
-        void Window::create() {
-            video::WindowingService::getService().createWindow(m_dims, m_title);
-            m_isCreated = true;
+        void Window::create(const Window::Dims &dims_w_h, std::string_view title) {
+            Video::getWindowingService()->createWindow(dims_w_h, title);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace r8ge {
     }
 
     void video::EntryPoint::run() {
-        while(!global::ar8geReady)
+        while(!Ar8ge::isReady())
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
         // TODO: Get data from core
@@ -27,7 +27,6 @@ namespace r8ge {
         video.run();
 
         video.exit();
-
     }
 
     video::EntryPoint entryPoint;

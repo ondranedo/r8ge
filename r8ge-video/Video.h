@@ -14,14 +14,13 @@ namespace r8ge {
         void run();
         void exit();
 
-    private:
-        std::shared_ptr<video::WindowingService> m_windowingService;
-        bool m_isRunning;
-    };
+    public:
+        static std::shared_ptr<video::WindowingService> getWindowingService();
 
-    namespace global {
-        extern std::unique_ptr<Video> video;
-    }
+    private:
+        static std::shared_ptr<video::WindowingService> s_windowingService;
+        static bool s_isReady;
+    };
 }
 
 #endif//!R8GE_VIDEO_H

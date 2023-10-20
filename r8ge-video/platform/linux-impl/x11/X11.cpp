@@ -109,9 +109,6 @@ namespace r8ge {
                     case Expose:
                         break;
                     case KeyPress:
-                        if(XLookupKeysym(&event.xkey, 0)==65307) {
-                            global::ar8geRunning = false;
-                        }
                         break;
                     case KeyRelease:
                         break;

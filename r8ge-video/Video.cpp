@@ -5,25 +5,22 @@
 #include <r8ge/r8ge.h>
 
 namespace r8ge {
-    namespace global {
-        std::unique_ptr<Video> video;
-    }
+    std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
+    bool Video::s_isReady = false;
 
-    Video::Video() : m_isRunning(false) , m_windowingService(video::WindowingService::create()) {}
+    Video::Video() {
+        s_windowingService = video::WindowingService::create();
+    }
     Video::~Video() {}
 
     void Video::init() {
-        m_windowingService->init();
-
-        video::WindowingService::setActiveService(m_windowingService);
+        s_windowingService->init();
 
         R8GE_LOG_INFOR("R8GE-Video initialized");
     }
 
     void Video::exit() {
-        video::WindowingService::releaseService();
-
-        m_windowingService->release();
+        s_windowingService->release();
 
         R8GE_LOG_INFOR("R8GE-Video released");
     }
@@ -31,8 +28,12 @@ namespace r8ge {
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
 
-        while(global::ar8geRunning) {
-            m_windowingService->updateWindows();
+        while(Ar8ge::isRunning()) {
+            s_windowingService->updateWindows();
         }
+    }
+
+    std::shared_ptr<video::WindowingService> Video::getWindowingService() {
+        return s_windowingService;
     }
 }

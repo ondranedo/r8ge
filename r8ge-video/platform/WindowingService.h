@@ -31,11 +31,7 @@ namespace r8ge {
             virtual void updateWindows() = 0;
 
             static std::shared_ptr<WindowingService> create();
-            [[nodiscard]] static WindowingService& getService();
-            static void releaseService();
-            static void setActiveService(const std::shared_ptr<WindowingService>& service);
         protected:
-            static std::shared_ptr<WindowingService> s_activeService;
             size_t m_windowCount;
         };
     }
