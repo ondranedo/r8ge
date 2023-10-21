@@ -26,7 +26,7 @@ namespace r8ge {
 
     private:
         EventQueue m_queue;
-        std::shared_ptr<GameInstance> m_game;
+        std::shared_ptr<Instance> m_game;
 
         // STATIC HACKING
     public:

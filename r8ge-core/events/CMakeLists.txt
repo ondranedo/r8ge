@@ -1,4 +1,4 @@
-add_library(events
+add_library(r8ge-core-events
         "Event.cpp"
         "Event.h"
         "EventPayload.cpp"
@@ -12,9 +12,9 @@ add_library(events
         "MouseEvents.h"
         "WindowEvents.cpp"
         "WindowEvents.h"
-        Strokes.cpp
-        Dispatcher.cpp
-        Dispatcher.h
-        EngineEvents.cpp
-        EngineEvents.h
+        "Strokes.cpp"
+        "Dispatcher.cpp"
+        "Dispatcher.h"
+        "EngineEvents.cpp"
+        "EngineEvents.h"
 )

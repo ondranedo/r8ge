@@ -23,19 +23,19 @@ add_library(r8ge-core
 
 # Subcomponents of `Core`
 add_subdirectory(utility)
-target_link_libraries(r8ge-core PUBLIC utility)
+target_link_libraries(r8ge-core PUBLIC r8ge-core-utility)
 
 add_subdirectory(platform)
-target_link_libraries(r8ge-core PRIVATE platform)
+target_link_libraries(r8ge-core PRIVATE r8ge-core-platform)
 
 add_subdirectory(events)
-target_link_libraries(r8ge-core PUBLIC events)
+target_link_libraries(r8ge-core PUBLIC r8ge-core-events)
 
 add_subdirectory(instance)
-target_link_libraries(r8ge-core PUBLIC instance)
+target_link_libraries(r8ge-core PUBLIC r8ge-core-instance)
 
 add_subdirectory(fileio)
-target_link_libraries(r8ge-core PRIVATE fileio)
+target_link_libraries(r8ge-core PUBLIC r8ge-core-fileio)
 
 # Compile definitions
 target_compile_definitions(r8ge-core PRIVATE R8GE_CORE_BUILD)

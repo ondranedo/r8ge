@@ -23,7 +23,7 @@ namespace r8ge {
 
         R8GE_LOG("Ar8ge event queue set - events may be received");
         m_queue.setEngineCallback([this](auto && PH1){handleEngineEvents(std::forward<decltype(PH1)>(PH1));});
-        m_game = r8ge::createGame();
+        m_game = r8ge::createInstance();
 
         R8GE_LOG("Engine application created");
     }
