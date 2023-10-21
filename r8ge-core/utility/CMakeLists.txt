@@ -1,4 +1,4 @@
-add_library(r8ge-utility
+add_library(r8ge-core-utility
         "StringFormat.h"
         "StringFormat.cpp"
         "TimeStamp.h"

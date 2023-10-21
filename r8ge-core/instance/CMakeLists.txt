@@ -1,4 +1,4 @@
-add_library(r8ge-instance
+add_library(r8ge-core-instance
         "Instance.cpp"
         "Instance.h"
         "GameInstance.cpp"
@@ -6,4 +6,4 @@ add_library(r8ge-instance
 )
 
 add_subdirectory(layers)
-target_link_libraries(r8ge-instance PUBLIC r8ge-layers)
+target_link_libraries(r8ge-core-instance PUBLIC r8ge-core-layers)

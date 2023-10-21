@@ -1,4 +1,4 @@
-add_library(r8ge-events
+add_library(r8ge-core-events
         "Event.cpp"
         "Event.h"
         "EventPayload.cpp"
