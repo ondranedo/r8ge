@@ -59,5 +59,9 @@ namespace r8ge {
 
             return i + 1;  // 1 for ']'
         }
+
+        std::vector<Json> Array::as_vector() const {
+            return m_vector;
+        }
     }
 }
