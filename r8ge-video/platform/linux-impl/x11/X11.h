@@ -24,19 +24,15 @@ namespace r8ge {
             void release() override;
             bool createMainWindow(size_t width, size_t height, std::string_view title) override;
 
-
-
             void poolEvents() override;
-
             bool destroyMainWindow() override;
-
             bool setContextOfMainWindow() override;
-
             void swapBuffersOfMainWindow() override;
 
         public:
             Display *m_display;
             ::Window m_rootWindow, m_mainWindow;
+            size_t m_mainWindowWidth, m_mainWindowHeight;
             std::string m_mainWindowTitle;
             XVisualInfo* m_visual;
             Colormap m_colormap;

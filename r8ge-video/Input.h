@@ -25,7 +25,9 @@ namespace r8ge {
             ~Input();
 
             void sendKeyAction(const r8ge::IOCode &code, IOAction action);
+            void sendMouseAction(const r8ge::IOCode &code, IOAction action);
             [[nodiscard]] std::function<void(const r8ge::IOCode&, IOAction)> getKeyActionCallback();
+            [[nodiscard]] std::function<void(const r8ge::IOCode&, IOAction)> getMouseActionCallback();
 
             bool isShiftPressed() const;
             bool isCtrlPressed() const;

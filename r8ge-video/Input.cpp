@@ -26,6 +26,23 @@ namespace r8ge {
         Ar8ge::getEventQueue()(payload);
     }
 
+    void video::Input::sendMouseAction(const IOCode &code, IOAction action) {
+        m_keyPressedMap[code] = (action == IOAction::PRESS);
+
+        EventPayload payload;
+        payload.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
+        IOStroke stroke = {code, m_shiftPressed, m_ctrlPressed, m_altPressed, m_superPressed};
+        if(action == IOAction::PRESS)
+            payload.setEvent(std::make_shared<MousePressed>(stroke));
+        else
+            payload.setEvent(std::make_shared<MouseReleased>(stroke));
+        Ar8ge::getEventQueue()(payload);
+    }
+
+    std::function<void(const r8ge::IOCode &, IOAction)> video::Input::getMouseActionCallback() {
+        return [this](auto && PH1, auto && PH2) { sendMouseAction(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2)); };
+    }
+
     std::function<void(const r8ge::IOCode &, IOAction)> video::Input::getKeyActionCallback() {
         return [this](auto && PH1, auto && PH2) { sendKeyAction(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2)); };
     }
