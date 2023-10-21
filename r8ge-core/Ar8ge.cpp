@@ -6,6 +6,9 @@
 #include "../r8ge-video/Video.h"
 #include "../r8ge-video/EntrytPoint.h"
 
+#include "events/Dispatcher.h"
+#include "events/EngineEvents.h"
+
 namespace r8ge {
     std::function<void(std::shared_ptr<Event>)> Ar8ge::m_layerSwitcherCallback = nullptr;
     EventQueue::CallbackFn Ar8ge::s_eventQueue = nullptr;
@@ -19,7 +22,7 @@ namespace r8ge {
         s_mutex.unlock();
 
         R8GE_LOG("Ar8ge event queue set - events may be received");
-
+        m_queue.setEngineCallback([this](auto && PH1){handleEngineEvents(std::forward<decltype(PH1)>(PH1));});
         m_game = r8ge::createGame();
 
         R8GE_LOG("Engine application created");
@@ -31,8 +34,8 @@ namespace r8ge {
         // Other modules may use this time to initialize
         s_mutex.lock();
         s_ready = true;
-        m_layerSwitcherCallback = m_game->getEventReceiver();
         s_mutex.unlock();
+        m_layerSwitcherCallback = m_game->getEventReceiver();
     }
 
     void Ar8ge::exit() {
@@ -82,14 +85,20 @@ namespace r8ge {
         return s_eventQueue;
     }
 
-    void Ar8ge::stop() {
-        std::lock_guard<std::mutex> lock(s_mutex);
-        s_running = false;
-        m_layerSwitcherCallback = nullptr;
-    }
-
     std::function<void(std::shared_ptr<Event>)> Ar8ge::getInstanceLayerSwitcherCallback() {
         std::lock_guard<std::mutex> lock(s_mutex);
         return m_layerSwitcherCallback;
+    }
+
+    void Ar8ge::handleEngineEvents(const std::shared_ptr<Event> &event) {
+        event::Dispatcher dispatcher(event);
+
+        dispatcher.dispatch<EngineKill>([](const std::shared_ptr<EngineKill>& event) ->bool {
+            R8GE_LOG_WARNI("Engine kill event received, exit procedure in place");
+            s_mutex.lock();
+            s_running = false;
+            s_mutex.unlock();
+            return true;
+        });
     }
 }

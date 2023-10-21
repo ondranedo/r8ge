@@ -15,4 +15,6 @@ add_library(events
         Strokes.cpp
         Dispatcher.cpp
         Dispatcher.h
+        EngineEvents.cpp
+        EngineEvents.h
 )

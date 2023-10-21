@@ -23,5 +23,6 @@
 #include "../r8ge-core/events/EventPayload.h"
 #include "../r8ge-core/events/KeyEvents.h"
 #include "../r8ge-core/events/Dispatcher.h"
+#include "../r8ge-core/events/EngineEvents.h"
 
 #endif//!R8GE_H

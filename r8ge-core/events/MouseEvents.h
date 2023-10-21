@@ -5,36 +5,36 @@
 #include "Strokes.h"
 
 namespace r8ge {
-    struct MouseMoved : public Event
+    struct MouseMoved : public UserEvent
     {
         double x, y;
 
         MouseMoved(double _x, double _y);
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct MouseScrolled : public Event
+    struct MouseScrolled : public UserEvent
     {
         double x, y;
 
         MouseScrolled(double _x, double _y);
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct MousePressed : public Event
+    struct MousePressed : public UserEvent
     {
         IOStroke stroke;
 
         explicit MousePressed(IOStroke _stroke);
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct MouseReleased : public Event
+    struct MouseReleased : public UserEvent
     {
         IOStroke stroke;
 
         explicit MouseReleased(IOStroke _stroke);
-        static EventType getEventType();
+        static Type getEventType();
     };
 }
 
