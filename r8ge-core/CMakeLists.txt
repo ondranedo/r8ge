@@ -35,7 +35,7 @@ add_subdirectory(instance)
 target_link_libraries(r8ge-core PUBLIC r8ge-core-instance)
 
 add_subdirectory(fileio)
-target_link_libraries(r8ge-core PRIVATE r8ge-core-fileio)
+target_link_libraries(r8ge-core PUBLIC r8ge-core-fileio)
 
 # Compile definitions
 target_compile_definitions(r8ge-core PRIVATE R8GE_CORE_BUILD)

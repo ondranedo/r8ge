@@ -3,6 +3,8 @@ add_library(r8ge-core-instance
         "Instance.h"
         "GameInstance.cpp"
         "GameInstance.h"
+        "ConsoleAppInstance.cpp"
+        "ConsoleAppInstance.h"
 )
 
 add_subdirectory(layers)
