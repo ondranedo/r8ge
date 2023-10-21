@@ -8,7 +8,7 @@ if(LINUX)
     )
 endif()
 
-add_library(platform
+add_library(r8ge-platform
         ${include-headers}
         ${platform-code}
 )

@@ -1,4 +1,4 @@
-add_library(fileio
+add_library(r8ge-fileio
         "File.cpp"
         "File.h"
         "FileReader.cpp"
