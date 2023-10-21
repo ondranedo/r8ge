@@ -134,5 +134,6 @@ namespace r8ge {
             case IOCode::RIGHT_SUPER: return "right super";
             case IOCode::MENU: return "menu";
         }
+        return "unknown";
     }
 }

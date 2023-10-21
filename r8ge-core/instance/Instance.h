@@ -29,9 +29,24 @@ namespace r8ge {
 
         // Returns the reference to the layer switcher, used to add/remove layers
         [[nodiscard]] LayerSwitcher& layerSwitcher();
+
+        // Called when class is initialized, not created!
+        virtual void onInit() = 0;
+
+        // Called evert frame, main core game logic should be here, not the rendering!
+        // Rendering should be handled by the layers
+        virtual void onUpdate() = 0;
+
+        // Called when the class is destroyed, not deleted!
+        virtual void onExit() = 0;
     private:
         LayerSwitcher m_layerSwitecher;
     };
+
+    extern std::shared_ptr<r8ge::Instance> createInstance();
 }
+
+#define R8GE_ADD_INSTANCE(x) namespace r8ge {std::shared_ptr<Instance> createInstance() {return std::make_shared<x>();}}
+
 
 #endif//!R8GE_INSTANCE_H
