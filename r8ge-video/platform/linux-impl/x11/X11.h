@@ -5,11 +5,14 @@
 #include <cstddef>
 #include <unordered_map>
 
-#include<X11/X.h>
-#include<X11/Xlib.h>
-
-#include "../../../Window.h"
 #include "../../WindowingService.h"
+
+//  TODO: Move to RenderingAPI
+#include <GL/glew.h>
+#include <GL/glx.h>
+
+#include <X11/Xutil.h>
+#include <X11/Xlib.h>
 
 namespace r8ge {
     namespace video {
@@ -19,19 +22,28 @@ namespace r8ge {
             virtual ~X11() override;
             void init() override;
             void release() override;
-            bool createWindow(const Window::Dims &dims, std::string_view title) override;
-            bool showWindow(std::string_view title) override;
-            bool hideWindow(std::string_view title) override;
-            bool destroyWindow(std::string_view title) override;
+            bool createMainWindow(size_t width, size_t height, std::string_view title) override;
+
+
+
+            void poolEvents() override;
+
+            bool destroyMainWindow() override;
+
+            bool setContextOfMainWindow() override;
+
+            void swapBuffersOfMainWindow() override;
 
         public:
             Display *m_display;
-            ::Window m_rootWindow;
-            Visual* m_visual;
+            ::Window m_rootWindow, m_mainWindow;
+            std::string m_mainWindowTitle;
+            XVisualInfo* m_visual;
             Colormap m_colormap;
             XSetWindowAttributes m_windowAttributes;
-            uint8_t m_depth;
-            std::unordered_map<std::string_view, ::Window> m_windows;
+
+            //TODO: Move to RenderingAPI
+            GLXContext m_context;
         };
     }
 }

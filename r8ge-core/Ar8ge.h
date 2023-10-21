@@ -6,13 +6,6 @@
 #include "instance/GameInstance.h"
 
 namespace r8ge {
-    // The global main event queue, every event is sent to this queue
-    namespace global {
-        extern EventQueue::CallbackFn ar8geEventQueue;
-        extern bool ar8geRunning;
-        extern bool ar8geReady;
-    }
-
     // Main Application class, handles the main loop, the event queue, and the game instances
     class Ar8ge {
     public:
@@ -30,6 +23,30 @@ namespace r8ge {
     private:
         EventQueue m_queue;
         std::shared_ptr<GameInstance> m_game;
+
+        // STATIC HACKING
+    public:
+        // Returns true if the engine is ready to run
+        // Other modules may use this time to initialize
+        static bool isReady();
+
+        // Returns true if the engine is running
+        // Other modules may use this time to exit
+        static bool isRunning();
+
+        // Stops the engine
+        static void stop();
+
+        // Returns the main event queue
+        static EventQueue::CallbackFn getEventQueue();
+
+        static std::function<void(std::shared_ptr<Event>)> getInstanceLayerSwitcherCallback();
+    private:
+        static EventQueue::CallbackFn s_eventQueue;
+        static std::function<void(std::shared_ptr<Event>)> m_layerSwitcherCallback;
+        static bool s_running;
+        static bool s_ready;
+        static std::mutex s_mutex;
     };
 }
 

@@ -1,12 +1,13 @@
 #ifndef R8GE_WINDOWSINGSERVICE_H
 #define R8GE_WINDOWSINGSERVICE_H
 
+#include "../../r8ge-core/events/Strokes.h"
+
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <memory>
-
-#include "../Window.h"
+#include <functional>
 
 namespace r8ge {
     namespace video {
@@ -18,19 +19,19 @@ namespace r8ge {
             virtual void init() = 0;
             virtual void release() = 0;
 
-            virtual bool createWindow(const Window::Dims& dims, std::string_view title) = 0;
-            virtual bool showWindow(std::string_view title) = 0;
-            virtual bool hideWindow(std::string_view title) = 0;
-            virtual bool destroyWindow(std::string_view title) = 0;
+            virtual bool createMainWindow(size_t width, size_t height, std::string_view title) = 0;
+            virtual bool destroyMainWindow() = 0;
+            virtual bool setContextOfMainWindow() = 0;
+            virtual void swapBuffersOfMainWindow() = 0;
+
+            virtual void poolEvents() = 0;
 
             static std::shared_ptr<WindowingService> create();
-            [[nodiscard]] static WindowingService& getService();
-            static void releaseService();
-            static void setActiveService(const std::shared_ptr<WindowingService>& service);
 
+            void setKeyPressedCallback(std::function<void(const r8ge::IOCode&, IOAction)> callback);
         protected:
-            static std::shared_ptr<WindowingService> s_activeService;
-            size_t m_windowCount;
+            bool m_mainWindowCreated;
+            std::function<void(const r8ge::IOCode&, IOAction)> m_keyActionCallback;
         };
     }
 }
