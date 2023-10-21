@@ -46,8 +46,8 @@ namespace r8ge {
                 Ar8ge::getEventQueue()(p);
             }
 
-            glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            //s_renderingService->setClearColor({0x545454});
+            s_renderingService->clear();
 
             s_windowingService->swapBuffersOfMainWindow();
         }

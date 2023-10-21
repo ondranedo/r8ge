@@ -1,13 +1,13 @@
 #ifndef R8GE_WINDOWSINGSERVICE_H
 #define R8GE_WINDOWSINGSERVICE_H
 
-#include <r8ge/r8ge.h>
-
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <memory>
 #include <functional>
+
+#include "../../r8ge-core/events/Strokes.h"
 
 namespace r8ge {
     namespace video {

@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "../renderer/Color.h"
+
 namespace r8ge {
     namespace video {
         class RenderingService {
@@ -16,8 +18,15 @@ namespace r8ge {
 
             virtual void init() = 0;
             virtual void exit() = 0;
+
+            virtual void clear() const = 0;
+
+            void setClearColor(Color c);
         public:
             static std::shared_ptr<RenderingService> create(API api);
+
+        protected:
+            Color m_clearColor;
         };
     }
 }

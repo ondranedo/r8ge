@@ -1,6 +1,8 @@
 add_library(r8ge-video-rendering-service
         "RenderingService.cpp"
         "RenderingService.h"
+        "buffers/Buffer.cpp"
+        "buffers/Buffer.h"
 )
 
 target_include_directories(r8ge-video-rendering-service PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -1,9 +1,9 @@
 #ifndef R8GE_INPUT_H
 #define R8GE_INPUT_H
-
-#include <r8ge/r8ge.h>
 #include <functional>
 #include <unordered_map>
+
+#include "../r8ge-core/events/Strokes.h"
 
 namespace r8ge {
     namespace video {

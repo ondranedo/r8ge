@@ -24,7 +24,7 @@ add_library(r8ge-video-platform
         ${platform-code}
 )
 
-target_include_directories(r8ge-video-platform PRIVATE "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(r8ge-video-platform PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
 if (LINUX)
     find_package(GLEW REQUIRED)
