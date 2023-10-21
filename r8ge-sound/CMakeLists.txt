@@ -9,6 +9,8 @@ add_library(r8ge-sound
         "Generators.hpp"
         "Sequencer.cpp"
         "Sequencer.hpp"
+        "Visualiser.cpp"
+        "Visualiser.h"
 )
 
 find_package(ALSA REQUIRED)

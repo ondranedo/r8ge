@@ -26,6 +26,7 @@ namespace r8ge {
         void stopSound();
         [[nodiscard]] double getGeneratedTime() const;
         void addSound(Sound* sound);
+        float *newCurrentSamples();
     private:
 #ifdef R8GE_WINDOWS
         WAVEFORMATEX* m_wfx = NULL;
@@ -49,6 +50,10 @@ namespace r8ge {
         std::vector<Sound*> m_activeSounds = {};
         std::mutex m_soundVectorGuard;
         double m_generatedTime = 0.0;
+
+        float* m_lastSamples = nullptr;
+        int m_lastSamplesCount = (1 << 14);
+        int m_lastSamplesCurr;
 
         void mainLoop();
         double sumSoundsAndRemove(unsigned char channel);

@@ -5,8 +5,7 @@
 #include "Sound.hpp"
 #include <iostream>
 #include <cmath>
-#include <cstdlib>
-#include <random>
+#include <cstring>
 
 #define R8GE_MAIN_VOLUME 0.01
 
@@ -189,6 +188,9 @@ r8ge::AudioPusher::AudioPusher() {
         std::cout << "Couldn't set parameters" << std::endl;
     }
 
+    m_lastSamples = new float[m_lastSamplesCount];
+    m_lastSamplesCurr = 0;
+
     m_mainLoop = std::thread(&AudioPusher::mainLoop, this);
 
     snd_pcm_start(m_pcmHandle);
@@ -198,6 +200,7 @@ r8ge::AudioPusher::AudioPusher() {
 
 r8ge::AudioPusher::~AudioPusher() {
     m_mainLoop.join();
+    delete[] m_lastSamples;
 }
 
 void r8ge::AudioPusher::stopSound() {
@@ -208,11 +211,19 @@ void r8ge::AudioPusher::mainLoop() {
     /* Allocate buffer to hold single period */
     unsigned int buff_size = 4 /*float*/ * m_nOfSamplesPerBuff * m_channels;
     char* buff = new char[buff_size];
+    float sum, chan;
 
     while(m_run){
         for (int i = 0; i < m_nOfSamplesPerBuff; i++) {
+            sum = 0;
             for (int j = 0; j < m_channels; j++) {
-                *((float*) buff + i * m_channels + j) = (float)(sumSoundsAndRemove(j) * R8GE_MAIN_VOLUME);
+                chan = (float)(sumSoundsAndRemove(j) * R8GE_MAIN_VOLUME);
+                *((float*) buff + i * m_channels + j) = chan;
+                sum += chan;
+            }
+            m_lastSamples[m_lastSamplesCurr++] = sum;
+            if(m_lastSamplesCurr == m_lastSamplesCount){
+                m_lastSamplesCurr = 0;
             }
             m_generatedTime += m_timeStep;
         }
@@ -257,6 +268,12 @@ double r8ge::AudioPusher::getGeneratedTime() const {
 void r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
     m_activeSounds.push_back(sound);
+}
+
+float *r8ge::AudioPusher::newCurrentSamples() {
+    auto r = new float[m_lastSamplesCount];
+    std::memcpy(r, m_lastSamples, m_lastSamplesCount);
+    return r;
 }
 
 /*
