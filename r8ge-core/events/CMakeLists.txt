@@ -12,4 +12,9 @@ add_library(events
         "MouseEvents.h"
         "WindowEvents.cpp"
         "WindowEvents.h"
+        Strokes.cpp
+        Dispatcher.cpp
+        Dispatcher.h
+        EngineEvents.cpp
+        EngineEvents.h
 )

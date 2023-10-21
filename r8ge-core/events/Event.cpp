@@ -4,11 +4,11 @@
 namespace r8ge {
 
 
-    Event::Event() : m_header(EventType::NONE, false){}
+    Event::Event() : m_header(Type::NONE, false){}
 
     Event::~Event() = default;
 
-    Event::EventType Event::getType() const {
+    Event::Type Event::getType() const {
         return m_header.type;
     }
 
@@ -22,19 +22,27 @@ namespace r8ge {
 
     std::string Event::to_string() const {
         switch (m_header.type) {
-            case EventType::NONE:               return "NONE";
-            case EventType::WINDOW_RESIZED:     return "WINDOW_RESIZED";
-            case EventType::WINDOW_CLOSED:      return "WINDOW_CLOSED";
-            case EventType::WINDOW_FOCUS:       return "WINDOW_FOCUS";
-            case EventType::WINDOW_LOST_FOCUS:  return "WINDOW_LOST_FOCUS";
-            case EventType::WINDOW_MOVED:       return "WINDOW_MOVED";
-            case EventType::KEY_PRESSED:        return "KEY_PRESSED";
-            case EventType::KEY_RELEASED:       return "KEY_RELEASED";
-            case EventType::MOUSE_PRESSED:      return "MOUSE_PRESSED";
-            case EventType::MOUSE_RELEASED:     return "MOUSE_RELEASED";
-            case EventType::MOUSE_MOVED:        return "MOUSE_MOVED";
-            case EventType::MOUSE_SCROLLED:     return "MOUSE_SCROLLED";
+            case Type::NONE:               return "NONE";
+            case Type::WINDOW_RESIZED:     return "WINDOW_RESIZED";
+            case Type::WINDOW_CLOSED:      return "WINDOW_CLOSED";
+            case Type::WINDOW_FOCUS:       return "WINDOW_FOCUS";
+            case Type::WINDOW_LOST_FOCUS:  return "WINDOW_LOST_FOCUS";
+            case Type::KEY_PRESSED:        return "KEY_PRESSED";
+            case Type::KEY_RELEASED:       return "KEY_RELEASED";
+            case Type::MOUSE_PRESSED:      return "MOUSE_PRESSED";
+            case Type::MOUSE_RELEASED:     return "MOUSE_RELEASED";
+            case Type::MOUSE_MOVED:        return "MOUSE_MOVED";
+            case Type::MOUSE_SCROLLED:     return "MOUSE_SCROLLED";
+            case Type::KILL_ENGINE:        return "KILL_ENGINE";
         }
         return "";
+    }
+
+    Event::Handler Event::getHandler() const {
+        return Event::Handler::NONE;
+    }
+
+    Event::Handler UserEvent::getHandler() const {
+        return Event::Handler::USER;
     }
 }

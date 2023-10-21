@@ -7,7 +7,7 @@ namespace r8ge {
             return FileType::JSON;
         }
 
-        Json::Json(const std::string &path) : Text(path) {
+        Json::Json(std::string_view path) : Text(path) {
             write("{}");
         }
 

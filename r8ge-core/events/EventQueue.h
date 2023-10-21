@@ -26,12 +26,16 @@ namespace r8ge {
         // Empty the queue, and delegate all the events to the callback function.
         void emptyQueue();
 
+        // Callback function to engine event handler.
+        void setEngineCallback(const std::function<void(const std::shared_ptr<Event>&)>& callback);
+
         // Get the callback function to the event queue system.
         [[nodiscard]] CallbackFn getCallbackFn();
 
     private:
         std::queue<EventPayload> m_queue;
         std::mutex m_queueMutex;
+        std::function<void(const std::shared_ptr<Event>&)> m_engineCallback;
     };
 }
 
