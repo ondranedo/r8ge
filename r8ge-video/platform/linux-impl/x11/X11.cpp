@@ -1,5 +1,5 @@
 #include "X11.h"
-#include "X11-convertor.h"
+#include "Convertor.h"
 #include "../../WindowingService.h"
 
 
@@ -20,27 +20,20 @@ namespace r8ge {
 
             m_rootWindow = DefaultRootWindow(m_display);
 
-            // TODO: Add double buffering option into settings
-            // TODO: Add abstraction for rendering API
-            GLint attributes[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-            auto visualInfo = glXChooseVisual(m_display, 0, attributes);
+            m_xContext = video::XContext::create();
+            m_xContext->setDisplay(m_display);
+            m_xContext->init();
 
-            m_visual = visualInfo;
-
-            R8GE_ASSERT(visualInfo, "X11 Visual was failed to create");
-
-            m_colormap = XCreateColormap(m_display, m_rootWindow, m_visual->visual, AllocNone);
-            m_windowAttributes.colormap = m_colormap;
+            auto colormap = XCreateColormap(m_display, m_rootWindow, m_xContext->getVisualInfo()->visual, AllocNone);//*
+            m_windowAttributes.colormap = colormap;
             m_windowAttributes.event_mask = ExposureMask;
             R8GE_LOG("X11 windowing service initialized");
 
-            //  TODO: Create context for rendering API
-            m_context = glXCreateContext(m_display, m_visual, nullptr, GL_TRUE);
-            R8GE_ASSERT(m_context, "X11 Context failed to create");
-            R8GE_LOG("X11 gl Context created");
+            m_xContext->createContext();
         }
 
-        void X11::release() {
+        void X11::exit() {
+            m_xContext->exit();
             if(m_mainWindowCreated)
                 destroyMainWindow();
             R8GE_LOG("X11 windowing service released");
@@ -54,7 +47,7 @@ namespace r8ge {
                     0, 0,
                     width, height,
                     0,
-                    m_visual->depth, InputOutput, m_visual->visual,
+                    m_xContext->getVisualInfo()->depth, InputOutput, m_xContext->getVisualInfo()->visual,//*
                     CWColormap | CWEventMask,
                     &m_windowAttributes);
 
@@ -71,23 +64,15 @@ namespace r8ge {
             m_mainWindowHeight = height;
             m_mainWindowWidth = width;
 
-            // TODO: Move to RenderingAPI
-            setContextOfMainWindow();
-
             R8GE_LOG_INFOR("X11 Main window `{}` created", title.data());
 
-            // TODO: Move to RenderingAPI
-            auto res = glewInit();
-            if(res != GLEW_OK) {
-                R8GE_LOG_ERROR("Failed to initialize GLEW: `{}`", (char *) glewGetErrorString(res));
-                return false;
-            }
-            R8GE_LOG("GLEW initialized");
+            m_xContext->setWindow(m_mainWindow);
+            m_xContext->windowIsReady();
 
             return true;
         }
 
-        X11::X11() : m_display(nullptr), m_rootWindow(0), m_visual(nullptr), m_colormap(0), m_windowAttributes{} {}
+        X11::X11() : m_display(nullptr), m_rootWindow(0), m_windowAttributes{} {}
 
         void X11::poolEvents() {
             XEvent event;
@@ -135,19 +120,6 @@ namespace r8ge {
                 }
             }
         }
-/*
-        void X11::setVSyncOnWindow(std::string_view title, bool enabled) {
-            if(!isWindowPresent(title))
-            {
-                R8GE_LOG_WARNI("X11 Window `{}` can't be found when setting VSync", title);
-                return;
-            }
-
-            // TODO: Create abstraction for rendering API
-            auto glXSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC) glXGetProcAddress(
-                    (const GLubyte *) "glXSwapIntervalEXT");
-            glXSwapIntervalEXT(m_display, m_windows[title].first, enabled);
-        }*/
 
         X11::~X11() = default;
 
@@ -160,10 +132,7 @@ namespace r8ge {
         }
 
         bool X11::setContextOfMainWindow() {
-            if(!m_mainWindowCreated)
-                return false;
-            glXMakeContextCurrent(m_display, m_mainWindow, m_mainWindow, m_context);
-            glXMakeCurrent(m_display, m_mainWindow, m_context);
+            m_xContext->setContextActive();
             return true;
         }
 
@@ -171,9 +140,7 @@ namespace r8ge {
             if(!m_mainWindowCreated)
                 return;
 
-            //TODO: Add double buffering option into settings,
-            //      Create abstraction for rendering API
-            glXSwapBuffers(m_display, m_mainWindow);
+            m_xContext->swapBuffers();
         }
     }
 }

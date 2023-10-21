@@ -16,3 +16,6 @@ target_include_directories(r8ge-video PRIVATE "${CMAKE_SOURCE_DIR}/include")
 
 add_subdirectory(platform)
 target_link_libraries(r8ge-video PUBLIC r8ge-video-platform)
+
+add_subdirectory(renderingService)
+target_link_libraries(r8ge-video PUBLIC r8ge-video-rendering-service)

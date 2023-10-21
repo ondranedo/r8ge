@@ -17,7 +17,7 @@ namespace r8ge {
             virtual ~WindowingService();
 
             virtual void init() = 0;
-            virtual void release() = 0;
+            virtual void exit() = 0;
 
             virtual bool createMainWindow(size_t width, size_t height, std::string_view title) = 0;
             virtual bool destroyMainWindow() = 0;

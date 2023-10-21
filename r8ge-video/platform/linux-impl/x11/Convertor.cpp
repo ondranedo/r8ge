@@ -1,4 +1,4 @@
-#include "X11-convertor.h"
+#include "Convertor.h"
 
 namespace r8ge {
     namespace video {
