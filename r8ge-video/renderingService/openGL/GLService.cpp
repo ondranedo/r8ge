@@ -14,7 +14,8 @@ namespace r8ge {
         }
 
         void GLService::init() {
-
+            auto version = std::string_view(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+            R8GE_LOG_INFOR("GL Running version: {}", version);
         }
 
         void GLService::exit() {
@@ -31,7 +32,21 @@ namespace r8ge {
         }
 
         void GLService::render() const {
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.0, 0.0, 0.0);
+            glVertex2f(-0.5, -0.5);
+            glColor3f(0.0, 1.0, 0.0);
+            glVertex2f(0.5, -0.5);
+            glColor3f(0.0, 0.0, 1.0);
+            glVertex2f(0.5, 0.5);
 
+            glColor3f(1.0, 0.0, 0.0);
+            glVertex2f(-0.5, 0.5);
+            glColor3f(0.0, 1.0, 0.0);
+            glVertex2f(-0.5, -0.5);
+            glColor3f(0.0, 0.0, 1.0);
+            glVertex2f(0.5, 0.5);
+            glEnd();
         }
     }
 }

@@ -3,7 +3,6 @@
 #include "EntrytPoint.h"
 
 #include <r8ge/r8ge.h>
-#include <GL/glew.h>
 
 namespace r8ge {
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
@@ -25,10 +24,11 @@ namespace r8ge {
     }
 
     void Video::init() {
-        s_renderingService->init();
         s_windowingService->init();
 
         s_windowingService->createMainWindow(800, 600, m_title);
+
+        s_renderingService->init();
 
         R8GE_LOG_INFOR("R8GE-Video initialized");
     }
