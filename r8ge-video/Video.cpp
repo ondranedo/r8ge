@@ -31,8 +31,11 @@ namespace r8ge {
             s_windowingService->poolEvents();
 
             // TODO: Config file, key bindings
-            if(m_input.isKeyPressed({IOCode::ESCAPE, IOCode::MBUTTON_LEFT}))
-                Ar8ge::stop(); // TODO: Send Kill event
+            if(m_input.isKeyPressed({IOCode::ESCAPE, IOCode::MBUTTON_LEFT})) {
+                EventPayload p;
+                p.setEvent(std::make_shared<EngineKill>());
+                Ar8ge::getEventQueue()(p);
+            }
 
             glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
