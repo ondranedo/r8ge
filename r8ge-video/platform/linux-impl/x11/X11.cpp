@@ -1,12 +1,9 @@
 #include "X11.h"
+#include "X11-convertor.h"
 #include "../../WindowingService.h"
 
 
 #include <r8ge/r8ge.h>
-
-
-#include <GL/glx.h>
-
 
 namespace r8ge {
     namespace video {
@@ -15,77 +12,168 @@ namespace r8ge {
         }
 
         void X11::init() {
+
             m_display = XOpenDisplay(nullptr);
-            R8GE_ASSERT(m_display, "Failed to open X11 display");
+            R8GE_ASSERT(m_display, "X11 display was failed to open");
+
+            R8GE_LOG_DEBUG("X11 display: {}x{}", XDisplayWidth(m_display, 0), XDisplayHeight(m_display, 0));
 
             m_rootWindow = DefaultRootWindow(m_display);
 
             // TODO: Add double buffering option into settings
             // TODO: Add abstraction for rendering API
             GLint attributes[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-            auto visualInfo = glXChooseVisual(m_display, 0, attributes);\
+            auto visualInfo = glXChooseVisual(m_display, 0, attributes);
 
-            m_depth = visualInfo->depth;
-            m_visual = visualInfo->visual;
+            m_visual = visualInfo;
 
-            R8GE_ASSERT(visualInfo, "Failed to create X11 visual");
+            R8GE_ASSERT(visualInfo, "X11 Visual was failed to create");
 
-            m_colormap = XCreateColormap(m_display,m_rootWindow, m_visual, AllocNone);
+            m_colormap = XCreateColormap(m_display, m_rootWindow, m_visual->visual, AllocNone);
             m_windowAttributes.colormap = m_colormap;
-            m_windowAttributes.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask;
-
+            m_windowAttributes.event_mask = ExposureMask;
             R8GE_LOG("X11 windowing service initialized");
+
+            //  TODO: Create context for rendering API
+            m_context = glXCreateContext(m_display, m_visual, nullptr, GL_TRUE);
+            R8GE_ASSERT(m_context, "X11 Context failed to create");
+            R8GE_LOG("X11 gl Context created");
         }
 
         void X11::release() {
+            if(m_mainWindowCreated)
+                destroyMainWindow();
             R8GE_LOG("X11 windowing service released");
         }
 
-        bool X11::createWindow(const Window::Dims &dims, std::string_view title) {
-            ::Window win = XCreateWindow(
+        bool X11::createMainWindow(size_t width, size_t height, std::string_view title) {
+            R8GE_LOG("X11 Window is being creating `{}`", title);
+
+            m_mainWindow = XCreateWindow(
                     m_display, m_rootWindow,
                     0, 0,
-                    dims.first, dims.second,
+                    width, height,
                     0,
-                    m_depth, InputOutput, m_visual,
+                    m_visual->depth, InputOutput, m_visual->visual,
                     CWColormap | CWEventMask,
                     &m_windowAttributes);
 
-            XStoreName(m_display, win, title.data());
-
-            if(!win)
+            if(!m_mainWindow)
             {
-                R8GE_LOG_ERROR("Failed to create X11 window");
+                R8GE_LOG_ERROR("X11 Main window `{}` failed to create", title);
                 return false;
             }
 
-            m_windows[title] = win;
-            m_windowCount++;
+            XStoreName(m_display, m_mainWindow, title.data());
+            XMapWindow(m_display, m_mainWindow);
+            m_mainWindowTitle = title;
+            m_mainWindowCreated = true;
+            m_mainWindowHeight = height;
+            m_mainWindowWidth = width;
+
+            // TODO: Move to RenderingAPI
+            setContextOfMainWindow();
+
+            R8GE_LOG_INFOR("X11 Main window `{}` created", title.data());
+
+            // TODO: Move to RenderingAPI
+            auto res = glewInit();
+            if(res != GLEW_OK) {
+                R8GE_LOG_ERROR("Failed to initialize GLEW: `{}`", (char *) glewGetErrorString(res));
+                return false;
+            }
+            R8GE_LOG("GLEW initialized");
 
             return true;
         }
 
-        bool X11::showWindow(std::string_view title) {
-            if(!m_windows.contains(title))
+        X11::X11() : m_display(nullptr), m_rootWindow(0), m_visual(nullptr), m_colormap(0), m_windowAttributes{} {}
+
+        void X11::poolEvents() {
+            XEvent event;
+            XSelectInput(m_display, m_mainWindow, ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask);
+
+            while (XPending(m_display) > 0) {
+                XNextEvent(m_display, &event);
+
+                switch (event.type) {
+                    case KeyPress: {
+                        IOCode code = X11Convertor::convertKeyCode(event.xkey.keycode);
+                        m_keyActionCallback(code, IOAction::PRESS);
+                        break;
+                    } case KeyRelease: {
+                        IOCode code = X11Convertor::convertKeyCode(event.xkey.keycode);
+                        m_keyActionCallback(code, IOAction::RELEASE);
+                        break;
+                    } case MotionNotify: {
+                        EventPayload p;
+                        p.setEvent(std::make_shared<MouseMoved>(event.xmotion.x, event.xmotion.y));
+                        p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
+                        Ar8ge::getEventQueue()(p);
+                        break;
+                    } case ButtonPress: {
+                        IOCode code = X11Convertor::convertKeyCode((event.xbutton.button)<<8);
+                        m_mouseActionCallback(code, IOAction::PRESS);
+                        break;
+                    } case ButtonRelease: {
+                        IOCode code = X11Convertor::convertKeyCode((event.xbutton.button)<<8);
+                        m_mouseActionCallback(code, IOAction::RELEASE);
+                        break;
+                    } case Expose: {
+                        m_mainWindowHeight = event.xexpose.height;
+                        m_mainWindowWidth = event.xexpose.width;
+
+                        EventPayload p;
+                        p.setEvent(std::make_shared<WindowResized>(m_mainWindowWidth, m_mainWindowHeight));
+                        p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
+                        Ar8ge::getEventQueue()(p);
+                        break;
+                    }
+                    default: {
+                        R8GE_LOG_DEBUG("X11 Event: `{}`", event.type);
+                    }
+                }
+            }
+        }
+/*
+        void X11::setVSyncOnWindow(std::string_view title, bool enabled) {
+            if(!isWindowPresent(title))
             {
-                R8GE_LOG_ERROR("Failed to show X11 window: window not found");
-                return false;
+                R8GE_LOG_WARNI("X11 Window `{}` can't be found when setting VSync", title);
+                return;
             }
 
-            XMapWindow(m_display, m_windows[title]);
-            return true;
-        }
-
-        bool X11::hideWindow(std::string_view title) {
-            return false;
-        }
-
-        bool X11::destroyWindow(std::string_view title) {
-            return false;
-        }
-
-        X11::X11() : m_display(nullptr), m_rootWindow(0), m_visual(nullptr), m_colormap(0), m_depth(0), m_windowAttributes{} {}
+            // TODO: Create abstraction for rendering API
+            auto glXSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC) glXGetProcAddress(
+                    (const GLubyte *) "glXSwapIntervalEXT");
+            glXSwapIntervalEXT(m_display, m_windows[title].first, enabled);
+        }*/
 
         X11::~X11() = default;
+
+        bool X11::destroyMainWindow() {
+            if(!m_mainWindowCreated)
+                return false;
+            XDestroyWindow(m_display, m_mainWindow);
+            m_mainWindowCreated = false;
+            return true;
+        }
+
+        bool X11::setContextOfMainWindow() {
+            if(!m_mainWindowCreated)
+                return false;
+            glXMakeContextCurrent(m_display, m_mainWindow, m_mainWindow, m_context);
+            glXMakeCurrent(m_display, m_mainWindow, m_context);
+            return true;
+        }
+
+        void X11::swapBuffersOfMainWindow() {
+            if(!m_mainWindowCreated)
+                return;
+
+            //TODO: Add double buffering option into settings,
+            //      Create abstraction for rendering API
+            glXSwapBuffers(m_display, m_mainWindow);
+        }
     }
 }

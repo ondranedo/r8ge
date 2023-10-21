@@ -4,12 +4,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 add_library(r8ge-video
-        "Window.cpp"
-        "Window.h"
         Video.cpp
         Video.h
         EntrytPoint.cpp
         EntrytPoint.h
+        Input.cpp
+        Input.h
 )
 
 target_include_directories(r8ge-video PRIVATE "${CMAKE_SOURCE_DIR}/include")

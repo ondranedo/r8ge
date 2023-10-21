@@ -6,18 +6,18 @@
 #include "Strokes.h"
 
 namespace r8ge {
-    struct KeyPressed : public Event {
+    struct KeyPressed : public UserEvent {
         IOStroke stroke;
         bool repeat;
         KeyPressed(IOStroke stroke, bool repeat);
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct KeyReleased : public Event {
+    struct KeyReleased : public UserEvent {
         IOStroke stroke;
 
         KeyReleased(IOStroke _key);
-        static EventType getEventType();
+        static Type getEventType();
     };
 }
 
