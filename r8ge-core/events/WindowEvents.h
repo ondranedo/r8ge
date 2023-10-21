@@ -4,37 +4,30 @@
 #include "Event.h"
 
 namespace r8ge {
-    struct WindowResized : public Event
+    struct WindowResized : public UserEvent
     {
         unsigned int x, y;
 
         WindowResized(unsigned int _x, unsigned int _y);
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct WindowClosed : public Event
+    struct WindowClosed : public UserEvent
     {
         WindowClosed();
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct WindowFocus : public Event
+    struct WindowFocus : public UserEvent
     {
         WindowFocus();
-        static EventType getEventType();
+        static Type getEventType();
     };
 
-    struct WindowLostFocus : public Event
+    struct WindowLostFocus : public UserEvent
     {
         WindowLostFocus();
-        static EventType getEventType();
-    };
-
-    struct WindowMoved : public Event
-    {
-        double x, y;
-        WindowMoved(double _x, double _y);
-        static EventType getEventType();
+        static Type getEventType();
     };
 }
 

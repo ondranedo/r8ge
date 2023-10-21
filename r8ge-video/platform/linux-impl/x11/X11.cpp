@@ -1,6 +1,7 @@
 #include "X11.h"
-#include "../../WindowingService.h"
 #include "X11-convertor.h"
+#include "../../WindowingService.h"
+
 
 #include <r8ge/r8ge.h>
 
@@ -30,11 +31,7 @@ namespace r8ge {
 
             m_colormap = XCreateColormap(m_display, m_rootWindow, m_visual->visual, AllocNone);
             m_windowAttributes.colormap = m_colormap;
-            m_windowAttributes.event_mask
-                =   ExposureMask
-                |   KeyPressMask
-                |   KeyReleaseMask
-                ;
+            m_windowAttributes.event_mask = ExposureMask;
             R8GE_LOG("X11 windowing service initialized");
 
             //  TODO: Create context for rendering API
@@ -71,6 +68,8 @@ namespace r8ge {
             XMapWindow(m_display, m_mainWindow);
             m_mainWindowTitle = title;
             m_mainWindowCreated = true;
+            m_mainWindowHeight = height;
+            m_mainWindowWidth = width;
 
             // TODO: Move to RenderingAPI
             setContextOfMainWindow();
@@ -92,6 +91,8 @@ namespace r8ge {
 
         void X11::poolEvents() {
             XEvent event;
+            XSelectInput(m_display, m_mainWindow, ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask);
+
             while (XPending(m_display) > 0) {
                 XNextEvent(m_display, &event);
 
@@ -104,9 +105,33 @@ namespace r8ge {
                         IOCode code = X11Convertor::convertKeyCode(event.xkey.keycode);
                         m_keyActionCallback(code, IOAction::RELEASE);
                         break;
-                    }
-                    case Expose:
+                    } case MotionNotify: {
+                        EventPayload p;
+                        p.setEvent(std::make_shared<MouseMoved>(event.xmotion.x, event.xmotion.y));
+                        p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
+                        Ar8ge::getEventQueue()(p);
                         break;
+                    } case ButtonPress: {
+                        IOCode code = X11Convertor::convertKeyCode((event.xbutton.button)<<8);
+                        m_mouseActionCallback(code, IOAction::PRESS);
+                        break;
+                    } case ButtonRelease: {
+                        IOCode code = X11Convertor::convertKeyCode((event.xbutton.button)<<8);
+                        m_mouseActionCallback(code, IOAction::RELEASE);
+                        break;
+                    } case Expose: {
+                        m_mainWindowHeight = event.xexpose.height;
+                        m_mainWindowWidth = event.xexpose.width;
+
+                        EventPayload p;
+                        p.setEvent(std::make_shared<WindowResized>(m_mainWindowWidth, m_mainWindowHeight));
+                        p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
+                        Ar8ge::getEventQueue()(p);
+                        break;
+                    }
+                    default: {
+                        R8GE_LOG_DEBUG("X11 Event: `{}`", event.type);
+                    }
                 }
             }
         }

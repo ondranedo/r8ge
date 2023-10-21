@@ -107,6 +107,9 @@ namespace r8ge {
                 case 86: return IOCode::KP_ADD;
                 case 104: return IOCode::KP_ENTER;
                 case 91: return IOCode::KP_DECIMAL;
+                case 1<<8: return IOCode::MBUTTON_LEFT;
+                case 3<<8: return IOCode::MBUTTON_RIGHT;
+                case 2<<8: return IOCode::MBUTTON_MIDDLE;
             }
             return IOCode::UNKNOWN;
         }

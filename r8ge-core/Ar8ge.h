@@ -21,6 +21,10 @@ namespace r8ge {
         // Performs the necessary cleanup, and exits the engine
         void exit();
     private:
+        // Handles the events sent to the engine
+        void handleEngineEvents(const std::shared_ptr<Event>& event);
+
+    private:
         EventQueue m_queue;
         std::shared_ptr<GameInstance> m_game;
 
@@ -33,9 +37,6 @@ namespace r8ge {
         // Returns true if the engine is running
         // Other modules may use this time to exit
         static bool isRunning();
-
-        // Stops the engine
-        static void stop();
 
         // Returns the main event queue
         static EventQueue::CallbackFn getEventQueue();

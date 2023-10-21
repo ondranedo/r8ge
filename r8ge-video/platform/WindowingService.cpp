@@ -10,5 +10,9 @@ namespace r8ge {
         void WindowingService::setKeyPressedCallback(std::function<void(const r8ge::IOCode &, IOAction)> callback) {
             m_keyActionCallback = callback;
         }
+
+        void WindowingService::setMousePressedCallback(std::function<void(const r8ge::IOCode &, IOAction)> callback) {
+            m_mouseActionCallback = callback;
+        }
     }
 }
