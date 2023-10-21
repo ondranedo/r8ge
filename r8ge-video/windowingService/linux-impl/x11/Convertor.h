@@ -1,7 +1,7 @@
 #ifndef R8GE_CONVERTOR_H
 #define R8GE_CONVERTOR_H
 
-#include "../r8ge-core/events/Strokes.h"
+#include <r8ge/r8ge.h>
 
 namespace r8ge {
     namespace video {

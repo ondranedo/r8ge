@@ -1,7 +1,7 @@
 #ifndef R8GE_VIDEO_H
 #define R8GE_VIDEO_H
 
-#include "platform/WindowingService.h"
+#include "windowingService/WindowingService.h"
 #include "renderingService/RenderingService.h"
 #include <memory>
 #include "Input.h"

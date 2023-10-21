@@ -1,7 +1,7 @@
 #ifndef R8GE_WINDOWSINGSERVICE_H
 #define R8GE_WINDOWSINGSERVICE_H
 
-#include "../../r8ge-core/events/Strokes.h"
+#include <r8ge/r8ge.h>
 
 #include <cstddef>
 #include <string>

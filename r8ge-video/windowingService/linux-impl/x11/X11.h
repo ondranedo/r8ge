@@ -7,10 +7,6 @@
 
 #include "../../WindowingService.h"
 
-//  TODO: Move to RenderingAPI
-#include <GL/glew.h>
-#include <GL/glx.h>
-
 #include "../../../renderingService/context/X11/XContext.h"
 
 #include <X11/Xutil.h>
