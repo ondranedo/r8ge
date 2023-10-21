@@ -28,12 +28,12 @@ namespace r8ge {
 
             static std::shared_ptr<WindowingService> create();
 
-            void setKeyPressedCallback(std::function<void(const r8ge::IOCode&, IOAction)> callback);
-            void setMousePressedCallback(std::function<void(const r8ge::IOCode&, IOAction)> callback);
+            void setKeyPressedCallback(std::function<void(const r8ge::Code&, IOAction)> callback);
+            void setMousePressedCallback(std::function<void(const r8ge::Code&, IOAction)> callback);
         protected:
             bool m_mainWindowCreated;
-            std::function<void(const r8ge::IOCode&, IOAction)> m_keyActionCallback;
-            std::function<void(const r8ge::IOCode&, IOAction)> m_mouseActionCallback;
+            std::function<void(const r8ge::Code&, IOAction)> m_keyActionCallback;
+            std::function<void(const r8ge::Code&, IOAction)> m_mouseActionCallback;
         };
     }
 }

@@ -9,25 +9,13 @@ namespace r8ge {
     namespace video {
         class Input {
         public:
-            enum Modulator {
-                Shift = 0b0001,
-                Ctrl  = 0b0010,
-                Alt   = 0b0100,
-                Super = 0b1000
-            };
-
-            friend Modulator operator | (Modulator lhs, Modulator rhs) {
-                return static_cast<Modulator>(static_cast<int>(lhs) | static_cast<int>(rhs));
-            }
-
-        public:
             Input();
             ~Input();
 
-            void sendKeyAction(const r8ge::IOCode &code, IOAction action);
-            void sendMouseAction(const r8ge::IOCode &code, IOAction action);
-            [[nodiscard]] std::function<void(const r8ge::IOCode&, IOAction)> getKeyActionCallback();
-            [[nodiscard]] std::function<void(const r8ge::IOCode&, IOAction)> getMouseActionCallback();
+            void sendKeyAction(const r8ge::Code &code, IOAction action);
+            void sendMouseAction(const r8ge::Code &code, IOAction action);
+            [[nodiscard]] std::function<void(const r8ge::Code&, IOAction)> getKeyActionCallback();
+            [[nodiscard]] std::function<void(const r8ge::Code&, IOAction)> getMouseActionCallback();
 
             bool isShiftPressed() const;
             bool isCtrlPressed() const;
@@ -37,10 +25,10 @@ namespace r8ge {
 
             // Returns true if all keys in the list are pressed and the modulator is satisfied
             // F.e. isKeyPressed({IOCode::A, IOCode::B}, video::Input::Shift | video::Input::Ctrl) returns true if A and B are pressed and Shift and Ctrl are pressed
-            bool isKeyPressed(const std::initializer_list<IOCode>& code, Modulator modulator) const;
-            bool isKeyPressed(const std::initializer_list<IOCode>& code) const;
+            bool isKeyPressed(const std::initializer_list<Code>& code, Modifier modifier) const;
+            bool isKeyPressed(const std::initializer_list<Code>& code) const;
         private:
-            std::unordered_map<r8ge::IOCode,bool> m_keyPressedMap;
+            std::unordered_map<r8ge::Code,bool> m_keyPressedMap;
 
             bool m_shiftPressed : 1;
             bool m_ctrlPressed : 1;

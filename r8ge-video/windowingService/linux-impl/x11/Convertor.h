@@ -7,7 +7,7 @@ namespace r8ge {
     namespace video {
         class X11Convertor {
         public:
-            static IOCode convertKeyCode(int x11KeDyCode);
+            static Code convertKeyCode(int x11KeDyCode);
         };
     }
 }

@@ -40,14 +40,17 @@ namespace r8ge {
             s_windowingService->poolEvents();
 
             // TODO: Config file, key bindings
-            if(m_input.isKeyPressed({IOCode::ESCAPE, IOCode::MBUTTON_LEFT})) {
+            if(m_input.isKeyPressed({Code::ESCAPE, Code::MBUTTON_LEFT})) {
                 EventPayload p;
                 p.setEvent(std::make_shared<EngineKill>());
                 Ar8ge::getEventQueue()(p);
             }
 
-            //s_renderingService->setClearColor({0x545454});
+            s_renderingService->setClearColor({0x54,0x54,0x54});
             s_renderingService->clear();
+
+            // TODO: Fetch raw data from Renderer
+            s_renderingService->render();
 
             s_windowingService->swapBuffersOfMainWindow();
         }

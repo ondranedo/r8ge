@@ -14,6 +14,8 @@ namespace r8ge {
             void exit() override;
 
             void clear() const override;
+
+            void render() const override;
         };
     }
 }

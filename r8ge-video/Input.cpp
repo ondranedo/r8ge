@@ -8,11 +8,11 @@ namespace r8ge {
     video::Input::Input() : m_shiftPressed(false), m_ctrlPressed(false), m_altPressed(false), m_superPressed(false) {}
     video::Input::~Input() = default;
 
-    void video::Input::sendKeyAction(const IOCode &code, IOAction action) {
-        if(code==IOCode::LEFT_SHIFT||code==IOCode::RIGHT_SHIFT) m_shiftPressed = (action == IOAction::PRESS);
-        if(code==IOCode::LEFT_ALT||code==IOCode::RIGHT_ALT) m_altPressed = (action == IOAction::PRESS);
-        if(code==IOCode::LEFT_CONTROL||code==IOCode::RIGHT_CONTROL) m_ctrlPressed = (action == IOAction::PRESS);
-        if(code==IOCode::LEFT_SUPER||code==IOCode::RIGHT_SUPER) m_superPressed = (action == IOAction::PRESS);
+    void video::Input::sendKeyAction(const Code &code, IOAction action) {
+        if(code == Code::LEFT_SHIFT || code == Code::RIGHT_SHIFT) m_shiftPressed = (action == IOAction::PRESS);
+        if(code == Code::LEFT_ALT || code == Code::RIGHT_ALT) m_altPressed = (action == IOAction::PRESS);
+        if(code == Code::LEFT_CONTROL || code == Code::RIGHT_CONTROL) m_ctrlPressed = (action == IOAction::PRESS);
+        if(code == Code::LEFT_SUPER || code == Code::RIGHT_SUPER) m_superPressed = (action == IOAction::PRESS);
 
         m_keyPressedMap[code] = (action == IOAction::PRESS);
 
@@ -26,7 +26,7 @@ namespace r8ge {
         Ar8ge::getEventQueue()(payload);
     }
 
-    void video::Input::sendMouseAction(const IOCode &code, IOAction action) {
+    void video::Input::sendMouseAction(const Code &code, IOAction action) {
         m_keyPressedMap[code] = (action == IOAction::PRESS);
 
         EventPayload payload;
@@ -39,11 +39,11 @@ namespace r8ge {
         Ar8ge::getEventQueue()(payload);
     }
 
-    std::function<void(const r8ge::IOCode &, IOAction)> video::Input::getMouseActionCallback() {
+    std::function<void(const r8ge::Code &, IOAction)> video::Input::getMouseActionCallback() {
         return [this](auto && PH1, auto && PH2) { sendMouseAction(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2)); };
     }
 
-    std::function<void(const r8ge::IOCode &, IOAction)> video::Input::getKeyActionCallback() {
+    std::function<void(const r8ge::Code &, IOAction)> video::Input::getKeyActionCallback() {
         return [this](auto && PH1, auto && PH2) { sendKeyAction(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2)); };
     }
 
@@ -63,18 +63,19 @@ namespace r8ge {
         return m_superPressed;
     }
 
-    bool video::Input::isKeyPressed(const std::initializer_list<IOCode>& code, video::Input::Modulator modulator) const {
-        if(modulator & Modulator::Shift && !m_shiftPressed) return false;
-        if(modulator & Modulator::Ctrl && !m_ctrlPressed) return false;
-        if(modulator & Modulator::Alt && !m_altPressed) return false;
-        if(modulator & Modulator::Super && !m_superPressed) return false;
+    bool video::Input::isKeyPressed(const std::initializer_list<Code>& code, Modifier modifier) const {
+        if(modifier & Modifier::SHIFT && !m_shiftPressed) return false;
+        if(modifier & Modifier::CTRL && !m_ctrlPressed)   return false;
+        if(modifier & Modifier::ALT && !m_altPressed)     return false;
+        if(modifier & Modifier::SUPER && !m_superPressed) return false;
+        R8GE_LOG("Checking key: {}", to_string(modifier));
         return isKeyPressed(code);
     }
 
-    bool video::Input::isKeyPressed(const std::initializer_list<IOCode>& code) const {
+    bool video::Input::isKeyPressed(const std::initializer_list<Code>& code) const {
         for(auto & c : code)
         {
-            if(c == IOCode::RIGHT_SHIFT || c == IOCode::LEFT_SHIFT || c== IOCode::RIGHT_CONTROL || c == IOCode::LEFT_CONTROL || c == IOCode::RIGHT_ALT || c == IOCode::LEFT_ALT || c == IOCode::RIGHT_SUPER || c == IOCode::LEFT_SUPER ) {
+            if(c == Code::RIGHT_SHIFT || c == Code::LEFT_SHIFT || c == Code::RIGHT_CONTROL || c == Code::LEFT_CONTROL || c == Code::RIGHT_ALT || c == Code::LEFT_ALT || c == Code::RIGHT_SUPER || c == Code::LEFT_SUPER ) {
                 R8GE_LOG_WARNI("Invalid key code, use Modulator instead");
                 return false;
             }

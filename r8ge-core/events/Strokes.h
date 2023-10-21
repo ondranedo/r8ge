@@ -4,7 +4,7 @@
 #include <string>
 
 namespace r8ge {
-    enum class IOCode {
+    enum class Code {
         UNKNOWN = 0,
         MBUTTON_1,
         MBUTTON_2,
@@ -142,10 +142,22 @@ namespace r8ge {
         RELEASE = 1
     };
 
-    std::string to_string(const IOCode& code);
+    enum class Modifier {
+        NONE = 0,
+        SHIFT = 0b0001,
+        CTRL  = 0b0010,
+        ALT   = 0b0100,
+        SUPER = 0b1000
+    };
+
+    Modifier operator|(Modifier lhs, Modifier rhs);
+    bool operator&(Modifier lhs, Modifier rhs);
+
+    std::string to_string(const Code& code);
+    std::string to_string(Modifier action);
 
     struct IOStroke {
-        IOCode iocode: 12;
+        Code iocode: 12;
         bool shift : 1;
         bool ctrl : 1;
         bool alt : 1;

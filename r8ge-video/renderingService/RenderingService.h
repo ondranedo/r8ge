@@ -21,6 +21,8 @@ namespace r8ge {
 
             virtual void clear() const = 0;
 
+            virtual void render() const = 0;
+
             void setClearColor(Color c);
         public:
             static std::shared_ptr<RenderingService> create(API api);
