@@ -12,8 +12,8 @@ if(LINUX)
         set(platform-code
                 "linux-impl/x11/X11.cpp"
                 "linux-impl/x11/X11.h"
-                linux-impl/x11/X11-convertor.h
-                linux-impl/x11/X11-convertor.cpp
+                linux-impl/x11/Convertor.h
+                linux-impl/x11/Convertor.cpp
         )
     endif()
 endif()

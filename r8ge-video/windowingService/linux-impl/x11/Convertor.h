@@ -1,5 +1,5 @@
-#ifndef R8GE_X11_CONVERTOR_H
-#define R8GE_X11_CONVERTOR_H
+#ifndef R8GE_CONVERTOR_H
+#define R8GE_CONVERTOR_H
 
 #include "../r8ge-core/events/Strokes.h"
 

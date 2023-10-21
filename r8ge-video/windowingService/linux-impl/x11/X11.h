@@ -11,6 +11,8 @@
 #include <GL/glew.h>
 #include <GL/glx.h>
 
+#include "../../../renderingService/context/X11/XContext.h"
+
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>
 
@@ -21,7 +23,7 @@ namespace r8ge {
             X11();
             virtual ~X11() override;
             void init() override;
-            void release() override;
+            void exit() override;
             bool createMainWindow(size_t width, size_t height, std::string_view title) override;
 
             void poolEvents() override;
@@ -29,17 +31,17 @@ namespace r8ge {
             bool setContextOfMainWindow() override;
             void swapBuffersOfMainWindow() override;
 
-        public:
-            Display *m_display;
-            ::Window m_rootWindow, m_mainWindow;
+        private:
+            // TODO: Make Window class
             size_t m_mainWindowWidth, m_mainWindowHeight;
             std::string m_mainWindowTitle;
-            XVisualInfo* m_visual;
-            Colormap m_colormap;
-            XSetWindowAttributes m_windowAttributes;
 
-            //TODO: Move to RenderingAPI
-            GLXContext m_context;
+
+            ::Window m_mainWindow;
+            ::Display *m_display;
+            ::Window m_rootWindow;
+            ::XSetWindowAttributes m_windowAttributes;
+            std::unique_ptr<XContext> m_xContext;
         };
     }
 }

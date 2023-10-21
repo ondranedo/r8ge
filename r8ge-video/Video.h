@@ -2,6 +2,7 @@
 #define R8GE_VIDEO_H
 
 #include "platform/WindowingService.h"
+#include "renderingService/RenderingService.h"
 #include <memory>
 #include "Input.h"
 
@@ -23,9 +24,11 @@ namespace r8ge {
 
     public:
         static std::shared_ptr<video::WindowingService> getWindowingService();
+        static std::shared_ptr<video::RenderingService> getRenderingService();
 
     private:
         static std::shared_ptr<video::WindowingService> s_windowingService;
+        static std::shared_ptr<video::RenderingService> s_renderingService;
         static bool s_isReady;
     };
 }
