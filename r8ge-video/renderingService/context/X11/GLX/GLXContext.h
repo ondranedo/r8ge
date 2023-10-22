@@ -26,6 +26,8 @@ namespace r8ge {
             void setContextActive() const override;
 
             void windowIsReady() const override;
+
+            void windowChanged(size_t w, size_t h) const override;
         private:
             ::GLXContext m_context;
             ::XVisualInfo *m_visual;

@@ -3,6 +3,14 @@ add_library(r8ge-video-rendering-service
         "RenderingService.h"
         "buffers/Buffer.cpp"
         "buffers/Buffer.h"
+        "buffers/VertexBuffer.cpp"
+        "buffers/VertexBuffer.h"
+        "Vertex.cpp"
+        "Vertex.h"
+        buffers/VertexBufferLayout.cpp
+        buffers/VertexBufferLayout.h
+        buffers/IndexBuffer.cpp
+        buffers/IndexBuffer.h
 )
 
 target_include_directories(r8ge-video-rendering-service PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -59,6 +59,10 @@ namespace r8ge {
             s_contextCount++;
         }
 
+        void GLXContext::windowChanged(size_t w, size_t h) const {
+            glViewport(0, 0, w, h);
+        }
+
         GLXContext::~GLXContext() = default;
     }
 }

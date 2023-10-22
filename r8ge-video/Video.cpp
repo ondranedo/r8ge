@@ -1,8 +1,11 @@
 #include "Video.h"
 
-#include "EntrytPoint.h"
-
 #include <r8ge/r8ge.h>
+#include <X11/Xlib.h>
+
+#include "renderingService/buffers/IndexBuffer.h"
+#include "renderingService/buffers/VertexBuffer.h"
+#include "renderingService/Vertex.h"
 
 namespace r8ge {
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
@@ -49,8 +52,23 @@ namespace r8ge {
             s_renderingService->setClearColor({0x54,0x54,0x54});
             s_renderingService->clear();
 
+            //r8ge::Rectangle r1(0.5, 0.25);
+
             // TODO: Fetch raw data from Renderer
-            s_renderingService->render();
+            //s_renderingService->render(r1.getIndices(), r1.getVertices());
+            video::IndexBuffer ib({0, 1, 2048, 2, 3, 0});
+            std::vector<Vertex> vertices = {
+                     {-0.5f, -0.5f}, {0.0f, 0.0f},
+                     {0.5f, -0.5f},  {1.0f, 0.0f},
+                     {0.5f, 0.5f},   {1.0f, 1.0f},
+                     {-0.5f, 0.5f},  {0.0f, 1.0f}
+            };
+
+            video::VertexBuffer vb(vertices, video::VertexBufferLayout({video::VertexBufferLayout::Entry::POS_XY}));
+
+            auto vec = ib.getData();
+
+            auto data = vb.getData<Vertex>();
 
             s_windowingService->swapBuffersOfMainWindow();
         }

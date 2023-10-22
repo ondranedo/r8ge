@@ -16,7 +16,7 @@ namespace r8ge {
             }
         }
 
-        void RenderingService::setClearColor(Color c) {
+        void RenderingService::setClearColor(Color32 c) {
             m_clearColor = c;
         }
     }

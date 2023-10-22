@@ -1,10 +1,10 @@
 add_library(r8ge-video-renderer
-        "Color.cpp"
-        "Color.h"
-        "Mesh.cpp"
-        "Mesh.h"
-        MeshTrinagle.cpp
-        MeshTrinagle.h
-        Vertex.cpp
-        Vertex.h
+        "Types.cpp"
+        "Types.h"
+        #"Mesh.cpp"
+        #"Mesh.h"
+        #"MeshTrinagle.cpp"
+        #"MeshTrinagle.h"
+        #"Rectangle.cpp"
+        #"Rectangle.h"
 )

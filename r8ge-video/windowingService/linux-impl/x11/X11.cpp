@@ -112,6 +112,9 @@ namespace r8ge {
                         p.setEvent(std::make_shared<WindowResized>(m_mainWindowWidth, m_mainWindowHeight));
                         p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
                         Ar8ge::getEventQueue()(p);
+
+                        m_xContext->windowChanged(m_mainWindowWidth, m_mainWindowHeight);
+
                         break;
                     }
                     default: {

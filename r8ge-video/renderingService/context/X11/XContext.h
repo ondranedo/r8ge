@@ -24,6 +24,8 @@ namespace r8ge {
             virtual void init() = 0;
             virtual void exit() = 0;
 
+            virtual void windowChanged(size_t w, size_t h) const = 0;
+
             [[nodiscard]] virtual ::XVisualInfo* getVisualInfo() const = 0;
 
             [[nodiscard]] static std::unique_ptr<XContext> create();

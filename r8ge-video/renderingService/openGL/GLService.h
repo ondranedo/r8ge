@@ -3,6 +3,8 @@
 
 #include "../RenderingService.h"
 
+#include <vector>
+
 namespace r8ge {
     namespace video {
         class GLService : public RenderingService {
@@ -15,7 +17,7 @@ namespace r8ge {
 
             void clear() const override;
 
-            void render() const override;
+            void render(const std::vector<size_t>& index_data, const std::vector<float>& vertex_data) const override;
         };
     }
 }
