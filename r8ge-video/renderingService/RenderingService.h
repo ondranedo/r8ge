@@ -9,6 +9,8 @@
 #include "../types/Color.h"
 #include "../types/Vertex.h"
 
+#include "programManager/Program.h"
+
 namespace r8ge {
     namespace video {
         class RenderingService {
@@ -32,6 +34,9 @@ namespace r8ge {
             virtual void setIndexBuffer(const IndexBuffer& ib) = 0;
             virtual void setVertexBuffer(const VertexBuffer& vb) = 0;
 
+            virtual void setProgram(const Program& program) = 0;
+
+            virtual bool compileProgram(Program& program) = 0;
         public:
             static std::shared_ptr<RenderingService> create(API api);
 

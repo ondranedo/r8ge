@@ -3,6 +3,8 @@
 
 #include "GLConvertor.h"
 
+#define R8GE_GL_ERROR_MSG_LENGTH 1024
+
 namespace r8ge {
     namespace video {
         static void debugMsg(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
@@ -26,7 +28,11 @@ namespace r8ge {
         }
 
         void GLService::exit() {
-
+            for(auto& [r8geid, glid] : m_programs)
+            {
+                glDeleteProgram(glid);
+                R8GE_LOG("GL Program [r8ge:{},gl:] deleted", r8geid, glid);
+            }
         }
 
         void GLService::clear() const {
@@ -59,7 +65,8 @@ namespace r8ge {
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vb.getSize()), &vb.getRawData()[0], GL_STATIC_DRAW);
 
             m_layout = vb.getLayout();
-            setDataLayout();
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
 
         void GLService::setDataLayout() const {
@@ -90,11 +97,75 @@ namespace r8ge {
 
             glBindVertexArray(m_vertexArrayObject);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-            //glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
             setDataLayout();
 
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
+        }
+
+        void GLService::setProgram(const Program &program) {
+            glUseProgram(m_programs[program.getId()]);
+        }
+
+        bool GLService::compileProgram(Program &program) {
+
+            // Shader creation
+            GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+            GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+
+            std::string vertexShaderSource   = program.getVertexShader();
+            std::string fragmentShaderSource = program.getFragmentShader();
+
+            if(compileShader(vs, vertexShaderSource, "vertex shader")) return false;
+            if(compileShader(fs, fragmentShaderSource, "fragment shader")) return false;
+
+            // Program compilation - linking shaders to a program
+            GLuint p = glCreateProgram();
+
+            glAttachShader(p, vs);
+            glAttachShader(p, fs);
+
+            glLinkProgram(p);
+
+            int result;
+            glGetProgramiv(p, GL_LINK_STATUS, &result);
+            if (result != GL_TRUE)
+            {
+                GLsizei log_length = 0;
+                char message[R8GE_GL_ERROR_MSG_LENGTH];
+                glGetProgramInfoLog(p, R8GE_GL_ERROR_MSG_LENGTH, &log_length, message);
+                R8GE_LOG_ERROR("GL program failed to link: {}", std::string_view(message, R8GE_GL_ERROR_MSG_LENGTH));
+                return false;
+            }
+
+            glDeleteShader(vs);
+            glDeleteShader(fs);
+
+            m_programs[program.getId()] = p;
+            program.setValid();
+
+            R8GE_LOG("GL Program [r8ge:{},gl:{}] compiled and created", program.getId(), p);
+
+            return true;
+        }
+
+        bool GLService::compileShader(GLuint shader, std::string_view source, std::string_view type) const {
+            const std::string shaderSource = std::string(source);
+            glShaderSource(shader, 1, reinterpret_cast<GLchar* const* const>(shaderSource.c_str()), nullptr);
+            glCompileShader(shader);
+            int result;
+            glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+            if(result != GL_TRUE) {
+                GLsizei log_length = 0;
+                char message[R8GE_GL_ERROR_MSG_LENGTH];
+                glGetShaderInfoLog(shader, R8GE_GL_ERROR_MSG_LENGTH, &log_length, message);
+                R8GE_LOG_ERROR("Failed to compile [{}] : {}", type, std::string_view(message, R8GE_GL_ERROR_MSG_LENGTH));
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -29,10 +29,18 @@ namespace r8ge {
 
             void setDataLayout() const;
 
+            void setProgram(const Program &program) override;
+
+            bool compileProgram(Program &program) override;
+
+            bool compileShader(GLuint shader, std::string_view source, std::string_view type) const;
         private:
             GLuint m_indexBuffer, m_vertexArrayObject, m_vertexBuffer;
             size_t m_indexCount;
             VertexBufferLayout m_layout;
+
+            //      r8ge program id -> gl program id
+            std::unordered_map<size_t, GLuint> m_programs;
         };
     }
 }
