@@ -2,8 +2,12 @@
 #define R8GE_GLSERVICE_H
 
 #include "../RenderingService.h"
+#include "../buffers/IndexBuffer.h"
 
 #include <vector>
+
+#include <r8ge/r8ge.h>
+#include <GL/glew.h>
 
 namespace r8ge {
     namespace video {
@@ -17,7 +21,18 @@ namespace r8ge {
 
             void clear() const override;
 
-            void render(const std::vector<size_t>& index_data, const std::vector<float>& vertex_data) const override;
+            void render() const override;
+
+            void setIndexBuffer(const IndexBuffer &ib) override;
+
+            void setVertexBuffer(const VertexBuffer &vb) override;
+
+            void setDataLayout() const;
+
+        private:
+            GLuint m_indexBuffer, m_vertexArrayObject, m_vertexBuffer;
+            size_t m_indexCount;
+            VertexBufferLayout m_layout;
         };
     }
 }
