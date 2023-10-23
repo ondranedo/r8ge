@@ -5,8 +5,12 @@
 #ifndef R8GE_VISUALISER_H
 #define R8GE_VISUALISER_H
 
+#include <complex>
+#include <valarray>
+
 namespace r8ge{
-    void simpleFastFourier(float* out, float* in, int count, int stride = 1);
+    void simpleFastFourier(std::valarray<std::complex<float>> arr);
+    void fft(float* out, float* in, int count);
 }
 
 #endif //R8GE_VISUALISER_H

@@ -16,6 +16,7 @@
 #include "Generators.hpp"
 #include <thread>
 
+#define R8GE_LAST_SAMPLE_COUNT (1 << 11)
 
 namespace r8ge {
     class AudioPusher{
@@ -52,7 +53,7 @@ namespace r8ge {
         double m_generatedTime = 0.0;
 
         float* m_lastSamples = nullptr;
-        int m_lastSamplesCount = (1 << 14);
+        int m_lastSamplesCount = R8GE_LAST_SAMPLE_COUNT;
         int m_lastSamplesCurr;
 
         void mainLoop();
