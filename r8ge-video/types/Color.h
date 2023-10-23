@@ -1,5 +1,5 @@
-#ifndef R8GE_TYPES_H
-#define R8GE_TYPES_H
+#ifndef R8GE_COLOR_H
+#define R8GE_COLOR_H
 
 #include <cstdint>
 #include <string>
@@ -25,18 +25,6 @@ namespace r8ge {
 
         uint32_t a : 8;
     };
-
-    namespace Type {
-        enum Basic {
-            VOID,
-            UINT8,UINT16,UINT32,UINT64,
-            INT8,INT16,INT32,INT64,
-            FLOAT, DOUBLE
-        };
-
-        std::string to_string(Basic type);
-        size_t size(Basic type);
-    }
 }
 
 #endif//!R8GE_COLOR_H

@@ -29,7 +29,7 @@ namespace r8ge {
         }
 
         uint8_t VertexBufferLayout::EntryTypeSize(VertexBufferLayout::Entry type) {
-            uint8_t size = EntryTypeComponents(type) * Type::size(EntryTypeToDataType(type));
+            uint8_t size = EntryTypeComponents(type) * r8ge::size(EntryTypeToDataType(type));
             return size;
         }
 
@@ -70,17 +70,17 @@ namespace r8ge {
             return false;
         }
 
-        Type::Basic VertexBufferLayout::EntryTypeToDataType(VertexBufferLayout::Entry type) {
+        Primitive VertexBufferLayout::EntryTypeToDataType(VertexBufferLayout::Entry type) {
             switch (type) {
                 case VertexBufferLayout::Entry::COLOUR_RGB:
-                case VertexBufferLayout::Entry::COLOUR_RGBA: return Type::Basic::UINT8;
+                case VertexBufferLayout::Entry::COLOUR_RGBA: return Primitive::UINT8;
                 case VertexBufferLayout::Entry::POS_XY:
-                case VertexBufferLayout::Entry::POS_XYZ: return Type::Basic::FLOAT;
-                case VertexBufferLayout::Entry::TEXTURE_UV: return Type::Basic::FLOAT;
+                case VertexBufferLayout::Entry::POS_XYZ: return Primitive::FLOAT;
+                case VertexBufferLayout::Entry::TEXTURE_UV: return Primitive::FLOAT;
             }
 
             R8GE_LOG_ERROR("Unknown layout entry type data type");
-            return Type::Basic::VOID;
+            return Primitive::VOID;
         }
     }
 }

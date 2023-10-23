@@ -2,13 +2,13 @@
 #define R8GE_GLCONVERTOR_H
 
 #include <GL/glew.h>
-#include "../../renderer/Types.h"
+#include "../../types/Primitives.h"
 
 namespace r8ge {
     namespace video {
         class GLConvertor {
         public:
-            static GLenum convertToGLType(Type::Basic type);
+            static GLenum convertToGLType(Primitive type);
         };
     }
 }

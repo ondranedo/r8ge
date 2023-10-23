@@ -1,8 +1,8 @@
 #ifndef R8GE_VERTEX_H
 #define R8GE_VERTEX_H
 
-#include "../renderer/Types.h"
-#include "buffers/VertexBufferLayout.h"
+#include "Color.h"
+#include "../renderingService/buffers/VertexBufferLayout.h"
 
 #include <vector>
 

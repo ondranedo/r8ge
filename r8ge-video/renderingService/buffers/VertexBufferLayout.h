@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdint>
 
-#include "../../renderer/Types.h"
+#include "../../types/Primitives.h"
 
 namespace r8ge
 {
@@ -78,7 +78,7 @@ namespace r8ge
             static bool EntryTypeShouldBeNormalized(Entry type);
 
             // Returns the data type of the entry
-            static Type::Basic EntryTypeToDataType(VertexBufferLayout::Entry type);
+            static Primitive EntryTypeToDataType(VertexBufferLayout::Entry type);
         protected:
             Layout m_layout;
         };

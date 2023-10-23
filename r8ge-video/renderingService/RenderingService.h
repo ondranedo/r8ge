@@ -6,8 +6,8 @@
 
 #include "buffers/VertexBuffer.h"
 #include "buffers/IndexBuffer.h"
-#include "../renderer/Types.h"
-#include "Vertex.h"
+#include "../types/Color.h"
+#include "../types/Vertex.h"
 
 namespace r8ge {
     namespace video {

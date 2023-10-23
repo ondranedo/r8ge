@@ -2,7 +2,7 @@
 #define R8GE_RECTANGLE_H
 
 #include "Mesh.h"
-#include "Types.h"
+#include "../types/Color.h"
 
 namespace r8ge {
    /* class Rectangle : protected Mesh2D {

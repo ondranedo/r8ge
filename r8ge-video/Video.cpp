@@ -5,7 +5,7 @@
 
 #include "renderingService/buffers/IndexBuffer.h"
 #include "renderingService/buffers/VertexBuffer.h"
-#include "renderingService/Vertex.h"
+#include "types/Vertex.h"
 
 namespace r8ge {
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;

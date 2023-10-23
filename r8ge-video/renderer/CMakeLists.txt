@@ -1,6 +1,8 @@
 add_library(r8ge-video-renderer
-        "Types.cpp"
-        "Types.h"
+        "../types/Color.cpp"
+        "../types/Color.h"
+        "../types/Primitives.cpp"
+        "../types/Primitives.h"
         #"Mesh.cpp"
         #"Mesh.h"
         #"MeshTrinagle.cpp"
