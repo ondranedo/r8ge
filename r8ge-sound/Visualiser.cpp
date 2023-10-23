@@ -42,9 +42,18 @@ void r8ge::simpleFastFourier(std::valarray<std::complex<float>> arr) {
 }
 
 void r8ge::printVisualiser(AudioPusher& audio){
+    const int barsCount = 10;
+    double sampleStep = 1.0 / R8GE_LAST_SAMPLE_COUNT;
+    double barsStep = 1.0 / barsCount;
+
     auto transformed = new float[R8GE_LAST_SAMPLE_COUNT];
     while(1){
-        fft()
-        audio.newCurrentSamples();
+        fft(transformed, audio.newCurrentSamples(), R8GE_LAST_SAMPLE_COUNT);
+
+        for(int i = 0; i < barsCount; i++){
+            for(int j = 0; (sampleStep * j) < (barsStep * i); j++){
+
+            }
+        }
     }
 }
