@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+#include "buffers/VertexBuffer.h"
+#include "buffers/IndexBuffer.h"
 #include "../renderer/Types.h"
 #include "Vertex.h"
 
@@ -23,14 +25,18 @@ namespace r8ge {
 
             virtual void clear() const = 0;
 
-            virtual void render(const std::vector<size_t>& index_data, const std::vector<float>& vertex_data) const = 0;
+            virtual void render() const = 0;
 
-            void setClearColor(Color32 c);
+            void setClearColor(ColorRGBA c);
+
+            virtual void setIndexBuffer(const IndexBuffer& ib) = 0;
+            virtual void setVertexBuffer(const VertexBuffer& vb) = 0;
+
         public:
             static std::shared_ptr<RenderingService> create(API api);
 
         protected:
-            Color32 m_clearColor;
+            ColorRGBA m_clearColor;
         };
     }
 }

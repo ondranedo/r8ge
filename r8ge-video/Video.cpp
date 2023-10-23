@@ -39,6 +39,24 @@ namespace r8ge {
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
 
+        // TODO: Fetch raw data from Renderer
+        video::IndexBuffer ib({0,3,2,0,1,2});
+        std::vector<Vertex> vertices = {
+                {-0.5f,-0.5f},
+                {-0.5f, 0.5f},
+                { 0.5f, 0.5f},
+                { 0.5f,-0.5f}
+        };
+
+        video::VertexBuffer vb(vertices, vertices[0].getLayout());
+
+        s_renderingService->setIndexBuffer(ib);
+        s_renderingService->setVertexBuffer(vb);
+
+        s_renderingService->setClearColor({0x54,0x54,0x54});
+
+        R8GE_LOG_INFOR("Vertex size: {}", sizeof(Vertex));
+
         while(Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
 
@@ -49,27 +67,8 @@ namespace r8ge {
                 Ar8ge::getEventQueue()(p);
             }
 
-            s_renderingService->setClearColor({0x54,0x54,0x54});
             s_renderingService->clear();
-
-            //r8ge::Rectangle r1(0.5, 0.25);
-
-            // TODO: Fetch raw data from Renderer
-            //s_renderingService->render(r1.getIndices(), r1.getVertices());
-            video::IndexBuffer ib({0, 1, 2048, 2, 3, 0});
-            std::vector<Vertex> vertices = {
-                     {-0.5f, -0.5f}, {0.0f, 0.0f},
-                     {0.5f, -0.5f},  {1.0f, 0.0f},
-                     {0.5f, 0.5f},   {1.0f, 1.0f},
-                     {-0.5f, 0.5f},  {0.0f, 1.0f}
-            };
-
-            video::VertexBuffer vb(vertices, video::VertexBufferLayout({video::VertexBufferLayout::Entry::POS_XY}));
-
-            auto vec = ib.getData();
-
-            auto data = vb.getData<Vertex>();
-
+            s_renderingService->render();
             s_windowingService->swapBuffersOfMainWindow();
         }
     }
@@ -78,9 +77,8 @@ namespace r8ge {
         s_windowingService->destroyMainWindow();
 
         s_windowingService->exit();
-
-
         s_renderingService->exit();
+
         R8GE_LOG_INFOR("R8GE-Video released");
     }
 

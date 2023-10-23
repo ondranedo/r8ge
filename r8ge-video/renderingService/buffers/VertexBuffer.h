@@ -3,8 +3,15 @@
 
 #include "Buffer.h"
 #include <vector>
+#include <ranges>
 
 #include "VertexBufferLayout.h"
+
+template<typename T>
+concept CanGetRawData = requires(T t) {
+    {t.getRawData()} -> std::convertible_to<std::vector<uint8_t>>;
+    {t.getSize()} -> std::convertible_to<size_t>;
+};
 
 namespace r8ge {
     namespace video {
@@ -17,11 +24,22 @@ namespace r8ge {
         class VertexBuffer final : public Buffer
         {
         public:
-            template<typename T>
+            template<CanGetRawData T>
             VertexBuffer(const std::vector<T>& data, const VertexBufferLayout& layout)
             {
-                auto first = reinterpret_cast<const uint8_t*>(data.data());
-                m_data = std::vector<uint8_t>(first, first + data.size() * sizeof(T));
+                size_t vertex_size = data[0].getSize();
+                std::vector<uint8_t> rawData(data.size()*vertex_size);
+                std::vector<uint8_t> rawDataPart0 = data[0].getRawData();
+
+                for(size_t i = 0; i < data.size(); ++i) {
+                    auto rawDataPart = data[i].getRawData();
+
+                    for(size_t j = 0; j < rawDataPart.size(); ++j)
+                        rawData[i*vertex_size + j] = rawDataPart[j];
+                }
+
+                m_data = std::move(rawData);
+                m_layout = layout;
             }
 
             VertexBuffer(const std::vector<uint8_t>& data, const VertexBufferLayout& layout);
@@ -41,9 +59,9 @@ namespace r8ge {
             [[nodiscard]] std::vector<T> getData() {
                 std::vector<T> data;
 
-                for(size_t i = 0; i < m_data.size()/sizeof(T); ++i) {
+                for(size_t i = 0; i < m_data.size()/sizeof(T); ++i)
                     data.push_back(*reinterpret_cast<T*>(&m_data[i*sizeof(T)]));
-                }
+
 
                 return data;
             }

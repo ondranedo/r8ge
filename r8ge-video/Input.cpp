@@ -68,7 +68,6 @@ namespace r8ge {
         if(modifier & Modifier::CTRL && !m_ctrlPressed)   return false;
         if(modifier & Modifier::ALT && !m_altPressed)     return false;
         if(modifier & Modifier::SUPER && !m_superPressed) return false;
-        R8GE_LOG("Checking key: {}", to_string(modifier));
         return isKeyPressed(code);
     }
 
