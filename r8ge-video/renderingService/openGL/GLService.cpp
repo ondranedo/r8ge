@@ -47,6 +47,8 @@ namespace r8ge {
         void GLService::setIndexBuffer(const IndexBuffer &ib) {
             m_indexCount = ib.getIndeciesCount();
 
+            auto a = ib.getData();
+
             glGenBuffers(1, &m_indexBuffer);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0], GL_STATIC_DRAW);
@@ -58,9 +60,6 @@ namespace r8ge {
 
             glGenBuffers(1, &m_vertexBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-            auto data = vb.getRawData();
-
 
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vb.getSize()), &vb.getRawData()[0], GL_STATIC_DRAW);
 
@@ -97,13 +96,11 @@ namespace r8ge {
 
             glBindVertexArray(m_vertexArrayObject);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
             setDataLayout();
 
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);
         }
 
         void GLService::setProgram(const Program &program) {
@@ -119,8 +116,8 @@ namespace r8ge {
             std::string vertexShaderSource   = program.getVertexShader();
             std::string fragmentShaderSource = program.getFragmentShader();
 
-            if(compileShader(vs, vertexShaderSource, "vertex shader")) return false;
-            if(compileShader(fs, fragmentShaderSource, "fragment shader")) return false;
+            if(!compileShader(vs, vertexShaderSource, "vertex shader")) return false;
+            if(!compileShader(fs, fragmentShaderSource, "fragment shader")) return false;
 
             // Program compilation - linking shaders to a program
             GLuint p = glCreateProgram();
@@ -132,8 +129,7 @@ namespace r8ge {
 
             int result;
             glGetProgramiv(p, GL_LINK_STATUS, &result);
-            if (result != GL_TRUE)
-            {
+            if (result != GL_TRUE) {
                 GLsizei log_length = 0;
                 char message[R8GE_GL_ERROR_MSG_LENGTH];
                 glGetProgramInfoLog(p, R8GE_GL_ERROR_MSG_LENGTH, &log_length, message);
@@ -154,7 +150,8 @@ namespace r8ge {
 
         bool GLService::compileShader(GLuint shader, std::string_view source, std::string_view type) const {
             const std::string shaderSource = std::string(source);
-            glShaderSource(shader, 1, reinterpret_cast<GLchar* const* const>(shaderSource.c_str()), nullptr);
+            char * ptr = const_cast<char*>(shaderSource.c_str());
+            glShaderSource(shader, 1, &ptr, nullptr);
             glCompileShader(shader);
             int result;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
@@ -162,7 +159,7 @@ namespace r8ge {
                 GLsizei log_length = 0;
                 char message[R8GE_GL_ERROR_MSG_LENGTH];
                 glGetShaderInfoLog(shader, R8GE_GL_ERROR_MSG_LENGTH, &log_length, message);
-                R8GE_LOG_ERROR("Failed to compile [{}] : {}", type, std::string_view(message, R8GE_GL_ERROR_MSG_LENGTH));
+                R8GE_LOG_ERROR("Failed to compile [{}] :\n\n {}", type, std::string(message));
                 return false;
             }
             return true;

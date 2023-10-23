@@ -6,7 +6,7 @@
 #include "../../utility/json/Json.h"
 
 namespace r8ge {
-    namespace Reader {
+    namespace reader {
         class Json : protected Text {
         public:
             Json(std::string_view path);

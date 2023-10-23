@@ -7,6 +7,8 @@
 #include "renderingService/buffers/VertexBuffer.h"
 #include "types/Vertex.h"
 
+#include "renderingService/programManager/Program.h"
+
 namespace r8ge {
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
     std::shared_ptr<video::RenderingService> Video::s_renderingService = nullptr;
@@ -55,7 +57,10 @@ namespace r8ge {
 
         s_renderingService->setClearColor({0x54,0x54,0x54});
 
-        R8GE_LOG_INFOR("Vertex size: {}", sizeof(Vertex));
+        video::Program basic_program(0, "shaders/basic.glsl");
+
+        s_renderingService->compileProgram(basic_program);
+        s_renderingService->setProgram(basic_program);
 
         while(Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
@@ -67,8 +72,11 @@ namespace r8ge {
                 Ar8ge::getEventQueue()(p);
             }
 
+
             s_renderingService->clear();
+
             s_renderingService->render();
+
             s_windowingService->swapBuffersOfMainWindow();
         }
     }

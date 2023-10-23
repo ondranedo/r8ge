@@ -334,4 +334,16 @@ namespace r8ge {
 
         return data;
     }
+
+    void FileIO::clear(std::string_view path) {
+        if(!isFilePresent(path)) return;
+        auto isbin = isBinary(path);
+
+        m_mutex.lock();
+        if(isbin)
+            m_binFileMap[path.data()].clear();
+        else
+            m_txtFileMap[path.data()].clear();
+        m_mutex.unlock();
+    }
 }

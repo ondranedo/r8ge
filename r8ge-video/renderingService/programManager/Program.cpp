@@ -1,10 +1,12 @@
 #include "Program.h"
 
+#include <r8ge/r8ge.h>
+
 namespace r8ge {
     namespace video {
 
-        Program::Program(size_t id, std::string_view vertexShader, std::string_view fragmentShader)
-        : m_valid(false), m_vertexShader(vertexShader), m_fragmentShader(fragmentShader), m_id(id)
+        Program::Program(size_t id, std::string_view source)
+        : m_valid(false), m_source(source), m_id(id)
         {}
 
         bool Program::isValid() const {
@@ -28,11 +30,15 @@ namespace r8ge {
         }
 
         std::string Program::getVertexShader() const {
-            return m_vertexShader;
+            File<reader::Glsl> glsl(m_source);
+            glsl->load_glsl();
+            return glsl->getVertexShader();
         }
 
         std::string Program::getFragmentShader() const {
-            return m_fragmentShader;
+            File<reader::Glsl> glsl(m_source);
+            glsl->load_glsl();
+            return glsl->getFragmentShader();
         }
     }
 }

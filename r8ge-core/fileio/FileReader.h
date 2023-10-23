@@ -13,10 +13,9 @@ namespace r8ge {
         void save() const;
         void load() const;
 
-        [[nodiscard]] size_t size() const;
+        void clear() const;
 
-    public:
-        static std::unique_ptr<FileReader> create(const FileType& ft, std::string_view path);
+        [[nodiscard]] size_t size() const;
 
     protected:
         std::string m_path;

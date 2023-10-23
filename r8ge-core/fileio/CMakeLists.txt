@@ -13,4 +13,6 @@ add_library(r8ge-core-fileio
         "fileReaders/Binary.h"
         "fileReaders/Json.cpp"
         "fileReaders/Json.h"
+        "fileReaders/Glsl.cpp"
+        "fileReaders/Glsl.h"
 )
