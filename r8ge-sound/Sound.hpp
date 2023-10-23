@@ -19,13 +19,16 @@
 #define R8GE_LAST_SAMPLE_COUNT (1 << 11)
 
 namespace r8ge {
+    // todo: rename to audioservice
     class AudioPusher{
     public:
         AudioPusher();
         ~AudioPusher();
 
+        //todo: pause
         void stopSound();
         [[nodiscard]] double getGeneratedTime() const;
+        //todo: shared ptr
         void addSound(Sound* sound);
         float *newCurrentSamples();
     private:

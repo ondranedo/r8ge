@@ -7,10 +7,13 @@
 
 #include <complex>
 #include <valarray>
+#include "Sound.hpp"
 
 namespace r8ge{
     void simpleFastFourier(std::valarray<std::complex<float>> arr);
     void fft(float* out, float* in, int count);
+
+    void printVisualiser(AudioPusher& audio);
 }
 
 #endif //R8GE_VISUALISER_H

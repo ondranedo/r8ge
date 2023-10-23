@@ -40,3 +40,11 @@ void r8ge::simpleFastFourier(std::valarray<std::complex<float>> arr) {
         arr[k + (count >> 1)] = even[k] - t;
     }
 }
+
+void r8ge::printVisualiser(AudioPusher& audio){
+    auto transformed = new float[R8GE_LAST_SAMPLE_COUNT];
+    while(1){
+        fft()
+        audio.newCurrentSamples();
+    }
+}
