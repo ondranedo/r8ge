@@ -4,8 +4,9 @@
   - ~~TimeStamp~~
   - ~~Log thread~~
   - ~~Colours~~
-  - Formats
+  - ~~Formats~~
   - Which system originated the log
+  - Config File
 - **~~Event System~~**
 - **~~System TimeStamp~~**
 - **~~File I/O~~**

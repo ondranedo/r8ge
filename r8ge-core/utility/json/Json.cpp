@@ -255,6 +255,13 @@ namespace r8ge {
             }
         }
 
+        std::vector<Json> Json::as_vector() const {
+            if (is_array()) return m_data.a->as_vector();
+            else
+                R8GE_LOG_ERROR("Cannot convert value [{}] to vector", to_string(m_type));
+            return {};
+        }
+
         Json::Convertor::Convertor(const Json &value) : m_value(value) {}
 
         Json::Convertor::operator int() const {

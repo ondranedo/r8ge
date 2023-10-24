@@ -8,6 +8,7 @@
 
 #include "events/Dispatcher.h"
 #include "events/EngineEvents.h"
+#include "Input.h"
 
 namespace r8ge {
     std::function<void(std::shared_ptr<Event>)> Ar8ge::m_layerSwitcherCallback = nullptr;
@@ -23,7 +24,7 @@ namespace r8ge {
 
         R8GE_LOG("Ar8ge event queue set - events may be received");
         m_queue.setEngineCallback([this](auto && PH1){handleEngineEvents(std::forward<decltype(PH1)>(PH1));});
-        m_game = r8ge::createGame();
+        m_game = r8ge::createInstance();
 
         R8GE_LOG("Engine application created");
     }
@@ -36,10 +37,12 @@ namespace r8ge {
         s_ready = true;
         s_mutex.unlock();
         m_layerSwitcherCallback = m_game->getEventReceiver();
+        m_input = std::make_shared<InputStator>();
+        Input::setInstance(m_input);
     }
 
     void Ar8ge::exit() {
-
+        Input::setInstance(nullptr);
         R8GE_LOG_INFOR("Ar8ge exited successfully");
     }
 
@@ -63,6 +66,8 @@ namespace r8ge {
         R8GE_LOG("Engine application starting main loop");
 
         while(isRunning()) {
+
+            m_game->update();
             m_game->onUpdate();
             m_queue.emptyQueue();
         }
@@ -92,13 +97,12 @@ namespace r8ge {
 
     void Ar8ge::handleEngineEvents(const std::shared_ptr<Event> &event) {
         event::Dispatcher dispatcher(event);
+    }
 
-        dispatcher.dispatch<EngineKill>([](const std::shared_ptr<EngineKill>& event) ->bool {
-            R8GE_LOG_WARNI("Engine kill event received, exit procedure in place");
-            s_mutex.lock();
-            s_running = false;
-            s_mutex.unlock();
-            return true;
-        });
+    void Ar8ge::killEngine() {
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        // TODO: Throw an event to the engine to exit
+        s_running = false;
     }
 }

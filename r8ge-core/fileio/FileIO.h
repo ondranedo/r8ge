@@ -21,6 +21,8 @@ namespace r8ge {
         void load(std::string_view path);
         void remove(std::string_view path);
 
+        void clear(std::string_view path);
+
         void writeStderr(std::string_view data);
         void writeStdout(std::string_view data);
         [[nodiscard]] std::string readStdin();

@@ -71,14 +71,39 @@ Core module is the base of the engine.
   ```
  
 ### File I/O
+Allows user to read and to write into files. Uses choses the file reader based on file extension.
+Each reader provides its own interface for reading and writing.
   ``` cpp 
     r8ge::File<Readers::[reader]>(path: string)
   ```
-  - `load()` - Loads file into memory from disk
-  - `save()` - Saves file from memory to disk 
+  - User operator `->` to access reader interface  
+
+  - `load()` - Loads file data into memory from disk
+  - `save()` - Saves file data from memory to disk
+
+> NOTE: File reader also writes to a file :D
+
+#### Text reader 
+  - Base class for all text readers
+  - Provides basic interface for reading and writing
+#### Binary Reader
+  - Base class for all binary readers
+  - Provides basic interface for reading and writing
+#### JSON Reader
+  - Wrapper around `utility::JSON` class
+
+#### Examples
+Appending data to a file
+```cpp
+  r8ge::File<r8ge::Reader::Text> file("list.txt"); // Creates file object, does not read data from disk
+  file->load(); // Reads data from disk
+
+  file->appendNewLine({"Line 1", "Line 2", "Line 3"}); // Appends data to a new line in the file
+
+  file->save(); // Saves data to disk
+```
 
 ### Instance
 #### Game instance
 - Class that is used for running the game
 - After creating instance class, that inherits from `r8ge::GameInstance` you shall override all its methods.
-- TODO
