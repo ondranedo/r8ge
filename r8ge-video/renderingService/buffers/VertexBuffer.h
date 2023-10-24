@@ -24,6 +24,8 @@ namespace r8ge {
         class VertexBuffer final : public Buffer
         {
         public:
+            VertexBuffer();
+
             template<CanGetRawData T>
             VertexBuffer(const std::vector<T>& data, const VertexBufferLayout& layout)
             {
@@ -61,7 +63,6 @@ namespace r8ge {
 
                 for(size_t i = 0; i < m_data.size()/sizeof(T); ++i)
                     data.push_back(*reinterpret_cast<T*>(&m_data[i*sizeof(T)]));
-
 
                 return data;
             }

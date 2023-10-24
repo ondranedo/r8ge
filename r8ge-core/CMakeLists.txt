@@ -18,6 +18,10 @@ add_library(r8ge-core
         "Ar8ge.cpp"
         "Ar8ge.h"
         "platform/Console.h"
+        Input.cpp
+        Input.h
+        InputStator.cpp
+        InputStator.h
 )
 
 

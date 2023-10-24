@@ -83,11 +83,11 @@ namespace r8ge {
 
                 switch (event.type) {
                     case KeyPress: {
-                        Code code = X11Convertor::convertKeyCode(event.xkey.keycode);
+                        Key code = X11Convertor::convertKeyCode(event.xkey.keycode);
                         m_keyActionCallback(code, IOAction::PRESS);
                         break;
                     } case KeyRelease: {
-                        Code code = X11Convertor::convertKeyCode(event.xkey.keycode);
+                        Key code = X11Convertor::convertKeyCode(event.xkey.keycode);
                         m_keyActionCallback(code, IOAction::RELEASE);
                         break;
                     } case MotionNotify: {
@@ -97,11 +97,11 @@ namespace r8ge {
                         Ar8ge::getEventQueue()(p);
                         break;
                     } case ButtonPress: {
-                        Code code = X11Convertor::convertKeyCode((event.xbutton.button) << 8);
+                        Key code = X11Convertor::convertKeyCode((event.xbutton.button) << 8);
                         m_mouseActionCallback(code, IOAction::PRESS);
                         break;
                     } case ButtonRelease: {
-                        Code code = X11Convertor::convertKeyCode((event.xbutton.button) << 8);
+                        Key code = X11Convertor::convertKeyCode((event.xbutton.button) << 8);
                         m_mouseActionCallback(code, IOAction::RELEASE);
                         break;
                     } case Expose: {

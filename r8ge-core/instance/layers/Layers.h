@@ -15,14 +15,14 @@ namespace r8ge {
         virtual ~Layer();
 
         // Used to update the layer, called every frame
-        virtual void update() const = 0;
+        virtual void update() = 0;
 
         // Used to handle the events, called for every event that is delegated to the layer
         // if event is not handled, it will be delegated to the next layer, until its destroyed
-        virtual void event(const std::shared_ptr<Event>& event) const = 0;
+        virtual void event(const std::shared_ptr<Event>& event) = 0;
 
         // Called by the render loop to render the layer
-        virtual void render() const = 0;
+        virtual void render() = 0;
 
 
         [[nodiscard]] std::string getName() const;

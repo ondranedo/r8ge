@@ -18,10 +18,10 @@ namespace r8ge {
         // TODO: Config file, rendering API
         s_renderingService = video::RenderingService::create(video::RenderingService::API::OpenGL);
 
-
         s_windowingService = video::WindowingService::create();
-        s_windowingService->setKeyPressedCallback(m_input.getKeyActionCallback());
-        s_windowingService->setMousePressedCallback(m_input.getMouseActionCallback());
+
+        s_windowingService->setKeyPressedCallback(Input::getKeyActionCallback());
+        s_windowingService->setMousePressedCallback(Input::getMouseActionCallback());
     }
     Video::~Video() {
         s_windowingService = nullptr;
@@ -64,14 +64,6 @@ namespace r8ge {
 
         while(Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
-
-            // TODO: Config file, key bindings
-            if(m_input.isKeyPressed({Code::ESCAPE, Code::MBUTTON_LEFT})) {
-                EventPayload p;
-                p.setEvent(std::make_shared<EngineKill>());
-                Ar8ge::getEventQueue()(p);
-            }
-
 
             s_renderingService->clear();
 

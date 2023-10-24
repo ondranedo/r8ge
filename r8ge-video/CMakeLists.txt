@@ -8,8 +8,6 @@ add_library(r8ge-video
         Video.h
         EntrytPoint.cpp
         EntrytPoint.h
-        Input.cpp
-        Input.h
 )
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")

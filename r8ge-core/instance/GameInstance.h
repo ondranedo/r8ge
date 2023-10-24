@@ -14,6 +14,7 @@ namespace r8ge {
 
         [[nodiscard]] std::string getGameName() const;
 
+        void directEvent(const std::shared_ptr<Event> &event) override;
     private:
         std::string m_name;
     };

@@ -1,11 +1,8 @@
 /**
  *  AUTHOR:         Ondrej Nedojedly (https://www.github.com/ondranedo)
- *  DATA:           2023-10-10
+ *  DATE:           2023-10-10
  *  DESCRIPTION:    The main header file for the r8ge engine.
  *  LICENSE:        "../../LICENSE"
- *  HISTORY:
- *      2023-10-10  -   Initial version
- *
  *
  */
 
@@ -30,5 +27,6 @@
 #include "../r8ge-core/events/KeyEvents.h"
 #include "../r8ge-core/events/Dispatcher.h"
 #include "../r8ge-core/events/EngineEvents.h"
+#include "../r8ge-core/Input.h"
 
 #endif//!R8GE_H

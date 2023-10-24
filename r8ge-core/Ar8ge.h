@@ -5,6 +5,8 @@
 #include "events/EventQueue.h"
 #include "instance/GameInstance.h"
 
+#include "InputStator.h"
+
 namespace r8ge {
     // Main Application class, handles the main loop, the event queue, and the game instances
     class Ar8ge {
@@ -27,7 +29,7 @@ namespace r8ge {
     private:
         EventQueue m_queue;
         std::shared_ptr<Instance> m_game;
-
+        std::shared_ptr<InputStator> m_input;
         // STATIC HACKING
     public:
         // Returns true if the engine is ready to run
@@ -40,6 +42,9 @@ namespace r8ge {
 
         // Returns the main event queue
         static EventQueue::CallbackFn getEventQueue();
+
+
+        static void killEngine();
 
         static std::function<void(std::shared_ptr<Event>)> getInstanceLayerSwitcherCallback();
     private:

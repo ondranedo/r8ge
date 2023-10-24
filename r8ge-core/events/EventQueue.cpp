@@ -25,7 +25,9 @@ namespace r8ge {
             if(eventP.getEvent()->getHandler() == Event::Handler::USER)
                 eventP.getCallback()(eventP.getEvent());
             else if(eventP.getEvent()->getHandler() == Event::Handler::ENGINE)
+            {
                 m_engineCallback(eventP.getEvent());
+            }
             m_queue.pop();
         }
         m_queueMutex.unlock();

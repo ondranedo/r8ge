@@ -1,18 +1,22 @@
-#include "Input.h"
+#include "InputStator.h"
 
-#include <utility>
-#include <r8ge/r8ge.h>
+#include "events/Event.h"
+#include "events/EventPayload.h"
+#include "events/KeyEvents.h"
+#include "events/MouseEvents.h"
+
+#include "Ar8ge.h"
+#include "Logger.h"
 
 namespace r8ge {
+    InputStator::InputStator() : m_shiftPressed(false), m_ctrlPressed(false), m_altPressed(false), m_superPressed(false), m_poolFunction(nullptr){}
+    InputStator::~InputStator()  = default;
 
-    video::Input::Input() : m_shiftPressed(false), m_ctrlPressed(false), m_altPressed(false), m_superPressed(false) {}
-    video::Input::~Input() = default;
-
-    void video::Input::sendKeyAction(const Code &code, IOAction action) {
-        if(code == Code::LEFT_SHIFT || code == Code::RIGHT_SHIFT) m_shiftPressed = (action == IOAction::PRESS);
-        if(code == Code::LEFT_ALT || code == Code::RIGHT_ALT) m_altPressed = (action == IOAction::PRESS);
-        if(code == Code::LEFT_CONTROL || code == Code::RIGHT_CONTROL) m_ctrlPressed = (action == IOAction::PRESS);
-        if(code == Code::LEFT_SUPER || code == Code::RIGHT_SUPER) m_superPressed = (action == IOAction::PRESS);
+    void InputStator::sendKeyAction(const Key &code, IOAction action) {
+        if(code == Key::LEFT_SHIFT || code == Key::RIGHT_SHIFT) m_shiftPressed = (action == IOAction::PRESS);
+        if(code == Key::LEFT_ALT || code == Key::RIGHT_ALT) m_altPressed = (action == IOAction::PRESS);
+        if(code == Key::LEFT_CONTROL || code == Key::RIGHT_CONTROL) m_ctrlPressed = (action == IOAction::PRESS);
+        if(code == Key::LEFT_SUPER || code == Key::RIGHT_SUPER) m_superPressed = (action == IOAction::PRESS);
 
         m_keyPressedMap[code] = (action == IOAction::PRESS);
 
@@ -26,7 +30,7 @@ namespace r8ge {
         Ar8ge::getEventQueue()(payload);
     }
 
-    void video::Input::sendMouseAction(const Code &code, IOAction action) {
+    void InputStator::sendMouseAction(const Key &code, IOAction action) {
         m_keyPressedMap[code] = (action == IOAction::PRESS);
 
         EventPayload payload;
@@ -39,31 +43,31 @@ namespace r8ge {
         Ar8ge::getEventQueue()(payload);
     }
 
-    std::function<void(const r8ge::Code &, IOAction)> video::Input::getMouseActionCallback() {
+    std::function<void(const r8ge::Key &, IOAction)> InputStator::getMouseActionCallback() {
         return [this](auto && PH1, auto && PH2) { sendMouseAction(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2)); };
     }
 
-    std::function<void(const r8ge::Code &, IOAction)> video::Input::getKeyActionCallback() {
+    std::function<void(const r8ge::Key &, IOAction)> InputStator::getKeyActionCallback() {
         return [this](auto && PH1, auto && PH2) { sendKeyAction(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2)); };
     }
 
-    bool video::Input::isShiftPressed() const {
+    bool InputStator::isShiftPressed() const {
         return m_shiftPressed;
     }
 
-    bool video::Input::isCtrlPressed() const {
+    bool InputStator::isCtrlPressed() const {
         return m_ctrlPressed;
     }
 
-    bool video::Input::isAltPressed() const {
+    bool InputStator::isAltPressed() const {
         return m_altPressed;
     }
 
-    bool video::Input::isSuperPressed() const {
+    bool InputStator::isSuperPressed() const {
         return m_superPressed;
     }
 
-    bool video::Input::isKeyPressed(const std::initializer_list<Code>& code, Modifier modifier) const {
+    bool InputStator::isKeyPressed(const std::initializer_list<Key>& code, Modifier modifier) const {
         if(modifier & Modifier::SHIFT && !m_shiftPressed) return false;
         if(modifier & Modifier::CTRL && !m_ctrlPressed)   return false;
         if(modifier & Modifier::ALT && !m_altPressed)     return false;
@@ -71,15 +75,17 @@ namespace r8ge {
         return isKeyPressed(code);
     }
 
-    bool video::Input::isKeyPressed(const std::initializer_list<Code>& code) const {
+    bool InputStator::isKeyPressed(const std::initializer_list<Key>& code) const {
         for(auto & c : code)
         {
-            if(c == Code::RIGHT_SHIFT || c == Code::LEFT_SHIFT || c == Code::RIGHT_CONTROL || c == Code::LEFT_CONTROL || c == Code::RIGHT_ALT || c == Code::LEFT_ALT || c == Code::RIGHT_SUPER || c == Code::LEFT_SUPER ) {
+            if(c == Key::RIGHT_SHIFT || c == Key::LEFT_SHIFT || c == Key::RIGHT_CONTROL || c == Key::LEFT_CONTROL || c == Key::RIGHT_ALT || c == Key::LEFT_ALT || c == Key::RIGHT_SUPER || c == Key::LEFT_SUPER ) {
                 R8GE_LOG_WARNI("Invalid key code, use Modulator instead");
                 return false;
             }
-            if(m_keyPressedMap.find(c) == m_keyPressedMap.end()) return false;
-            if(!m_keyPressedMap.at(c)) return false;
+            {
+                if(m_keyPressedMap.find(c) == m_keyPressedMap.end()) return false;
+                if(!m_keyPressedMap.at(c)) return false;
+            }
         }
         return true;
     }

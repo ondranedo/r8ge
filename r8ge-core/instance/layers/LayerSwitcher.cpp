@@ -63,7 +63,6 @@ namespace r8ge {
     void LayerSwitcher::updateAll() const {
         for(auto& l : m_layers)
             l->update();
-
     }
 
     void LayerSwitcher::renderAll() const {
