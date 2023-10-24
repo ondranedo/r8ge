@@ -1,6 +1,7 @@
 install
 build
 .idea
-testbed
 demo
 .vs
+CMakeSettings.json
+cmake-build-debug
