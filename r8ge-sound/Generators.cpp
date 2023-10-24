@@ -71,7 +71,7 @@ void r8ge::Sound::setState(bool state) {
 
 r8ge::Wave::Wave(double startTime, const std::string& filename) : Sound(startTime) {
   // TODO: File<T>  
-  Reader::Wave f(filename);
+  reader::Wave f(filename);
     f.load_wave();
     m_data = f.wave();
     m_endTime = m_startTime + (m_data.m_timeStep * m_data.m_sampleCount);

@@ -31,6 +31,8 @@ namespace r8ge {
         //todo: shared ptr
         void addSound(Sound* sound);
         float *newCurrentSamples();
+
+        std::vector<r8ge::Sound *> *getSoundVector();
     private:
 #ifdef R8GE_WINDOWS
         WAVEFORMATEX* m_wfx = NULL;

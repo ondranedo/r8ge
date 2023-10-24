@@ -8,7 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
-#include "../r8ge-core/fileio/fileReaders/Wave.hpp"
+#include <r8ge/r8ge.h>
 
 // this will be refactored a lot and I will curse myself
 

@@ -7,7 +7,7 @@
 #include <cstring>
 
 namespace r8ge {
-    namespace Reader {
+    namespace reader {
 
         FileType Wave::getType() {
             return FileType::WAVE;

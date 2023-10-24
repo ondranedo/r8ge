@@ -17,3 +17,5 @@ if(ALSA_FOUND)
     include_directories(${ALSA_INCLUDE_DIRS})
     target_link_libraries(r8ge-sound ${ALSA_LIBRARIES})
 endif(ALSA_FOUND)
+
+target_include_directories(r8ge-sound PRIVATE ${CMAKE_SOURCE_DIR}/include)

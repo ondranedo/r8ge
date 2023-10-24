@@ -22,7 +22,7 @@ namespace r8ge {
         void fromVec(std::vector<unsigned char> vec);
     };
 
-    namespace Reader {
+    namespace reader {
         class Wave : protected Binary {
         public:
             Wave(std::string_view path);

@@ -180,7 +180,7 @@ r8ge::AudioPusher::AudioPusher() {
 
     /* Open the PCM device in playback mode */
     if (snd_pcm_open(&m_pcmHandle, PCM_DEVICE,SND_PCM_STREAM_PLAYBACK, 0) < 0){
-        std::cout << "ERROR: Can't open default PCM device." << std::endl;
+        R8GE_LOG_ERROR("ERROR: Can't open {} PCM device. {}", std::string(PCM_DEVICE), std::string(snd_strerror(err)));
         goto Exit;
     }
 
@@ -191,8 +191,9 @@ r8ge::AudioPusher::AudioPusher() {
                              m_rate,
                              1,
                              1000000 * m_timeStep * m_nOfSamplesPerBuff * m_nOfBuffers);
+
     if(err < 0){
-        std::cout << "Couldn't set parameters" << std::endl;
+        R8GE_LOG_ERROR("ERROR: Can't set sound parameters: {}",  snd_strerror(err));
     }
 
     m_lastSamples = new float[m_lastSamplesCount];
