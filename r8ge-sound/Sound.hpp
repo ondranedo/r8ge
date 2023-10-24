@@ -12,7 +12,6 @@
 #ifdef R8GE_LINUX
     #include <alsa/asoundlib.h>
 #endif
-#include <chrono>
 #include "Generators.hpp"
 #include <thread>
 
@@ -25,14 +24,20 @@ namespace r8ge {
         AudioPusher();
         ~AudioPusher();
 
-        //todo: pause
         void stopSound();
+        void pause();
+        void play();
         [[nodiscard]] double getGeneratedTime() const;
         //todo: shared ptr
-        void addSound(Sound* sound);
-        float *newCurrentSamples();
+        int addSound(Sound* sound);
+        void deleteSound(int id);
 
-        std::vector<r8ge::Sound *> *getSoundVector();
+        // abstraction
+        int playWave(const std::string& filename);
+        int playNote(short tone = 49, double (*generator)(double) = &std::sin, Envelope envelope = {});
+        int playNote(short tone = 49, Instrument inst = {});
+
+        float *newCurrentSamples();
     private:
 #ifdef R8GE_WINDOWS
         WAVEFORMATEX* m_wfx = NULL;
@@ -58,6 +63,8 @@ namespace r8ge {
         std::vector<Sound*> m_activeSounds = {};
         std::mutex m_soundVectorGuard;
         double m_generatedTime = 0.0;
+        bool m_isPaused = false;
+        int m_count = 0;
 
         float* m_lastSamples = nullptr;
         int m_lastSamplesCount = R8GE_LAST_SAMPLE_COUNT;
