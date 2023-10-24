@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include "../r8ge-core/fileio/fileReaders/Wave.hpp"
 
 // this will be refactored a lot and I will curse myself
 
@@ -64,14 +65,7 @@ namespace r8ge{
 
         double getDuration();
     private:
-        unsigned short m_format{};
-        unsigned short m_channels{};
-        unsigned long m_sampleRate{};
-        unsigned short m_blockAlign{};
-        double m_timeStep;
-
-        unsigned long m_sampleCount;
-        char* m_data = nullptr; // takes up to megabytes but allows for instant skipping
+        WaveData m_data;
     };
 
 }
