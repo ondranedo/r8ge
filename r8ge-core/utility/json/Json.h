@@ -3,6 +3,8 @@
 
 #include "StringKey.h"
 
+#include <vector>
+
 namespace r8ge {
     namespace utility {
         class Object;
@@ -103,6 +105,7 @@ namespace r8ge {
             [[nodiscard]] decimal as_decimal() const;
             [[nodiscard]] boolean as_boolean() const;
             [[nodiscard]] string as_string(bool format) const;
+            [[nodiscard]] std::vector<Json> as_vector() const;
 
         private:
             Data m_data{};

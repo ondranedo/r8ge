@@ -11,6 +11,8 @@ namespace r8ge {
                 return "BINARY";
             case WAVE:
                 return "WAVE";
+            case GLSL:
+                return "GLSL";
         }
         return "UNKNOWN";
     }

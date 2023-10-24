@@ -5,11 +5,16 @@
 #include "Sound.hpp"
 #include <iostream>
 #include <cmath>
+
 #include <cstring>
 
 #define R8GE_MAIN_VOLUME 0.01
 
 #ifdef R8GE_WINDOWS
+
+#include <cstdlib>
+#include <random>
+
 // credit: someone on learn.microsoft
 //-----------------------------------------------------------
 // Play an audio stream on the default audio rendering
@@ -148,6 +153,7 @@ HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData) {
     return 0;
 }
 
+
 void r8ge::AudioPusher::stopSound() {
     m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
 }
@@ -160,6 +166,7 @@ r8ge::AudioPusher::~AudioPusher() {
     SAFE_RELEASE(m_pAudioClient)
     SAFE_RELEASE(m_pRenderClient)
 }
+
 #endif // R8GE_WINDOWS
 #ifdef R8GE_LINUX
 // Alessandro Ghedini helped write this portion of the code
@@ -237,6 +244,10 @@ void r8ge::AudioPusher::mainLoop() {
 
 #endif // R8GE_LINUX
 
+std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
+    return &m_activeSounds;
+}
+
 double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
     double res = 0.0;
@@ -275,7 +286,6 @@ float *r8ge::AudioPusher::newCurrentSamples() {
     std::memcpy(r, m_lastSamples, m_lastSamplesCount);
     return r;
 }
-
 /*
 HRESULT r8ge::PlayAudioStream(MyAudioSource *pMySource)
 {

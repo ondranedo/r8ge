@@ -57,7 +57,6 @@ namespace r8ge{
 
     double square(double time);
 
-
     class Wave : public Sound{
     public:
         Wave(double startTime, const std::string& filename);

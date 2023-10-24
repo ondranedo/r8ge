@@ -1,19 +1,16 @@
 #include <r8ge/r8ge.h>
+#include <r8ge/video.h>
 
 class GameLayer : public r8ge::Layer {
 public:
     ~GameLayer() override = default;
 
-    GameLayer() : r8ge::Layer("gameLayer") {
+    GameLayer() : r8ge::Layer("gameLayer") {}
 
-    }
-
-    void update() const override {
-
-    }
+    void update() const override {}
 
     void event(const std::shared_ptr<r8ge::Event> &event) const override {
-        R8GE_LOG_DEBUG("{} received {} event", getName(), event->to_string());
+        r8ge::event::Dispatcher dispatcher(event);
     }
 
     void render() const override {
@@ -34,7 +31,7 @@ public:
     }
 
     void event(const std::shared_ptr<r8ge::Event> &event) const override {
-        R8GE_LOG_DEBUG("{} received {} event", getName(), event->to_string());
+        r8ge::event::Dispatcher dispatcher(event);
     }
 
     void render() const override {
@@ -42,10 +39,10 @@ public:
     }
 };
 
-class TestbedGame : public r8ge::GameInstance {
+class PlainApplication : public r8ge::GameInstance {
 public:
-    TestbedGame() : r8ge::GameInstance("testbedGame") {}
-    ~TestbedGame() override = default;
+    PlainApplication() : r8ge::GameInstance("PlainApplication") {}
+    ~PlainApplication() override = default;
 
     void onInit()  override {
         R8GE_LOG("`{}` game initialization", getGameName());
@@ -58,8 +55,18 @@ public:
     }
 
     void directEvent(const std::shared_ptr<r8ge::Event> &event) override {
-        // There is going to be a list of events that are handled directly by the game instance
-        // f.e. window resize, window close, BUTTON_ESC pressed, etc.
+        r8ge::event::Dispatcher dispatcher(event);
+
+        dispatcher.dispatch<r8ge::KeyPressed>([](const std::shared_ptr<r8ge::KeyPressed>& event) -> bool {
+            R8GE_LOG_DEBUG("Key pressed: {} [Sx{};Ax{};Cx{};Sux{}]",
+                           r8ge::to_string(event->stroke.iocode),
+                           static_cast<bool>(event->stroke.shift),
+                           static_cast<bool>(event->stroke.alt),
+                           static_cast<bool>(event->stroke.ctrl),
+                           static_cast<bool>(event->stroke.super)
+            );
+            return true;
+        });
     }
 
     void onUpdate() override {
@@ -71,5 +78,4 @@ public:
     }
 };
 
-R8GE_ADD_GAMEINSTANCE(TestbedGame);
-
+R8GE_ADD_GAMEINSTANCE(PlainApplication);

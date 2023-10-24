@@ -34,11 +34,13 @@ namespace r8ge {
     private:
 #ifdef R8GE_WINDOWS
         WAVEFORMATEX* m_wfx = NULL;
+
         IMMDeviceEnumerator *m_pEnumerator = NULL;
         IMMDevice *m_pDevice = NULL;
         IAudioClient *m_pAudioClient = NULL;
         IAudioRenderClient *m_pRenderClient = NULL;
         DWORD m_flags = 0;
+
         HRESULT LoadData(UINT32 bufferFrameCount, BYTE *pData);
 #endif
 

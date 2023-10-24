@@ -1,4 +1,4 @@
-add_library(fileio
+add_library(r8ge-core-fileio
         "File.cpp"
         "File.h"
         "FileReader.cpp"
@@ -15,4 +15,6 @@ add_library(fileio
         "fileReaders/Json.h"
         "fileReaders/Wave.cpp"
         "fileReaders/Wave.hpp"
+        "fileReaders/Glsl.cpp"
+        "fileReaders/Glsl.h"
 )

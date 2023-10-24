@@ -1,0 +1,117 @@
+#include "Convertor.h"
+
+namespace r8ge {
+    namespace video {
+        Key X11Convertor::convertKeyCode(int x11KeDyCode) {
+            switch (x11KeDyCode) {
+                case 9: return  Key::ESCAPE;
+                case 38: return Key::A;
+                case 56: return Key::B;
+                case 54: return Key::C;
+                case 40: return Key::D;
+                case 26: return Key::E;
+                case 41: return Key::F;
+                case 42: return Key::G;
+                case 43: return Key::H;
+                case 31: return Key::I;
+                case 44: return Key::J;
+                case 45: return Key::K;
+                case 46: return Key::L;
+                case 58: return Key::M;
+                case 57: return Key::N;
+                case 32: return Key::O;
+                case 33: return Key::P;
+                case 24: return Key::Q;
+                case 55: return Key::V;
+                case 53: return Key::X;
+                case 25: return Key::W;
+                case 29: return Key::Y;
+                case 52: return Key::Z;
+                case 39: return Key::S;
+                case 27: return Key::R;
+                case 28: return Key::T;
+                case 30: return Key::U;
+                case 49: return Key::GRAVE_ACCENT;
+                case 23: return Key::TAB;
+                case 66: return Key::CAPS_LOCK;
+                case 50: return Key::LEFT_SHIFT;
+                case 37: return Key::LEFT_CONTROL;
+                case 133: return Key::LEFT_SUPER;
+                case 64: return Key::LEFT_ALT;
+                case 65: return Key::SPACE;
+                case 135: return Key::MENU;
+                case 105: return Key::RIGHT_CONTROL;
+                case 62: return Key::RIGHT_SHIFT;
+                case 108: return Key::RIGHT_ALT;
+                case 36: return Key::ENTER;
+                case 22: return Key::BACKSPACE;
+                case 10: return Key::N1;
+                case 11: return Key::N2;
+                case 12: return Key::N3;
+                case 13: return Key::N4;
+                case 14: return Key::N5;
+                case 15: return Key::N6;
+                case 16: return Key::N7;
+                case 17: return Key::N8;
+                case 18: return Key::N9;
+                case 19: return Key::N0;
+                case 67: return Key::F1;
+                case 68: return Key::F2;
+                case 69: return Key::F3;
+                case 70: return Key::F4;
+                case 71: return Key::F5;
+                case 72: return Key::F6;
+                case 73: return Key::F7;
+                case 74: return Key::F8;
+                case 75: return Key::F9;
+                case 76: return Key::F10;
+                case 95: return Key::F11;
+                case 96: return Key::F12;
+                case 21: return Key::EQUAL;
+                case 20: return Key::MINUS;
+                case 34: return Key::LEFT_BRACKET;
+                case 35: return Key::RIGHT_BRACKET;
+                case 51: return Key::BACKSLASH;
+                case 48: return Key::APOSTROPHE;
+                case 59: return Key::COMMA;
+                case 60: return Key::PERIOD;
+                case 61: return Key::SLASH;
+                case 107: return Key::PRINT_SCREEN;
+                case 118: return Key::INSERT;
+                case 119: return Key::DELETE;
+                case 115: return Key::END;
+                case 110: return Key::HOME;
+                case 112: return Key::PAGE_UP;
+                case 117: return Key::PAGE_DOWN;
+                case 78: return Key::SCROLL_LOCK;
+                case 127: return Key::PAUSE;
+                case 111: return Key::UP;
+                case 116: return Key::DOWN;
+                case 113: return Key::LEFT;
+                case 114: return Key::RIGHT;
+                case 47: return Key::SEMICOLON;
+                case 90: return Key::KP_0;
+                case 87: return Key::KP_1;
+                case 88: return Key::KP_2;
+                case 89: return Key::KP_3;
+                case 83: return Key::KP_4;
+                case 84: return Key::KP_5;
+                case 85: return Key::KP_6;
+                case 79: return Key::KP_7;
+                case 80: return Key::KP_8;
+                case 81: return Key::KP_9;
+                case 77: return Key::NUM_LOCK;
+                case 82: return Key::KP_SUBTRACT;
+                case 63: return Key::KP_MULTIPLY;
+                case 106: return Key::KP_DIVIDE;
+                case 86: return Key::KP_ADD;
+                case 104: return Key::KP_ENTER;
+                case 91: return Key::KP_DECIMAL;
+                case 1<<8: return Key::MBUTTON_LEFT;
+                case 3<<8: return Key::MBUTTON_RIGHT;
+                case 2<<8: return Key::MBUTTON_MIDDLE;
+            }
+            return Key::UNKNOWN;
+        }
+    }
+}

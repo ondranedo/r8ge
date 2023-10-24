@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace r8ge {
-    namespace Reader {
+    namespace reader {
         class Binary : public FileReader {
         public:
             Binary(std::string_view path);

@@ -3,7 +3,7 @@
 #include "../FileIO.h"
 
 namespace r8ge {
-    namespace Reader {
+    namespace reader {
         Text::Text(std::string_view path) : FileReader(path) {
             global::fileIO->add(m_path, FileType::TEXT);
         }
