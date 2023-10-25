@@ -10,6 +10,7 @@
 #include "../types/Vertex.h"
 
 #include "programManager/Program.h"
+#include "programManager/ProgramData.h"
 
 namespace r8ge {
     namespace video {
@@ -37,6 +38,8 @@ namespace r8ge {
             virtual void setProgram(const Program& program) = 0;
 
             virtual bool compileProgram(Program& program) = 0;
+
+            virtual void sendProgramData(const Program& program, const ProgramData& data) = 0;
         public:
             static std::shared_ptr<RenderingService> create(API api);
 

@@ -22,8 +22,9 @@ namespace r8ge {
         }
 
         void Program::setLayout(const VertexBufferLayout &layout) {
-            m_layout = layout;
-        }
+            File<reader::Glsl> glsl(m_source);
+            glsl->load_glsl();
+         }
 
         size_t Program::getId() const {
             return m_id;
@@ -39,6 +40,10 @@ namespace r8ge {
             File<reader::Glsl> glsl(m_source);
             glsl->load_glsl();
             return glsl->getFragmentShader();
+        }
+
+        std::vector<std::string> Program::getUniformList() const {
+            return std::vector<std::string>();
         }
     }
 }

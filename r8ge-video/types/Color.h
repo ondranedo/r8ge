@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace r8ge {
     using coord_pixel = uint16_t;
@@ -24,6 +25,18 @@ namespace r8ge {
         explicit ColorRGBA(uint32_t rgba);
 
         uint32_t a : 8;
+    };
+
+    struct ColorRGB_n {
+        float r;
+        float g;
+        float b;
+
+        std::vector<uint8_t> getRawData() const;
+        size_t getSize() const;
+
+        ColorRGB_n(float _r, float _g, float _b);
+        explicit ColorRGB_n(ColorRGB rgba);
     };
 }
 

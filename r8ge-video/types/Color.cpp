@@ -14,4 +14,24 @@ namespace r8ge {
     ColorRGB::ColorRGB(uint32_t rgb) :
     r((rgb >> 16) & 0xFF),g((rgb >> 8) & 0xFF),b(rgb & 0xFF)
     {}
+
+    ColorRGB_n::ColorRGB_n(float _r, float _g, float _b)
+    : r(_r), g(_g), b(_b){}
+
+    ColorRGB_n::ColorRGB_n(ColorRGB rgba)
+    : r(static_cast<float>(rgba.r)/255.0f),
+      g(static_cast<float>(rgba.g)/255.0f),
+      b(static_cast<float>(rgba.b)/255.0f){}
+
+    std::vector<uint8_t> ColorRGB_n::getRawData() const {
+        union {
+            struct { float r, g, b;};
+            uint8_t _raw[sizeof(float)*3];
+        } convertor = {r, g, b};
+        return {convertor._raw, convertor._raw + sizeof(float)*3};
+    }
+
+    size_t ColorRGB_n::getSize() const {
+        return 0;
+    }
 }

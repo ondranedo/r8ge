@@ -3,6 +3,8 @@
 
 #include "Text.h"
 
+#include <vector>
+
 namespace r8ge {
     namespace reader {
 
@@ -12,12 +14,12 @@ namespace r8ge {
          * This class is used to read GLSL files. Uses modified .glsl file format:
          *
          *             /------------------------------------------------|
-         *             |  #r8ge fragment
+         *             |  @r8ge fragment
          *             |
          *             |   // Fragment Shader code
          *             |
          *             |
-         *             |  #r8ge vertex
+         *             |  @r8ge vertex
          *             |
          *             |  // Vertex Shader code
          *             |

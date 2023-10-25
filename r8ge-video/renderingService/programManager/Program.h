@@ -25,6 +25,9 @@ namespace r8ge {
             [[nodiscard]] std::string getVertexShader() const;
 
             [[nodiscard]] std::string getFragmentShader() const;
+
+            // Return uniform list
+            [[nodiscard]] std::vector<std::string> getUniformList() const;
         private:
             size_t m_id;
             std::string m_source;
