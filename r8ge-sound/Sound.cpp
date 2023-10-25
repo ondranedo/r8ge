@@ -310,13 +310,11 @@ int r8ge::AudioPusher::playNote(short tone, r8ge::Instrument inst) {
 }
 
 void r8ge::AudioPusher::deleteSound(int id) {
-    int i = 0;
     for(auto& s : m_activeSounds){
         if(s->getID() == id){
-            m_activeSounds.erase(m_activeSounds.begin() + i);
+            s->setEndTime(m_generatedTime);
             return;
         }
-        i++;
     }
 }
 
