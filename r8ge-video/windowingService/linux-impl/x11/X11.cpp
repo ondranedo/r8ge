@@ -145,5 +145,13 @@ namespace r8ge {
 
             m_xContext->swapBuffers();
         }
+
+        size_t X11::getWidthOfMainWindow() const {
+            return m_mainWindowWidth;
+        }
+
+        size_t X11::getHeightOfMainWindow() const {
+            return m_mainWindowHeight;
+        }
     }
 }

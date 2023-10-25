@@ -28,6 +28,9 @@ namespace r8ge {
 
             static std::shared_ptr<WindowingService> create();
 
+            [[nodiscard]] virtual size_t getWidthOfMainWindow() const = 0;
+            [[nodiscard]] virtual size_t getHeightOfMainWindow() const = 0;
+
             void setKeyPressedCallback(std::function<void(const r8ge::Key&, IOAction)> callback);
             void setMousePressedCallback(std::function<void(const r8ge::Key&, IOAction)> callback);
         protected:

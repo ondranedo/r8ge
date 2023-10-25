@@ -27,6 +27,10 @@ namespace r8ge {
             bool setContextOfMainWindow() override;
             void swapBuffersOfMainWindow() override;
 
+            size_t getWidthOfMainWindow() const override;
+
+            size_t getHeightOfMainWindow() const override;
+
         private:
             // TODO: Make Window class
             size_t m_mainWindowWidth, m_mainWindowHeight;

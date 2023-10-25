@@ -5,6 +5,9 @@
 
 #define R8GE_GL_ERROR_MSG_LENGTH 1024
 
+#include <cstdlib>
+#include <cstring>
+
 namespace r8ge {
     namespace video {
         static void debugMsg(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
@@ -145,6 +148,39 @@ namespace r8ge {
 
             R8GE_LOG("GL Program [r8ge:{},gl:{}] compiled and created", program.getId(), p);
 
+            // Uniforms and Attributes
+            {
+                /*GLint count;
+
+                GLint size; // size of the variable
+                GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+                const GLsizei bufSize = 16; // maximum name length
+                GLchar name[bufSize]; // variable name in GLSL
+                GLsizei length; // name length
+
+                glGetProgramiv(p, GL_ACTIVE_ATTRIBUTES, &count);
+                R8GE_LOG_DEBUG("Active Attributes: {}", count);
+
+                for (size_t i = 0; i < count; ++i)
+                {
+                    glGetActiveAttrib(p, (GLuint)i, bufSize, &length, &size, &type, name);
+
+                    R8GE_LOG_DEBUG("Attribute {} Type: {} Name: {}", i, type, name);
+                }
+
+                glGetProgramiv(p, GL_ACTIVE_UNIFORMS, &count);
+                R8GE_LOG_DEBUG("Active Uniforms: {}", count);
+
+                for (size_t i = 0; i < count; ++i)
+                {
+                    glGetActiveUniform(p, (GLuint)i, bufSize, &length, &size, &type, name);
+
+                    R8GE_LOG_DEBUG("Uniform {} Type: {} Name: {}", i, type, name);
+                }*/
+            }
+
+
             return true;
         }
 
@@ -163,6 +199,60 @@ namespace r8ge {
                 return false;
             }
             return true;
+        }
+
+        void GLService::sendProgramData(const Program &program, const ProgramData &data) {
+            auto location = glGetUniformLocation(m_programs[program.getId()], data.getLocation().c_str());
+            if(location==-1)
+            {
+                R8GE_LOG_ERROR("Invalid uniform location for uniform `{}` in gl program[r8ge:{}]", data.getLocation(), program.getId());
+                return;
+            }
+
+            // TODO: create conversion module
+            switch (data.getType()) {
+                case ProgramData::Type::VEC1: {
+                    union {
+                        float v1[1];
+                        uint8_t raw[sizeof(float)];
+                    } convertor;
+                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float));
+                    glUniform1f(location, convertor.v1[0]);
+                    break;
+                }
+                case ProgramData::Type::VEC2: {
+                    union {
+                        float v2[2];
+                        uint8_t raw[sizeof(float) * 2];
+                    } convertor;
+                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float) * 2);
+                    glUniform2f(location, convertor.v2[0], convertor.v2[1]);
+                    break;
+                }
+                case ProgramData::Type::VEC3: {
+                    union {
+                        float v3[3];
+                        uint8_t raw[sizeof(float) * 3];
+                    } convertor;
+                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float) * 3);
+                    glUniform3f(location, convertor.v3[0], convertor.v3[1], convertor.v3[2]);
+                    break;
+                }
+                case ProgramData::Type::VEC4:
+                {
+                    union {
+                        float v4[4];
+                        uint8_t raw[sizeof(float)*4];
+                    } convertor;
+                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float)*4);
+                    glUniform4f(location, convertor.v4[0], convertor.v4[1],convertor.v4[2],convertor.v4[3]);
+                    break;
+                }
+
+                default:
+                    R8GE_LOG_ERROR("Invalid uniform type for uniform `{}`", data.getLocation());
+                    break;
+            }
         }
     }
 }

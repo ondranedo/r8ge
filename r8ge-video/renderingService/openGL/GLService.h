@@ -34,6 +34,9 @@ namespace r8ge {
             bool compileProgram(Program &program) override;
 
             bool compileShader(GLuint shader, std::string_view source, std::string_view type) const;
+
+            void sendProgramData(const Program &program, const ProgramData &data) override;
+
         private:
             GLuint m_indexBuffer, m_vertexArrayObject, m_vertexBuffer;
             size_t m_indexCount;

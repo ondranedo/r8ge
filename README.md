@@ -1,4 +1,5 @@
-# R8GE
+# ![Screenshot](./docs/img.png)
+
 - **R**etro **8**-bit **G**ame **E**ngine, a simple game engine for 2D games.
 - 3D support is planned in the future.
 - Project is in early development stage.
