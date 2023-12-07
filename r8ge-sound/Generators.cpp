@@ -73,6 +73,10 @@ int r8ge::Sound::getID() const {
     return m_id;
 }
 
+void r8ge::Sound::setMId(int mId) {
+    m_id = mId;
+}
+
 r8ge::Wave::Wave(double startTime, const std::string& filename) : Sound(startTime) {
   // TODO: File<T>
     reader::Wave f(filename);

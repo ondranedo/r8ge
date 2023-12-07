@@ -31,6 +31,8 @@ namespace r8ge{
         double m_endTime = 999999.0;
         bool m_isActive;
         int m_id = -1;
+    public:
+        void setMId(int mId);
     };
 
     class Note : public Sound{

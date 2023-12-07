@@ -278,8 +278,9 @@ double r8ge::AudioPusher::getGeneratedTime() const {
 
 int r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
-    m_activeSounds.push_back(sound);
     m_count++;
+    sound->setMId(m_count);
+    m_activeSounds.push_back(sound);
     return m_count;
 }
 
@@ -302,7 +303,9 @@ int r8ge::AudioPusher::playWave(const std::string &filename) {
 }
 
 int r8ge::AudioPusher::playNote(short tone, double (*generator)(double), r8ge::Envelope envelope) {
-    return addSound(new Note(m_generatedTime, tone, generator, envelope));
+    auto noye = new Note(m_generatedTime, tone, generator, envelope);
+    noye->setMId(m_count);
+    return addSound(noye);
 }
 
 int r8ge::AudioPusher::playNote(short tone, r8ge::Instrument inst) {
