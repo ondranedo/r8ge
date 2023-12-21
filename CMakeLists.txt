@@ -14,12 +14,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${INSTALL_DIR}")
 add_subdirectory(r8ge-core)
 add_subdirectory(r8ge-sound)
 add_subdirectory(r8ge-video)
+add_subdirectory(r8ge-gui)
 
 # Executables
 add_subdirectory(testbed)
 
 # Installation
-install(TARGETS testbed r8ge-video r8ge-core r8ge-sound
+install(TARGETS testbed r8ge-video r8ge-core r8ge-sound r8ge-gui
         RUNTIME DESTINATION ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
         LIBRARY DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         ARCHIVE DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}

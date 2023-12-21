@@ -1,4 +1,5 @@
 #include <r8ge/r8ge.h>
+#include <r8ge/video.h>
 
 class GameLayer : public r8ge::Layer {
 public:
@@ -6,13 +7,13 @@ public:
 
     GameLayer() : r8ge::Layer("gameLayer") {}
 
-    void update() const override {}
+    void update() const  {}
 
-    void event(const std::shared_ptr<r8ge::Event> &event) const override {
+    void event(const std::shared_ptr<r8ge::Event> &event) const  {
         r8ge::event::Dispatcher dispatcher(event);
     }
 
-    void render() const override {
+    void render() const  {
 
     }
 };
@@ -25,15 +26,15 @@ public:
 
     }
 
-    void update() const override {
+    void update() const  {
 
     }
 
-    void event(const std::shared_ptr<r8ge::Event> &event) const override {
+    void event(const std::shared_ptr<r8ge::Event> &event) const  {
         r8ge::event::Dispatcher dispatcher(event);
     }
 
-    void render() const override {
+    void render() const  {
 
     }
 };
@@ -46,15 +47,11 @@ public:
     void onInit()  override {
         R8GE_LOG("`{}` game initialization", getGameName());
 
-        layerSwitcher().add<GameLayer>();
-
-        // Menu layer will be rendered last, so it will be on top of the game layer
-        // But events will be sent to the game layer first
-        layerSwitcher().add<MenuLayer>();
     }
 
     void directEvent(const std::shared_ptr<r8ge::Event> &event) override {
         r8ge::event::Dispatcher dispatcher(event);
+
     }
 
     void onUpdate() override {
@@ -66,4 +63,4 @@ public:
     }
 };
 
-R8GE_ADD_GAMEINSTANCE(PlainApplication);
+R8GE_ADD_INSTANCE(PlainApplication);

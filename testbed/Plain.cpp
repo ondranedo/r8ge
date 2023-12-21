@@ -1,66 +1,80 @@
 #include <r8ge/r8ge.h>
 #include <r8ge/video.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui.h>
+#include <memory>
+
+
+r8ge::ColorRGB color(0x000000);
 
 class GameLayer : public r8ge::Layer {
+
 public:
+
     ~GameLayer() override = default;
 
-    GameLayer() : r8ge::Layer("gameLayer") {}
-
-    void update() const  {}
-
-    void event(const std::shared_ptr<r8ge::Event> &event) const  {
-        r8ge::event::Dispatcher dispatcher(event);
+    GameLayer() : r8ge::Layer("gameLayer") {
+        /*
+        int f;
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        ImGui_ImplOpenGL3_Init("#version 460");
+        //r8ge::Video::getWindowingService()->setContextOfMainWindow();
+        bool show_demo_window = true;
+        bool show_another_window = false;
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+        ImGui::Checkbox("Another Window", &show_another_window);
+        //r8ge::Video::getWindowingService()->poolEvents();
+         */
+        //r8ge::Video::getRenderingService()->
     }
 
-    void render() const  {
+    void update() override {
+        color.b = 0x20;
+    }
 
+    void event(const std::shared_ptr<r8ge::Event> &event) override {
+        r8ge::Video::getRenderingService()->setClearColor(color);
+    }
+
+    void render() override {
+
+/*
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui::NewFrame();
+        ImGui::Begin("Hello, ImGui!");
+        ImGui::Text("Hello, world!");
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        */
     }
 };
 
-class MenuLayer : public r8ge::Layer {
+class PlainApp : public r8ge::GameInstance {
+
 public:
-    ~MenuLayer() override = default;
-
-    MenuLayer() : r8ge::Layer("menuLayer") {
-
+    PlainApp() : r8ge::GameInstance("testbedGame") {
     }
 
-    void update() const  {
+    ~PlainApp() override = default;
 
-    }
-
-    void event(const std::shared_ptr<r8ge::Event> &event) const  {
-        r8ge::event::Dispatcher dispatcher(event);
-    }
-
-    void render() const  {
-
-    }
-};
-
-class PlainApplication : public r8ge::GameInstance {
-public:
-    PlainApplication() : r8ge::GameInstance("PlainApplication") {}
-    ~PlainApplication() override = default;
-
-    void onInit()  override {
+    void onInit() override {
         R8GE_LOG("`{}` game initialization", getGameName());
-
-    }
-
-    void directEvent(const std::shared_ptr<r8ge::Event> &event) override {
-        r8ge::event::Dispatcher dispatcher(event);
-
+        layerSwitcher().add<GameLayer>();
     }
 
     void onUpdate() override {
 
     }
 
-    void onExit()  override {
+    void onExit() override {
         R8GE_LOG("`{}` game exiting", getGameName());
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui::DestroyContext();
     }
 };
 
-R8GE_ADD_INSTANCE(PlainApplication);
+R8GE_ADD_INSTANCE(PlainApp);

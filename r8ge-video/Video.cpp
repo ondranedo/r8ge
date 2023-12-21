@@ -35,7 +35,7 @@ namespace r8ge {
 
         s_renderingService->init();
 
-        R8GE_LOG_INFOR("R8GE-Video initialized");
+        R8GE_LOG("R8GE-Video initialized");
     }
 
     void Video::run() {
@@ -44,9 +44,9 @@ namespace r8ge {
         // TODO: Fetch raw data from Renderer
         video::IndexBuffer ib({0,3,2,0,1,2});
         std::vector<Vertex> vertices = {
-                {-0.0f,-0.0f},
-                {-0.0f, 0.0f},
-                { 0.0f, 0.0f},
+                {-0.5f,-0.5f},
+                {0.5f, -0.5f},
+                { 0.0f, 0.5f},
                 { 0.0f,-0.0f}
         };
 
@@ -57,10 +57,10 @@ namespace r8ge {
 
         s_renderingService->setClearColor({0x54,0x54,0x54});
 
-        //video::Program basic_program(0, "shaders/basic.glsl");
+        video::Program basic_program(0, "shaders/basic.glsl");
 
-        //s_renderingService->compileProgram(basic_program);
-       // s_renderingService->setProgram(basic_program);
+        s_renderingService->compileProgram(basic_program);
+        s_renderingService->setProgram(basic_program);
 
         while(Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
