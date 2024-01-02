@@ -69,6 +69,8 @@ namespace r8ge {
         }
 
         void GLService::setDataLayout() const {
+            //TODO Rewrite this function
+            /*
             size_t index = 0, offset = 0;
             for(auto& element : m_layout.getLayout()) {
                 glEnableVertexAttribArray(index);
@@ -76,12 +78,19 @@ namespace r8ge {
                                       VertexBufferLayout::EntryTypeComponents(element),
                                       GLConvertor::convertToGLType(VertexBufferLayout::EntryTypeToDataType(element)),
                                       VertexBufferLayout::EntryTypeShouldBeNormalized(element),
-                                      static_cast<GLsizei>(m_layout.getStride()),
+                                      15,
                                       reinterpret_cast<const void*>(offset)
                 );
+
                 index++;
                 offset+= VertexBufferLayout::EntryTypeSize(element);
-            }
+                }
+                */
+
+            glVertexAttribPointer(  0,2,GL_FLOAT,GL_FALSE,11,(void*)0);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(  1,3,GL_UNSIGNED_BYTE,GL_TRUE,11,(void*)8);
+            glEnableVertexAttribArray(1);
         }
 
         void GLService::render() const {

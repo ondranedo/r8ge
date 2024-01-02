@@ -2,6 +2,7 @@
 
 #include <r8ge/r8ge.h>
 #include <X11/Xlib.h>
+#include <iostream>
 
 #include "renderingService/buffers/IndexBuffer.h"
 #include "renderingService/buffers/VertexBuffer.h"
@@ -23,6 +24,7 @@ namespace r8ge {
         s_windowingService->setKeyPressedCallback(Input::getKeyActionCallback());
         s_windowingService->setMousePressedCallback(Input::getMouseActionCallback());
     }
+
     Video::~Video() {
         s_windowingService = nullptr;
         s_renderingService = nullptr;
@@ -42,27 +44,28 @@ namespace r8ge {
         R8GE_LOG("Video starting to run main loop");
 
         // TODO: Fetch raw data from Renderer
-        video::IndexBuffer ib({0,3,2,0,1,2});
-        std::vector<Vertex> vertices = {
-                {-0.5f,-0.5f},
-                {0.5f, -0.5f},
-                { 0.0f, 0.5f},
-                { 0.0f,-0.0f}
+        video::IndexBuffer ib({0, 1, 2});
+        std::vector<VertexColor> vertices = {
+                {0.5f, -0.5f, ColorRGB(255, 0, 0)},
+                {-0.5f,  -0.5f, ColorRGB(0, 255, 0)},
+                {0.0f,  0.5f,  ColorRGB(0, 0, 255)},
         };
+
+        std::cout<< sizeof(VertexColor);
 
         video::VertexBuffer vb(vertices, vertices[0].getLayout());
 
         s_renderingService->setIndexBuffer(ib);
         s_renderingService->setVertexBuffer(vb);
 
-        s_renderingService->setClearColor({0x54,0x54,0x54});
+        s_renderingService->setClearColor({0x54, 0x54, 0x54,0x00});
 
         video::Program basic_program(0, "shaders/basic.glsl");
 
         s_renderingService->compileProgram(basic_program);
         s_renderingService->setProgram(basic_program);
 
-        while(Ar8ge::isRunning()) {
+        while (Ar8ge::isRunning()) {
             s_windowingService->poolEvents();
 
             s_renderingService->clear();
