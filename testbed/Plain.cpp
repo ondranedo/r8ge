@@ -5,7 +5,7 @@
 #include <memory>
 
 
-r8ge::ColorRGB color(0x000000);
+r8ge::ColorRGBA color(0x000000);
 
 class GameLayer : public r8ge::Layer {
 
@@ -33,7 +33,9 @@ public:
     }
 
     void update() override {
-        color.b = 0x20;
+        color.r = 0x00;
+        color.b = 0x30;
+        color.g = 0x00;
     }
 
     void event(const std::shared_ptr<r8ge::Event> &event) override {

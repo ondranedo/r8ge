@@ -20,12 +20,10 @@ namespace r8ge {
 
     struct ColorRGBA : public ColorRGB {
         ColorRGBA(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a);
-        ColorRGBA(uint8_t _r, uint8_t _g, uint8_t _b);
-        ColorRGBA(const ColorRGB& rgb);
         explicit ColorRGBA(uint32_t rgba);
 
         uint32_t a : 8;
-    };
+    }__attribute__((packed));
 }
 
 #endif//!R8GE_COLOR_H
