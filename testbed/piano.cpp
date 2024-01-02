@@ -116,7 +116,7 @@ public:
         for (int i = 0; i < keyCount; i++) {
             if (wasPressed[i]) {
                 if (!isPlaying[i]) {
-                    ids[i] = sound.playNote(28 + i, testgen);
+                    ids[i] = sound.playNote(16 + i, r8ge::saw);
                     isPlaying[i] = true;
                 }
             }

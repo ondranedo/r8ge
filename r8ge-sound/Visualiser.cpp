@@ -35,7 +35,7 @@ void r8ge::simpleFastFourier(std::valarray<std::complex<float>> arr) {
 
     std::complex<float> t;
     for(int k = 0; k < count >> 1; k++){
-        t = (std::complex<float>)std::polar(1.0, -2 * 3.141592653589793238462 * k / count) * odd[k];
+        t = (std::complex<float>)std::polar(1.0, -2 * std::numbers::pi * k / count) * odd[k];
         arr[k] = even[k] + t;
         arr[k + (count >> 1)] = even[k] - t;
     }

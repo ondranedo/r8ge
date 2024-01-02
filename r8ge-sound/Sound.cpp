@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-#define R8GE_MAIN_VOLUME 0.01
+#define R8GE_MAIN_VOLUME 0.02
 
 #ifdef R8GE_WINDOWS
 

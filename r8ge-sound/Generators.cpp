@@ -28,7 +28,7 @@ double r8ge::Note::generate(double timeSecs, unsigned char channel) {
     if(modifier < 0.0){
         m_isActive = false;
     }
-    return m_generator(timeSecs * m_frequency * 6.2831853) * (channel == 1 ? m_right : m_left) * modifier;
+    return m_generator(timeSecs * m_frequency * std::numbers::pi * 2) * (channel == 1 ? m_right : m_left) * modifier;
 }
 
 r8ge::Note::Note(double startTime, short tone, double (*generator)(double), Envelope envelope) : Sound(startTime) {
@@ -49,6 +49,10 @@ double r8ge::toneToFrequency(short note){
 
 double r8ge::square(double time){
     return std::sin(time) > 0 ? 1.0 : -1.0;
+}
+
+double r8ge::saw(double time) {
+    return std::fmod(time, std::numbers::pi * 2) / std::numbers::pi - 1;
 }
 
 void r8ge::Sound::setVolumes(double left, double right) {

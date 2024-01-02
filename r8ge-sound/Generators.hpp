@@ -50,6 +50,7 @@ namespace r8ge{
     double toneToFrequency(short tone);
 
     double square(double time);
+    double saw(double time);
 
     class Wave : public Sound{
     public:
