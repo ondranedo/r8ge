@@ -41,14 +41,11 @@ r8ge::Vertex3D::Vertex3D(r8ge::coord_float x, r8ge::coord_float y, r8ge::coord_f
 }
 
 std::vector<uint8_t> r8ge::Vertex3D::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            coord_float z;
-        };
-        uint8_t _raw[sizeof(coord_float)];
-    } convertor = {z};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* zCoordRawData = reinterpret_cast<const uint8_t*>(&z);
+    data.insert(data.end(), zCoordRawData, zCoordRawData + sizeof(coord_float));
+
     return data;
 }
 
@@ -66,14 +63,14 @@ r8ge::video::VertexBufferLayout r8ge::VertexTexture::getLayout() const {
 }
 
 std::vector<uint8_t> r8ge::VertexTexture::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            texture_coord tex_x, tex_y;
-        };
-        uint8_t _raw[2 * sizeof(texture_coord)];
-    } convertor = {tex_x, tex_y};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* texXRawData = reinterpret_cast<const uint8_t*>(&tex_x);
+    data.insert(data.end(), texXRawData, texXRawData + sizeof(texture_coord));
+
+    const auto* texYRawData = reinterpret_cast<const uint8_t*>(&tex_y);
+    data.insert(data.end(), texYRawData, texYRawData + sizeof(texture_coord));
+
     return data;
 }
 
@@ -94,15 +91,17 @@ r8ge::video::VertexBufferLayout r8ge::VertexTexture3D::getLayout() const {
 }
 
 std::vector<uint8_t> r8ge::VertexTexture3D::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            coord_float z;
-            texture_coord tex_x, tex_y, tex_z;
-        };
-        uint8_t _raw[sizeof(coord_float) + 3 * sizeof(texture_coord)];
-    } convertor = {z, tex_x, tex_y, tex_z};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* zCoordRawData = reinterpret_cast<const uint8_t*>(&z);
+    data.insert(data.end(), zCoordRawData, zCoordRawData + sizeof(coord_float));
+
+    const auto* texXRawData = reinterpret_cast<const uint8_t*>(&tex_x);
+    data.insert(data.end(), texXRawData, texXRawData + sizeof(texture_coord));
+
+    const auto* texYRawData = reinterpret_cast<const uint8_t*>(&tex_y);
+    data.insert(data.end(), texYRawData, texYRawData + sizeof(texture_coord));
+
     return data;
 }
 
@@ -110,119 +109,122 @@ size_t r8ge::VertexTexture3D::getSize() const {
     return Vertex::getSize() + sizeof(z) + sizeof(tex_x) + sizeof(tex_y) + sizeof(tex_z);
 }
 
-r8ge::VertexColor::VertexColor(r8ge::coord_float x, r8ge::coord_float y, r8ge::ColorRGBA rgba) : Vertex(x, y),
-                                                                                                 rgba(rgba) {
+r8ge::VertexColor::VertexColor(r8ge::coord_float x, r8ge::coord_float y, r8ge::ColorRGB rgb) : Vertex(x, y),
+                                                                                                 rgb(rgb) {
 }
 
 r8ge::video::VertexBufferLayout r8ge::VertexColor::getLayout() const {
     return video::VertexBufferLayout(
-            {video::VertexBufferLayout::Entry::POS_XY, video::VertexBufferLayout::Entry::COLOUR_RGBA});
+            {video::VertexBufferLayout::Entry::POS_XY, video::VertexBufferLayout::Entry::COLOUR_RGB});
 }
 
 std::vector<uint8_t> r8ge::VertexColor::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            ColorRGBA rgba;
-        };
-        uint8_t _raw[sizeof(ColorRGBA)];
-    } convertor = {rgba};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
+    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
+
     return data;
 }
 
 size_t r8ge::VertexColor::getSize() const {
-    return Vertex::getSize() + sizeof(rgba);
+    return Vertex::getSize() + sizeof(rgb);
 }
 
 r8ge::VertexColor3D::VertexColor3D(r8ge::coord_float x, r8ge::coord_float y, r8ge::coord_float z,
-                                   r8ge::ColorRGBA rgba) : Vertex(x, y), z(z), rgba(rgba) {
+                                   r8ge::ColorRGB rgb) : Vertex(x, y), z(z), rgb(rgb) {
 
 }
 
 r8ge::video::VertexBufferLayout r8ge::VertexColor3D::getLayout() const {
     return video::VertexBufferLayout(
-            {video::VertexBufferLayout::Entry::POS_XYZ, video::VertexBufferLayout::Entry::COLOUR_RGBA});
+            {video::VertexBufferLayout::Entry::POS_XYZ, video::VertexBufferLayout::Entry::COLOUR_RGB});
 }
 
 std::vector<uint8_t> r8ge::VertexColor3D::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            coord_float z;
-            ColorRGBA rgba;
-        };
-        uint8_t _raw[sizeof(coord_float) + sizeof(ColorRGBA)];
-    } convertor = {z, rgba};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
+    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
+
+    const auto* zCoordRawData = reinterpret_cast<const uint8_t*>(&z);
+    data.insert(data.end(), zCoordRawData, zCoordRawData + sizeof(coord_float));
+
     return data;
 }
 
+
 size_t r8ge::VertexColor3D::getSize() const {
-    return Vertex::getSize() + sizeof(z) + sizeof(rgba);
+    return Vertex::getSize() + sizeof(z) + sizeof(rgb);
 }
 
-r8ge::VertexColorTexture::VertexColorTexture(r8ge::coord_float x, r8ge::coord_float y, r8ge::ColorRGBA rgba,
+r8ge::VertexColorTexture::VertexColorTexture(r8ge::coord_float x, r8ge::coord_float y, r8ge::ColorRGB rgb,
                                              r8ge::texture_coord tex_x, r8ge::texture_coord tex_y) : Vertex(x, y),
-                                                                                                     rgba(rgba),
+                                                                                                     rgb(rgb),
                                                                                                      tex_x(tex_x),
                                                                                                      tex_y(tex_y) {
 
 }
 
 r8ge::video::VertexBufferLayout r8ge::VertexColorTexture::getLayout() const {
-    return video::VertexBufferLayout({video::VertexBufferLayout::POS_XY, video::VertexBufferLayout::COLOUR_RGBA,
+    return video::VertexBufferLayout({video::VertexBufferLayout::POS_XY, video::VertexBufferLayout::COLOUR_RGB,
                                       video::VertexBufferLayout::TEXTURE_XY
                                      });
 }
 
 std::vector<uint8_t> r8ge::VertexColorTexture::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            ColorRGBA rgba;
-            texture_coord tex_x, tex_y;
-        };
-        uint8_t _raw[sizeof(ColorRGBA) + 2 * sizeof(texture_coord)];
-    } convertor = {rgba, tex_x, tex_y};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
+    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
+
+    const auto* texXRawData = reinterpret_cast<const uint8_t*>(&tex_x);
+    data.insert(data.end(), texXRawData, texXRawData + sizeof(texture_coord));
+
+    const auto* texYRawData = reinterpret_cast<const uint8_t*>(&tex_y);
+    data.insert(data.end(), texYRawData, texYRawData + sizeof(texture_coord));
+
     return data;
 }
 
 size_t r8ge::VertexColorTexture::getSize() const {
-    return Vertex::getSize() + sizeof(rgba) + sizeof(tex_x) + sizeof(tex_y);
+    return Vertex::getSize() + sizeof(rgb) + sizeof(tex_x) + sizeof(tex_y);
 }
 
 r8ge::VertexColorTexture3D::VertexColorTexture3D(r8ge::coord_float x, r8ge::coord_float y, r8ge::coord_float z,
-                                                 r8ge::ColorRGBA rgba, r8ge::texture_coord tex_x,
+                                                 r8ge::ColorRGB rgb, r8ge::texture_coord tex_x,
                                                  r8ge::texture_coord tex_y, r8ge::texture_coord tex_z) : Vertex(x, y),
                                                                                                          z(z),
-                                                                                                         rgba(rgba),
+                                                                                                         rgb(rgb),
                                                                                                          tex_x(tex_x),
                                                                                                          tex_y(tex_y),
                                                                                                          tex_z(tex_z) {
 }
 
 r8ge::video::VertexBufferLayout r8ge::VertexColorTexture3D::getLayout() const {
-    return video::VertexBufferLayout({video::VertexBufferLayout::POS_XYZ, video::VertexBufferLayout::COLOUR_RGBA,
+    return video::VertexBufferLayout({video::VertexBufferLayout::POS_XYZ, video::VertexBufferLayout::COLOUR_RGB,
                                       video::VertexBufferLayout::TEXTURE_XYZ
                                      });
 }
 
 std::vector<uint8_t> r8ge::VertexColorTexture3D::getRawData() const {
-    auto data = Vertex::getRawData();
-    union {
-        struct {
-            coord_float z;
-            ColorRGBA rgba;
-            texture_coord tex_x, tex_y, tex_z;
-        };
-        uint8_t _raw[sizeof(coord_float) + sizeof(ColorRGBA) + 3 * sizeof(texture_coord)];
-    } convertor = {z, rgba, tex_x, tex_y, tex_z};
-    data += {convertor._raw, convertor._raw + sizeof(convertor._raw)};
+    std::vector<uint8_t> data = Vertex::getRawData();
+
+    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
+    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
+
+    const auto* zCoordRawData = reinterpret_cast<const uint8_t*>(&z);
+    data.insert(data.end(), zCoordRawData, zCoordRawData + sizeof(coord_float));
+
+    const auto* texXRawData = reinterpret_cast<const uint8_t*>(&tex_x);
+    data.insert(data.end(), texXRawData, texXRawData + sizeof(texture_coord));
+
+    const auto* texYRawData = reinterpret_cast<const uint8_t*>(&tex_y);
+    data.insert(data.end(), texYRawData, texYRawData + sizeof(texture_coord));
+
     return data;
 }
 
 size_t r8ge::VertexColorTexture3D::getSize() const {
-    return Vertex::getSize() + sizeof(z) + sizeof(rgba) + sizeof(tex_x) + sizeof(tex_y) + sizeof(tex_z);
+    return Vertex::getSize() + sizeof(z) + sizeof(rgb) + sizeof(tex_x) + sizeof(tex_y) + sizeof(tex_z);
 }

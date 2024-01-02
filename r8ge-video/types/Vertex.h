@@ -66,7 +66,7 @@ namespace r8ge {
     };
 
     struct VertexColor : public Vertex {
-        VertexColor(coord_float x, coord_float y, ColorRGBA rgba);
+        VertexColor(coord_float x, coord_float y, ColorRGB rgb);
 
         ~VertexColor() override = default;
 
@@ -76,11 +76,11 @@ namespace r8ge {
 
         [[nodiscard]] size_t getSize() const override;
 
-        ColorRGBA rgba;
+        ColorRGB rgb;
     };
 
     struct VertexColor3D : public Vertex {
-        VertexColor3D(coord_float x, coord_float y, coord_float z, ColorRGBA rgba);
+        VertexColor3D(coord_float x, coord_float y, coord_float z, ColorRGB rgb);
 
         ~VertexColor3D() override = default;
 
@@ -90,12 +90,12 @@ namespace r8ge {
 
         [[nodiscard]] size_t getSize() const override;
 
-        ColorRGBA rgba;
+        ColorRGB rgb;
         coord_float z;
     };
 
     struct VertexColorTexture : public Vertex {
-        VertexColorTexture(coord_float x, coord_float y, ColorRGBA rgba, texture_coord tex_x,
+        VertexColorTexture(coord_float x, coord_float y, ColorRGB rgb, texture_coord tex_x,
                            texture_coord tex_y);
 
         ~VertexColorTexture() override = default;
@@ -106,13 +106,13 @@ namespace r8ge {
 
         [[nodiscard]] size_t getSize() const override;
 
-        ColorRGBA rgba;
+        ColorRGB rgb;
         texture_coord tex_x, tex_y;
 
     };
 
     struct VertexColorTexture3D : public Vertex {
-        VertexColorTexture3D(coord_float x, coord_float y, coord_float z, ColorRGBA rgba, texture_coord tex_x,
+        VertexColorTexture3D(coord_float x, coord_float y, coord_float z, ColorRGB rgb, texture_coord tex_x,
                              texture_coord tex_y,
                              texture_coord tex_z);
 
@@ -125,7 +125,7 @@ namespace r8ge {
         [[nodiscard]] size_t getSize() const override;
 
         coord_float z;
-        ColorRGBA rgba;
+        ColorRGB rgb;
         texture_coord tex_x, tex_y, tex_z;
     };
 
