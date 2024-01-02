@@ -40,7 +40,8 @@ namespace r8ge
                 POS_XYZ,     // Basic 3 x FLOAT, should be used for 3D games and 3D rendering (like 3D models: .obj, .fbx, etc.)
                 COLOUR_RGB,  // Basic 3 x U8CHAR, should be used for RGB colours, !0-255 values only!,
                 COLOUR_RGBA, // Basic 4 x U8CHAR, should be used for RGBA colours, !0-255 values only!, Alpha channel is used for transparency
-                TEXTURE_UV   // Basic 2 x FLOAT, should be used for texture coordinates, !0.0 - 1.0 values only!
+                TEXTURE_XY,  // Basic 2 x FLOAT, should be used for texture coordinates, !0.0 - 1.0 values only!
+                TEXTURE_XYZ   // Basic 3 x FLOAT, should be used for texture coordinates, !0.0 - 1.0 values only!
             };
 
             // Layout is a vector of LayoutEntryType
