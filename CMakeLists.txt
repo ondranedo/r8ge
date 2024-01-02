@@ -12,9 +12,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${INSTALL_DIR}/slib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${INSTALL_DIR}")
 
 add_subdirectory(r8ge-core)
-
 add_subdirectory(r8ge-sound)
-
 add_subdirectory(r8ge-video)
 
 # Executables

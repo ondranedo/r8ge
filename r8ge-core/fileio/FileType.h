@@ -11,6 +11,7 @@ namespace r8ge {
             JSON,
             TEXT,
             BINARY,
+            WAVE,
             GLSL
         };
 

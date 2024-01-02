@@ -5,6 +5,13 @@
 #include "Sound.hpp"
 #include <iostream>
 #include <cmath>
+
+#include <cstring>
+
+#define R8GE_MAIN_VOLUME 0.01
+
+#ifdef R8GE_WINDOWS
+
 #include <cstdlib>
 #include <random>
 
@@ -124,7 +131,6 @@ void r8ge::AudioPusher::mainLoop() {
     Exit:
 }
 
-#define R8GE_MAIN_VOLUME 0.01
 // note to self: all this should do is load correct sound data to a buffer
 HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData) {
     switch(m_wfx->wBitsPerSample){
@@ -147,6 +153,11 @@ HRESULT r8ge::AudioPusher::LoadData(UINT32 bufferFrameCount, BYTE *pData) {
     return 0;
 }
 
+
+void r8ge::AudioPusher::stopSound() {
+    m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+}
+
 r8ge::AudioPusher::~AudioPusher() {
     m_mainLoop.join();
     CoTaskMemFree(m_wfx);
@@ -156,15 +167,88 @@ r8ge::AudioPusher::~AudioPusher() {
     SAFE_RELEASE(m_pRenderClient)
 }
 
-void r8ge::AudioPusher::stopSound() {
-    m_flags |= AUDCLNT_BUFFERFLAGS_SILENT;
+#endif // R8GE_WINDOWS
+#ifdef R8GE_LINUX
+// Alessandro Ghedini helped write this portion of the code
+
+#define PCM_DEVICE "default"
+
+r8ge::AudioPusher::AudioPusher() {
+    int err;
+
+    m_timeStep = 1.0 / m_rate;
+
+    /* Open the PCM device in playback mode */
+    if (snd_pcm_open(&m_pcmHandle, PCM_DEVICE, SND_PCM_STREAM_PLAYBACK, 0) < 0){
+        R8GE_LOG_ERROR("ERROR: Can't open {} PCM device. {}", std::string(PCM_DEVICE), std::string(snd_strerror(err)));
+        goto Exit;
+    }
+
+    err = snd_pcm_set_params(m_pcmHandle,
+                             SND_PCM_FORMAT_FLOAT,
+                             SND_PCM_ACCESS_RW_INTERLEAVED,
+                             m_channels,
+                             m_rate,
+                             1,
+                             1000000 * m_timeStep * m_nOfSamplesPerBuff * m_nOfBuffers);
+
+    if(err < 0){
+        R8GE_LOG_ERROR("ERROR: Can't set sound parameters: {}",  snd_strerror(err));
+    }
+
+    m_lastSamples = new float[m_lastSamplesCount];
+    m_lastSamplesCurr = 0;
+
+    m_mainLoop = std::thread(&AudioPusher::mainLoop, this);
+
+    snd_pcm_start(m_pcmHandle);
+
+    Exit:
 }
 
-std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
-    return &m_activeSounds;
+r8ge::AudioPusher::~AudioPusher() {
+    m_mainLoop.join();
+    delete[] m_lastSamples;
 }
+
+void r8ge::AudioPusher::stopSound() {
+    m_run = false;
+}
+
+void r8ge::AudioPusher::mainLoop() {
+    /* Allocate buffer to hold single period */
+    unsigned int buff_size = 4 /*float*/ * m_nOfSamplesPerBuff * m_channels;
+    char* buff = new char[buff_size];
+    float sum, chan;
+
+    while(m_run){
+        for (int i = 0; i < m_nOfSamplesPerBuff; i++) {
+            sum = 0;
+            for (int j = 0; j < m_channels; j++) {
+                chan = (float)(sumSoundsAndRemove(j) * R8GE_MAIN_VOLUME);
+                *((float*) buff + i * m_channels + j) = chan;
+                sum += chan;
+            }
+            m_lastSamples[m_lastSamplesCurr++] = sum;
+            if(m_lastSamplesCurr == m_lastSamplesCount){
+                m_lastSamplesCurr = 0;
+            }
+            m_generatedTime += m_timeStep;
+        }
+        snd_pcm_writei(m_pcmHandle, buff, m_nOfSamplesPerBuff);
+    }
+
+    snd_pcm_drain(m_pcmHandle);
+    snd_pcm_close(m_pcmHandle);
+    delete[] buff;
+}
+
+#endif // R8GE_LINUX
 
 double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
+    if(m_isPaused){
+        return 0.0;
+    }
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
     double res = 0.0;
     int i = 0;
@@ -192,9 +276,47 @@ double r8ge::AudioPusher::getGeneratedTime() const {
     return m_generatedTime;
 }
 
-void r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
+int r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
+    m_count++;
+    sound->setID(m_count);
     m_activeSounds.push_back(sound);
+    return m_count;
+}
+
+float *r8ge::AudioPusher::newCurrentSamples() {
+    auto r = new float[m_lastSamplesCount];
+    std::memcpy(r, m_lastSamples, m_lastSamplesCount);
+    return r;
+}
+
+void r8ge::AudioPusher::pause() {
+    m_isPaused = true;
+}
+
+void r8ge::AudioPusher::play() {
+    m_isPaused = false;
+}
+
+int r8ge::AudioPusher::playWave(const std::string &filename) {
+    return addSound(new Wave(m_generatedTime ,filename));;
+}
+
+int r8ge::AudioPusher::playNote(short tone, double (*generator)(double), r8ge::Envelope envelope) {
+    return addSound(new Note(m_generatedTime, tone, generator, envelope));
+}
+
+int r8ge::AudioPusher::playNote(short tone, r8ge::Instrument inst) {
+    return addSound(new Note(m_generatedTime, tone, inst.m_generator, inst.m_envelope));
+}
+
+void r8ge::AudioPusher::deleteSound(int id) {
+    for(auto& s : m_activeSounds){
+        if(s->getID() == id){
+            s->setEndTime(m_generatedTime);
+            return;
+        }
+    }
 }
 
 /*

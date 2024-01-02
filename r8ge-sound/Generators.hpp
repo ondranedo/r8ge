@@ -6,21 +6,13 @@
 #define R8GE_GENERATORS_HPP
 
 #include <vector>
-#include <cmath>
 #include <string>
+#include <r8ge/r8ge.h>
+#include "Instruments.h"
 
 // this will be refactored a lot and I will curse myself
 
 namespace r8ge{
-
-    struct Envelope{
-        double m_attackTime = 0.1;
-        double m_decayTime = 0.1;
-        double m_releaseTime = 0.2;
-
-        double m_sustainVolume = 0.9;
-        double m_maxVolume = 1.1;
-    };
 
     class Sound{
     public:
@@ -31,12 +23,15 @@ namespace r8ge{
         void setEndTime(double endTime);
         void setState(bool state);
         [[nodiscard]] bool getState() const;
+        [[nodiscard]] int getID() const;
+        void setID(int ID);
     protected:
         double m_left = 1.0;
         double m_right = 1.0;
         double m_startTime;
-        double m_endTime = 999999.0;
+        double m_endTime = std::numeric_limits<double>::infinity();
         bool m_isActive;
+        int m_id = -1;
     };
 
     class Note : public Sound{
@@ -64,14 +59,7 @@ namespace r8ge{
 
         double getDuration();
     private:
-        unsigned short m_format{};
-        unsigned short m_channels{};
-        unsigned long m_sampleRate{};
-        unsigned short m_blockAlign{};
-        double m_timeStep;
-
-        unsigned long m_sampleCount;
-        char* m_data = nullptr; // takes up to megabytes but allows for instant skipping
+        WaveData m_data;
     };
 
 }
