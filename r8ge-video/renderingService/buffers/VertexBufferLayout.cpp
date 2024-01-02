@@ -36,10 +36,10 @@ namespace r8ge {
 
         uint8_t VertexBufferLayout::EntryTypeComponents(VertexBufferLayout::Entry type) {
             switch (type) {
-                case VertexBufferLayout::Entry::COLOUR_RGB:
+                case VertexBufferLayout::Entry::COLOUR_RGB: return 3;
                 case VertexBufferLayout::Entry::POS_XYZ: return 3;
                 case VertexBufferLayout::Entry::COLOUR_RGBA: return 4;
-                case VertexBufferLayout::Entry::POS_XY:
+                case VertexBufferLayout::Entry::POS_XY: return 2;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return 2;
                 case VertexBufferLayout::Entry::TEXTURE_XYZ: return 3;
             }
@@ -59,12 +59,12 @@ namespace r8ge {
 
         bool VertexBufferLayout::EntryTypeShouldBeNormalized(VertexBufferLayout::Entry type) {
             switch (type) {
-                case VertexBufferLayout::Entry::COLOUR_RGB:
+                case VertexBufferLayout::Entry::COLOUR_RGB: return true;
                 case VertexBufferLayout::Entry::COLOUR_RGBA: return true;
 
                 // Position should not be normalized, it is normalized in shader, with MVP matrix
-                case VertexBufferLayout::Entry::POS_XY:
-                case VertexBufferLayout::Entry::POS_XYZ:
+                case VertexBufferLayout::Entry::POS_XY: return false;
+                case VertexBufferLayout::Entry::POS_XYZ: return false;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return false;
                 case VertexBufferLayout::Entry::TEXTURE_XYZ: return false;
             }
@@ -75,9 +75,9 @@ namespace r8ge {
 
         Primitive VertexBufferLayout::EntryTypeToDataType(VertexBufferLayout::Entry type) {
             switch (type) {
-                case VertexBufferLayout::Entry::COLOUR_RGB:
+                case VertexBufferLayout::Entry::COLOUR_RGB: return Primitive::UINT8;
                 case VertexBufferLayout::Entry::COLOUR_RGBA: return Primitive::UINT8;
-                case VertexBufferLayout::Entry::POS_XY:
+                case VertexBufferLayout::Entry::POS_XY: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::POS_XYZ: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::TEXTURE_XYZ: return Primitive::FLOAT;
