@@ -24,15 +24,14 @@ namespace r8ge{
         void setState(bool state);
         [[nodiscard]] bool getState() const;
         [[nodiscard]] int getID() const;
+        void setID(int ID);
     protected:
         double m_left = 1.0;
         double m_right = 1.0;
         double m_startTime;
-        double m_endTime = 999999.0;
+        double m_endTime = std::numeric_limits<double>::infinity();
         bool m_isActive;
         int m_id = -1;
-    public:
-        void setMId(int mId);
     };
 
     class Note : public Sound{

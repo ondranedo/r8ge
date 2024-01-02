@@ -20,7 +20,6 @@ class GameLayer : public r8ge::Layer {
     r8ge::Instrument test = {{}, testgen};
 
     static const int keyCount = 17;
-    bool sw = 0;
 
     int ids[keyCount] = {-1};
     bool wasPressed[keyCount] = {false};
@@ -117,7 +116,7 @@ public:
         for (int i = 0; i < keyCount; i++) {
             if (wasPressed[i]) {
                 if (!isPlaying[i]) {
-                    //ids[i] = sound.playNote(40 + i, sw ? test : );
+                    ids[i] = sound.playNote(28 + i, testgen);
                     isPlaying[i] = true;
                 }
             }

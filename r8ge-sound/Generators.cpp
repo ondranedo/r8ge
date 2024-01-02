@@ -73,8 +73,8 @@ int r8ge::Sound::getID() const {
     return m_id;
 }
 
-void r8ge::Sound::setMId(int mId) {
-    m_id = mId;
+void r8ge::Sound::setID(int ID) {
+    m_id = ID;
 }
 
 r8ge::Wave::Wave(double startTime, const std::string& filename) : Sound(startTime) {
