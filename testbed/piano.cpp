@@ -17,13 +17,59 @@ class GameLayer : public r8ge::Layer {
     bool state = false;
     // todo: too dumb to move outside of hfere
     r8ge::AudioPusher sound;
-    r8ge::Instrument test = {{}, testgen};
 
+    // piano --------------------------------------
     static const int keyCount = 17;
-
+    const r8ge::Key keyboard[keyCount] = {
+            r8ge::Key::A,
+            r8ge::Key::W,
+            r8ge::Key::S,
+            r8ge::Key::E,
+            r8ge::Key::D,
+            r8ge::Key::F,
+            r8ge::Key::T,
+            r8ge::Key::G,
+            r8ge::Key::Y,
+            r8ge::Key::H,
+            r8ge::Key::U,
+            r8ge::Key::J,
+            r8ge::Key::K,
+            r8ge::Key::O,
+            r8ge::Key::L,
+            r8ge::Key::P,
+            r8ge::Key::SEMICOLON,
+    };
     int ids[keyCount] = {-1};
     bool wasPressed[keyCount] = {false};
     bool isPlaying[keyCount] = {false};
+    void pianoUpdate(){
+        // resetting the keys
+        for (bool & i : wasPressed) {
+            i = false;
+        }
+        // checking the pressed keys
+        for(int i = 0; i < keyCount; i++) {
+            if(r8ge::Input::isKeyPressed(keyboard[i])){
+                wasPressed[i] = true;
+            }
+        }
+        // starting or stopping keys
+        for (int i = 0; i < keyCount; i++) {
+            if (wasPressed[i]) {
+                if (!isPlaying[i]) {
+                    ids[i] = sound.playNote(20 + i, r8ge::saw);
+                    isPlaying[i] = true;
+                }
+            }
+            else {
+                if (isPlaying[i]) {
+                    sound.deleteSound(ids[i]);
+                    isPlaying[i] = false;
+                }
+            }
+        }
+    }
+    // -------------------------------------------------------------
 public:
     ~GameLayer() override = default;
 
@@ -36,98 +82,7 @@ public:
     }
 
     void event(const std::shared_ptr<r8ge::Event> &event) override {
-        for (int i = 0; i < keyCount; i++) {
-            wasPressed[i] = false;
-        }
-        r8ge::ColorRGB color(0x000000);
-
-        if (r8ge::Input::isKeyPressed(r8ge::Key::A)) {
-            wasPressed[0] = true;
-            //
-            color.r += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::W)) {
-            wasPressed[1] = true;
-            color.g += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::S)) {
-            wasPressed[2] = true;
-            color.b += 0x20;
-
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::E)) {
-            wasPressed[3] = true;
-            color.r += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::D)) {
-            wasPressed[4] = true;
-            color.g += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::F)) {
-            wasPressed[5] = true;
-            color.b += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::T)) {
-            wasPressed[6] = true;
-            color.r += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::G)) {
-            wasPressed[7] = true;
-            color.g += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::Z)) {
-            wasPressed[8] = true;
-            color.b += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::H)) {
-            wasPressed[9] = true;
-            color.r += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::U)) {
-            wasPressed[10] = true;
-            color.g += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::J)) {
-            wasPressed[11] = true;
-            color.b += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::K)) {
-            wasPressed[12] = true;
-            color.r += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::O)) {
-            wasPressed[13] = true;
-            color.b += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::L)) {
-            wasPressed[14] = true;
-            color.r += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::P)) {
-            wasPressed[15] = true;
-            color.g += 0x20;
-        }
-        if (r8ge::Input::isKeyPressed(r8ge::Key::SEMICOLON)) {
-            wasPressed[16] = true;
-        }
-
-        r8ge::Video::getRenderingService()->setClearColor(color);
-
-        for (int i = 0; i < keyCount; i++) {
-            if (wasPressed[i]) {
-                if (!isPlaying[i]) {
-                    ids[i] = sound.playNote(16 + i, r8ge::saw);
-                    isPlaying[i] = true;
-                }
-            }
-            else {
-                if (isPlaying[i]) {
-                    sound.deleteSound(ids[i]);
-                    isPlaying[i] = false;
-                }
-            }
-        }
-
+        pianoUpdate();
     }
 
     void render() override {
