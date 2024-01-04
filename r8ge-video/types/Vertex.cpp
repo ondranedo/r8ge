@@ -102,6 +102,9 @@ std::vector<uint8_t> r8ge::VertexTexture3D::getRawData() const {
     const auto* texYRawData = reinterpret_cast<const uint8_t*>(&tex_y);
     data.insert(data.end(), texYRawData, texYRawData + sizeof(texture_coord));
 
+    const auto* texZRawData = reinterpret_cast<const uint8_t*>(&tex_z);
+    data.insert(data.end(), texZRawData, texZRawData + sizeof(texture_coord));
+
     return data;
 }
 
@@ -144,11 +147,11 @@ r8ge::video::VertexBufferLayout r8ge::VertexColor3D::getLayout() const {
 std::vector<uint8_t> r8ge::VertexColor3D::getRawData() const {
     std::vector<uint8_t> data = Vertex::getRawData();
 
-    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
-    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
-
     const auto* zCoordRawData = reinterpret_cast<const uint8_t*>(&z);
     data.insert(data.end(), zCoordRawData, zCoordRawData + sizeof(coord_float));
+
+    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
+    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
 
     return data;
 }
@@ -210,11 +213,11 @@ r8ge::video::VertexBufferLayout r8ge::VertexColorTexture3D::getLayout() const {
 std::vector<uint8_t> r8ge::VertexColorTexture3D::getRawData() const {
     std::vector<uint8_t> data = Vertex::getRawData();
 
-    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
-    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
-
     const auto* zCoordRawData = reinterpret_cast<const uint8_t*>(&z);
     data.insert(data.end(), zCoordRawData, zCoordRawData + sizeof(coord_float));
+
+    const auto* colorRawData = reinterpret_cast<const uint8_t*>(&rgb);
+    data.insert(data.end(), colorRawData, colorRawData + sizeof(ColorRGB));
 
     const auto* texXRawData = reinterpret_cast<const uint8_t*>(&tex_x);
     data.insert(data.end(), texXRawData, texXRawData + sizeof(texture_coord));
