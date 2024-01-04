@@ -1,3 +1,6 @@
 [submodule "r8ge-gui/vendor/imgui"]
 	path = r8ge-gui/vendor/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "r8ge-video/vendor/stb"]
+	path = r8ge-video/vendor/stb
+	url = https://github.com/nothings/stb
