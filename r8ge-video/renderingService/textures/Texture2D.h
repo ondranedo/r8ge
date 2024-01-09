@@ -7,7 +7,7 @@
 
 #include <r8ge/r8ge.h>
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include "../r8ge-video/vendor/stb/stb_image.h"
 
 namespace r8ge {
     namespace video {
