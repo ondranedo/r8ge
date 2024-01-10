@@ -4,6 +4,7 @@
 #include "../RenderingService.h"
 #include "../buffers/IndexBuffer.h"
 
+
 #include <vector>
 
 #include <r8ge/r8ge.h>
@@ -28,6 +29,8 @@ namespace r8ge {
             void setVertexBuffer(const VertexBuffer &vb) override;
 
             void setDataLayout() const;
+
+            void setTexture(const GLTexture &tex) override;
 
             void setProgram(const Program &program) override;
 

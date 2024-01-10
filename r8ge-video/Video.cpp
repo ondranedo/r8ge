@@ -7,7 +7,7 @@
 #include "renderingService/buffers/IndexBuffer.h"
 #include "renderingService/buffers/VertexBuffer.h"
 #include "types/Vertex.h"
-
+#include "renderingService/openGL/GLTexture.h"
 #include "renderingService/programManager/Program.h"
 
 namespace r8ge {
@@ -45,10 +45,10 @@ namespace r8ge {
 
         // TODO: Fetch raw data from Renderer
         video::IndexBuffer ib({0, 1, 2});
-        std::vector<VertexColor> vertices = {
-                {0.5f, -0.5f, ColorRGB(255, 0, 0)},
-                {-0.5f,  -0.5f, ColorRGB(0, 255, 0)},
-                {0.0f,  0.5f,  ColorRGB(0, 0, 255)},
+        std::vector<VertexColorTexture> vertices = {
+                {0.5f, -0.5f, ColorRGB(255, 0, 0),1.0f,1.0f},
+                {-0.5f,  -0.5f, ColorRGB(0, 255, 0),1.0f,0.0f},
+                {0.0f,  0.5f,  ColorRGB(0, 0, 255),0.0f,0.0f},
         };
 
         std::cout<< sizeof(VertexColor);
@@ -60,7 +60,13 @@ namespace r8ge {
 
         s_renderingService->setClearColor({0x54, 0x54, 0x54,0x00});
 
+        video::Texture2D tex2D("textures/morce.jpg", false);
+        video::GLTexture glTex(tex2D);
+
+
         video::Program basic_program(0, "shaders/basic.glsl");
+
+
 
         s_renderingService->compileProgram(basic_program);
         s_renderingService->setProgram(basic_program);

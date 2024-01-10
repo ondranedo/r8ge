@@ -17,8 +17,15 @@ namespace r8ge {
                 case Primitive::FLOAT: return GL_FLOAT;
                 case Primitive::DOUBLE: return GL_DOUBLE;
             }
-
             return GL_NONE;
+        }
+
+        GLenum GLConvertor::convertImageFormatToGLType(ImageFormat format) {
+            switch(format){
+                case ImageFormat::RGB8: return GL_RGB8;
+                case ImageFormat::RGBA8: return GL_RGBA8;
+                case ImageFormat::NONE: return GL_NONE;
+            }
         }
     }
 }

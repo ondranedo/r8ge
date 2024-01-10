@@ -3,6 +3,7 @@ add_library(r8ge-video-renderer
         "../types/Color.h"
         "../types/Primitives.cpp"
         "../types/Primitives.h"
+        ../types/Texture.h
         #"Mesh.cpp"
         #"Mesh.h"
         #"MeshTrinagle.cpp"

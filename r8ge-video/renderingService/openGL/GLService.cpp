@@ -98,7 +98,10 @@ namespace r8ge {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
+            //TODO Should be moved to pre render loop
             setDataLayout();
+
+            setTexture();
 
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
         }
@@ -163,6 +166,10 @@ namespace r8ge {
                 return false;
             }
             return true;
+        }
+
+        void GLService::setTexture(const GLTexture &tex) {
+            tex.bindTexture();
         }
     }
 }

@@ -7,6 +7,10 @@
 namespace r8ge {
     namespace video {
 
+        Texture2D::Texture2D(const std::string &pathToFile, bool flipTexture) {
+            loadTextureFromFile(pathToFile, flipTexture);
+        }
+
         uint16_t Texture2D::getWidth() const {
             return m_width;
         }
@@ -19,19 +23,26 @@ namespace r8ge {
             return m_channelsCount;
         }
 
-        uint8_t Texture2D::getImageData() {
-            return *m_imageData;
+        void* Texture2D::getImageData() const{
+            return m_imageData;
         }
 
-        bool Texture2D::getFlipState() const{
+        bool Texture2D::getFlipState() const {
             return m_isFlipped;
         }
 
-        void Texture2D::loadTextureFromFile(std::string pathToFile, bool flipTexture) {
+        void Texture2D::loadTextureFromFile(const std::string &pathToFile, bool flipTexture) {
             if (flipTexture) {
                 stbi_set_flip_vertically_on_load(true);
             }
-            stbi_load(pathToFile.c_str(), &m_width, &m_height, &m_channelsCount, 0);
+            m_imageData = stbi_load(pathToFile.c_str(), &m_width, &m_height, &m_channelsCount, 0);
+            if (m_imageData == nullptr) {
+                R8GE_LOG_WARNI("Data of texture {} is null", pathToFile.c_str());
+            }
+        }
+
+        Texture2D::~Texture2D() {
+            stbi_image_free(m_imageData);
         }
     }
 }
