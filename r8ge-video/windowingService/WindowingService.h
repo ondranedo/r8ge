@@ -19,8 +19,9 @@ namespace r8ge {
             virtual void init() = 0;
             virtual void exit() = 0;
 
-            virtual bool createMainWindow(size_t width, size_t height, std::string_view title) = 0;
+            virtual bool createMainWindow(size_t width, size_t height, std::string title) = 0;
             virtual bool destroyMainWindow() = 0;
+            virtual void setEventCallbacks() = 0;
             virtual bool setContextOfMainWindow() = 0;
             virtual void swapBuffersOfMainWindow() = 0;
 
