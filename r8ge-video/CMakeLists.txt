@@ -10,10 +10,14 @@ add_library(r8ge-video
         EntrytPoint.h
 )
 
-target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
+include_directories(vendor/stb)
+add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
+include_directories(vendor/glfw/include)
+add_subdirectory(vendor/glfw)
+link_libraries(glfw)
 
-add_subdirectory(vendor)
-target_link_libraries(r8ge-video PUBLIC r8ge-video-stb)
+
+target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
 add_subdirectory(windowingService)
 target_link_libraries(r8ge-video PUBLIC r8ge-video-platform)

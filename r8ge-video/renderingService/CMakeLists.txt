@@ -26,4 +26,3 @@
 
     add_subdirectory(textures)
     target_link_libraries(r8ge-video-rendering-service PUBLIC r8ge-video-textures)
-

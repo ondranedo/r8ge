@@ -2,7 +2,7 @@
 #include "Convertor.h"
 #include "../../WindowingService.h"
 
-
+#include <GLFW/glfw3.h>
 #include <r8ge/r8ge.h>
 
 namespace r8ge {

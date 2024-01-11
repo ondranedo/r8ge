@@ -9,7 +9,7 @@
 #include "../types/Color.h"
 #include "../types/Vertex.h"
 
-#include "../r8ge-video/renderingService/openGL/GLTexture.h"
+
 #include "programManager/Program.h"
 
 namespace r8ge {
@@ -35,7 +35,6 @@ namespace r8ge {
             virtual void setIndexBuffer(const IndexBuffer& ib) = 0;
             virtual void setVertexBuffer(const VertexBuffer& vb) = 0;
 
-            virtual void setTexture(const GLTexture& tex) = 0;
 
             virtual void setProgram(const Program& program) = 0;
 

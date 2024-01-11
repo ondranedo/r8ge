@@ -30,8 +30,6 @@ namespace r8ge {
 
             void setDataLayout() const;
 
-            void setTexture(const GLTexture &tex) override;
-
             void setProgram(const Program &program) override;
 
             bool compileProgram(Program &program) override;

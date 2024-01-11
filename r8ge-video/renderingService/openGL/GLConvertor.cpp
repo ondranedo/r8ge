@@ -26,6 +26,7 @@ namespace r8ge {
                 case ImageFormat::RGBA8: return GL_RGBA8;
                 case ImageFormat::NONE: return GL_NONE;
             }
+            return GL_NONE;
         }
     }
 }

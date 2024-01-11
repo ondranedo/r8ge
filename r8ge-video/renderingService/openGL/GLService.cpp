@@ -101,8 +101,6 @@ namespace r8ge {
             //TODO Should be moved to pre render loop
             setDataLayout();
 
-            setTexture();
-
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
         }
 
@@ -168,8 +166,5 @@ namespace r8ge {
             return true;
         }
 
-        void GLService::setTexture(const GLTexture &tex) {
-            tex.bindTexture();
-        }
     }
 }

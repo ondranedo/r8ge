@@ -4,3 +4,6 @@
 [submodule "r8ge-video/vendor/stb"]
 	path = r8ge-video/vendor/stb
 	url = https://github.com/nothings/stb
+[submodule "r8ge-video/vendor/glfw"]
+	path = r8ge-video/vendor/glfw
+	url = https://github.com/glfw/glfw
