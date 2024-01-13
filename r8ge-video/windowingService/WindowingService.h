@@ -22,6 +22,7 @@ namespace r8ge {
             virtual bool createMainWindow(size_t width, size_t height, std::string title) = 0;
             virtual bool destroyMainWindow() = 0;
             virtual void setEventCallbacks() = 0;
+            virtual bool setGLContext() = 0;
             virtual bool setContextOfMainWindow() = 0;
             virtual void swapBuffersOfMainWindow() = 0;
 
@@ -33,6 +34,7 @@ namespace r8ge {
             void setMousePressedCallback(std::function<void(const r8ge::Key&, IOAction)> callback);
         protected:
             bool m_mainWindowCreated;
+            bool m_GLContextCreated=false;
             std::function<void(const r8ge::Key&, IOAction)> m_keyActionCallback;
             std::function<void(const r8ge::Key&, IOAction)> m_mouseActionCallback;
         };
