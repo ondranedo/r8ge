@@ -9,6 +9,12 @@
 #include "types/Vertex.h"
 #include "renderingService/openGL/GLTexture.h"
 #include "renderingService/programManager/Program.h"
+#include "GLFW/glfw3.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 namespace r8ge {
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
@@ -44,7 +50,7 @@ namespace r8ge {
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
         s_renderingService->setClearColor(ColorRGBA{0,0,30,0});
-        video::Program basic_program(0, "shaders/basic.glsl");
+        video::Program basic_program(0, "shaders/glm.glsl");
         s_renderingService->compileProgram(basic_program);
 
         // TODO: Fetch raw data from Renderer
@@ -71,15 +77,19 @@ namespace r8ge {
 
         s_renderingService->setProgram(basic_program);
 
-        s_renderingService->setUniform(basic_program,"texture1",0);
-        s_renderingService->setUniform(basic_program,"texture2",1);
-
+        s_renderingService->setUniformInt(basic_program,"texture1",0);
+        s_renderingService->setUniformInt(basic_program,"texture2",1);
+        glTex1.bindTexture(0);
+        glTex2.bindTexture(1);
 
         while (Ar8ge::isRunning()) {
             s_renderingService->clear();
 
-            glTex1.bindTexture(0);
-            glTex2.bindTexture(1);
+            auto transform = glm::mat4(1.0f);
+            transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(1.0f, 1.0f, 1.0f));
+            s_renderingService->setProgram(basic_program);
+
+            s_renderingService->setUniformMat4(basic_program,"transform",transform);
 
             s_renderingService->render();
 
