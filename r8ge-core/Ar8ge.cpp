@@ -3,7 +3,6 @@
 #include "Logger.h"
 
 #include "instance/GameInstance.h"
-#include "../r8ge-video/Video.h"
 #include "../r8ge-video/EntrytPoint.h"
 
 #include "events/Dispatcher.h"
