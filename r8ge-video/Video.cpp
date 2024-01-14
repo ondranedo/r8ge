@@ -1,8 +1,8 @@
 #include "Video.h"
 
 #include <r8ge/r8ge.h>
-#include <X11/Xlib.h>
 #include <iostream>
+#include <GL/glew.h>
 
 #include "renderingService/buffers/IndexBuffer.h"
 #include "renderingService/buffers/VertexBuffer.h"
@@ -32,8 +32,9 @@ namespace r8ge {
 
     void Video::init() {
         s_windowingService->init();
-
         s_windowingService->createMainWindow(800, 600, m_title);
+        s_windowingService->setEventCallbacks();
+        s_windowingService->setGLContext();
 
         s_renderingService->init();
 
@@ -42,43 +43,49 @@ namespace r8ge {
 
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
+        s_renderingService->setClearColor(ColorRGBA{0,0,30,0});
+        video::Program basic_program(0, "shaders/basic.glsl");
+        s_renderingService->compileProgram(basic_program);
 
         // TODO: Fetch raw data from Renderer
-        video::IndexBuffer ib({0, 1, 2});
+        video::IndexBuffer ib({0, 1, 3, 1, 2, 3});
         std::vector<VertexColorTexture> vertices = {
-                {0.5f, -0.5f, ColorRGB(255, 0, 0),1.0f,1.0f},
-                {-0.5f,  -0.5f, ColorRGB(0, 255, 0),1.0f,0.0f},
-                {0.0f,  0.5f,  ColorRGB(0, 0, 255),0.0f,0.0f},
+                {0.5f,  0.5f,  ColorRGB(255, 0, 0), 1.0f, 1.0f}, // top right
+                {0.5f,  -0.5f, ColorRGB(0, 255, 0), 1.0f, 0.0f}, // bottom right
+                {-0.5f, -0.5f, ColorRGB(0, 0, 255), 0.0f, 0.0f}, // bottom left
+                {-0.5f, 0.5f,  ColorRGB(255, 255, 0), 0.0f, 1.0f}  // top left
         };
 
-        std::cout<< sizeof(VertexColor);
 
         video::VertexBuffer vb(vertices, vertices[0].getLayout());
 
-        s_renderingService->setIndexBuffer(ib);
         s_renderingService->setVertexBuffer(vb);
+        s_renderingService->setIndexBuffer(ib);
 
-        s_renderingService->setClearColor({0x54, 0x54, 0x54,0x00});
+        s_renderingService->preRender();
 
-        video::Texture2D tex2D("textures/morce.jpg", false);
-        video::GLTexture glTex(tex2D);
+        video::Texture2D tex2D1("textures/morce.jpg", true);
+        video::Texture2D tex2D2("textures/spsetrans.png", true);
+        video::GLTexture glTex1(tex2D1);
+        video::GLTexture glTex2(tex2D2);
 
-
-        video::Program basic_program(0, "shaders/basic.glsl");
-
-
-
-        s_renderingService->compileProgram(basic_program);
         s_renderingService->setProgram(basic_program);
 
-        while (Ar8ge::isRunning()) {
-            s_windowingService->poolEvents();
+        s_renderingService->setUniform(basic_program,"texture1",0);
+        s_renderingService->setUniform(basic_program,"texture2",1);
 
+
+        while (Ar8ge::isRunning()) {
             s_renderingService->clear();
+
+            glTex1.bindTexture(0);
+            glTex2.bindTexture(1);
 
             s_renderingService->render();
 
             s_windowingService->swapBuffersOfMainWindow();
+
+            s_windowingService->poolEvents();
         }
     }
 
