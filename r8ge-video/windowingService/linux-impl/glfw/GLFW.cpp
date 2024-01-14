@@ -1,9 +1,10 @@
-#include "GLFW.h"
+#include <GL/glew.h>
 
-#include "../../WindowingService.h"
+#include "GLFW.h"
 #include <GLFW/glfw3.h>
 #include "Convertor.h"
 #include <r8ge/r8ge.h>
+
 
 namespace r8ge {
     namespace video {
@@ -12,6 +13,10 @@ namespace r8ge {
         }
 
         void GLFW::init() {
+            glfwSetErrorCallback([](int error, const char *description) {
+                R8GE_LOG_ERROR("GLFW Error: `{}`", description);
+            });
+
             if (!glfwInit()) {
                 R8GE_LOG_ERROR("Unable to init GLFW");
             }
@@ -19,7 +24,12 @@ namespace r8ge {
                 R8GE_LOG("GLFW Initialized running version `{}`", glfwGetVersionString());
             }
 
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+            //TODO: Config file ?
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         }
+
 
         void GLFW::exit() {
             if (m_mainWindowCreated)
@@ -34,6 +44,7 @@ namespace r8ge {
                     static_cast<int>(width), static_cast<int>(height), title.c_str(), nullptr, nullptr);
 
             if (!m_mainWindow) {
+                glfwTerminate();
                 R8GE_LOG_ERROR("GLFW Main window `{}` failed to create", title);
                 return false;
             }
@@ -44,9 +55,6 @@ namespace r8ge {
 
             R8GE_LOG_INFOR("GLFW Main window `{}` created", title.data());
 
-            //m_xContext->setWindow(m_mainWindow);
-            //m_xContext->windowIsReady();
-
             return true;
         }
 
@@ -55,7 +63,12 @@ namespace r8ge {
         }
 
         void GLFW::setEventCallbacks() {
+            if (!m_mainWindow) {
+                R8GE_LOG_WARNI("Callbacks cannot be set, main Window is not created");
+                return;
+            }
             glfwSetWindowUserPointer(m_mainWindow, this);
+
 
             glfwSetKeyCallback(m_mainWindow, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
                 GLFW *instance = static_cast<GLFW *>(glfwGetWindowUserPointer(window));
@@ -133,6 +146,7 @@ namespace r8ge {
                     p.setEvent(std::make_shared<WindowClosed>());
                     p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
                     Ar8ge::getEventQueue()(p);
+                    R8GE_LOG("Window close event");
                 }
             });
 
@@ -151,6 +165,8 @@ namespace r8ge {
                     Ar8ge::getEventQueue()(p);
                 }
             });
+
+            R8GE_LOG("Callbacks set successfully");
         }
 
 
@@ -159,10 +175,12 @@ namespace r8ge {
         }
 
         bool GLFW::destroyMainWindow() {
-            if (!m_mainWindowCreated)
+            if (!m_mainWindowCreated) {
                 return false;
+            }
             glfwDestroyWindow(m_mainWindow);
             m_mainWindowCreated = false;
+            R8GE_LOG("Main window has been destroyed");
             return true;
         }
 
@@ -174,7 +192,6 @@ namespace r8ge {
         void GLFW::swapBuffersOfMainWindow() {
             if (!m_mainWindowCreated)
                 return;
-
             glfwSwapBuffers(m_mainWindow);
         }
 
@@ -185,12 +202,24 @@ namespace r8ge {
                 instance->m_mainWindowWidth = width;
                 instance->m_mainWindowHeight = height;
 
+                glViewport(0, 0, width, height);
+
                 EventPayload p;
                 p.setEvent(std::make_shared<WindowResized>(width, height));
                 p.setCallback(Ar8ge::getInstanceLayerSwitcherCallback());
                 Ar8ge::getEventQueue()(p);
+            }
+        }
 
-                //instance->m_xContext->windowChanged(instance->m_mainWindowWidth, instance->m_mainWindowHeight);
+        bool GLFW::setGLContext() {
+            if (!m_GLContextCreated) {
+                glfwMakeContextCurrent(m_mainWindow);
+                glewInit();
+                return true;
+            }
+            else {
+                R8GE_LOG_WARNI("GL context already created");
+                return false;
             }
         }
 

@@ -1,9 +1,6 @@
 #ifndef R8GE_X11_H
 #define R8GE_X11_H
 
-#include <tuple>
-#include <cstddef>
-#include <unordered_map>
 
 #include <GLFW/glfw3.h>
 
@@ -24,6 +21,7 @@ namespace r8ge {
             void poolEvents() override;
             bool destroyMainWindow() override;
             void setEventCallbacks() override;
+            bool setGLContext() override;
             bool setContextOfMainWindow() override;
             void swapBuffersOfMainWindow() override;
 
