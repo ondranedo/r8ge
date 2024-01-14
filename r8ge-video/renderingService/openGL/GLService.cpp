@@ -121,13 +121,15 @@ namespace r8ge {
             GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
             std::string vertexShaderSourceStr = program.getVertexShader();
-            const char* vertexShaderSource = vertexShaderSourceStr.c_str();
+            const char *vertexShaderSource = vertexShaderSourceStr.c_str();
 
             std::string fragmentShaderSourceStr = program.getFragmentShader();
-            const char* fragmentShaderSource = fragmentShaderSourceStr.c_str();
+            const char *fragmentShaderSource = fragmentShaderSourceStr.c_str();
 
-            if(!compileShader(vs, vertexShaderSource, "vertex shader")) return false;
-            if(!compileShader(fs, fragmentShaderSource, "fragment shader")) return false;
+            if (!compileShader(vs, vertexShaderSource, "vertex shader"))
+                return false;
+            if (!compileShader(fs, fragmentShaderSource, "fragment shader"))
+                return false;
 
             // Program compilation - linking shaders to a program
             GLuint p = glCreateProgram();
@@ -175,12 +177,56 @@ namespace r8ge {
             return true;
         }
 
-        void GLService::setUniform(Program &program,const std::string &name, bool value) {
+        void GLService::setUniformBool(Program &program, const std::string &name, bool value) {
             glUniform1i(glGetUniformLocation(m_programs[program.getId()], name.c_str()), (int) value);
         }
 
-        void GLService::setUniform(Program &program,const std::string &name, int value) {
+        void GLService::setUniformInt(Program &program, const std::string &name, int value) {
             glUniform1i(glGetUniformLocation(m_programs[program.getId()], name.c_str()), value);
+        }
+
+        void GLService::setUniformFloat(Program &program, const std::string &name, float value) {
+            glUniform1f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), value);
+        }
+
+        void GLService::setUniformVec2(Program &program, const std::string &name, const glm::vec2 &value) {
+            glUniform2fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, &value[0]);
+        }
+
+        void GLService::setUniformVec2(Program &program, const std::string &name, float x, float y) {
+            glUniform2f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), x, y);
+        }
+
+        void GLService::setUniformVec3(Program &program, const std::string &name, const glm::vec3 &value) {
+            glUniform3fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, &value[0]);
+        }
+
+        void GLService::setUniformVec3(Program &program, const std::string &name, float x, float y, float z) {
+
+            glUniform3f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), x, y, z);
+        }
+
+        void GLService::setUniformVec4(Program &program, const std::string &name, const glm::vec4 &value) {
+            glUniform4fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, &value[0]);
+        }
+
+        void GLService::setUniformVec4(Program &program, const std::string &name, float x, float y, float z, float w) {
+            glUniform4f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), x, y, z, w);
+        }
+
+        void GLService::setUniformMat2(Program &program, const std::string &name, const glm::mat2 &mat) {
+            glUniformMatrix2fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
+                               &mat[0][0]);
+        }
+
+        void GLService::setUniformMat3(Program &program, const std::string &name, const glm::mat3 &mat) {
+            glUniformMatrix3fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
+                               &mat[0][0]);
+        }
+
+        void GLService::setUniformMat4(Program &program, const std::string &name, const glm::mat4 &mat) {
+            glUniformMatrix4fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
+                               &mat[0][0]);
         }
 
     }
