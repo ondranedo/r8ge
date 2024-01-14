@@ -20,11 +20,18 @@ namespace r8ge {
             return GL_NONE;
         }
 
-        GLenum GLConvertor::convertImageFormatToGLType(ImageFormat format) {
+        GLenum GLConvertor::convertImageFormatToGLInternalFormat(ImageFormat format) {
             switch(format){
                 case ImageFormat::RGB8: return GL_RGB8;
                 case ImageFormat::RGBA8: return GL_RGBA8;
-                case ImageFormat::NONE: return GL_NONE;
+            }
+            return GL_NONE;
+        }
+
+        GLenum GLConvertor::convertImageFormatToGLFormat(Format format) {
+            switch(format){
+                case Format::RGB: return GL_RGB;
+                case Format::RGBA: return GL_RGBA;
             }
             return GL_NONE;
         }

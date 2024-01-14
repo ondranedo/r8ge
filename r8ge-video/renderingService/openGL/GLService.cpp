@@ -7,13 +7,16 @@
 
 namespace r8ge {
     namespace video {
-        static void debugMsg(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+        static void
+        debugMsg(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
+                 const void *userParam) {
             R8GE_LOG_ERROR("GL debug message: {}", std::string_view(message, length));
         }
 
         GLService::GLService() : m_indexCount(0), m_indexBuffer(-1), m_vertexArrayObject(-1), m_vertexBuffer(-1) {
             R8GE_LOG("GL Service created");
         }
+
         GLService::~GLService() {
             R8GE_LOG("GL Service destroyed");
         }
@@ -23,13 +26,12 @@ namespace r8ge {
 
             glDebugMessageCallback(debugMsg, nullptr);
 
-            auto version = std::string_view(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+            auto version = std::string_view(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
             R8GE_LOG_INFOR("GL Running version: {}", version);
         }
 
         void GLService::exit() {
-            for(auto& [r8geid, glid] : m_programs)
-            {
+            for (auto &[r8geid, glid]: m_programs) {
                 glDeleteProgram(glid);
                 R8GE_LOG("GL Program [r8ge:{},gl:] deleted", r8geid, glid);
             }
@@ -37,10 +39,10 @@ namespace r8ge {
 
         void GLService::clear() const {
             glClearColor(
-                    static_cast<float>(m_clearColor.r)/0xFF,
-                    static_cast<float>(m_clearColor.g)/0xFF,
-                    static_cast<float>(m_clearColor.b)/0xFF,
-                    static_cast<float>(m_clearColor.a)/0xFF);
+                    static_cast<float>(m_clearColor.r) / 0xFF,
+                    static_cast<float>(m_clearColor.g) / 0xFF,
+                    static_cast<float>(m_clearColor.b) / 0xFF,
+                    static_cast<float>(m_clearColor.a) / 0xFF);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
@@ -51,7 +53,8 @@ namespace r8ge {
 
             glGenBuffers(1, &m_indexBuffer);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0], GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0],
+                         GL_STATIC_DRAW);
         }
 
         void GLService::setVertexBuffer(const VertexBuffer &vb) {
@@ -70,36 +73,39 @@ namespace r8ge {
 
         void GLService::setDataLayout() const {
             size_t index = 0, offset = 0;
-            for(auto& element : m_layout.getLayout()) {
+            for (auto &element: m_layout.getLayout()) {
                 glVertexAttribPointer(index,
                                       VertexBufferLayout::EntryTypeComponents(element),
                                       GLConvertor::convertToGLType(VertexBufferLayout::EntryTypeToDataType(element)),
                                       VertexBufferLayout::EntryTypeShouldBeNormalized(element),
                                       static_cast<GLsizei>(m_layout.getStride()),
-                                      reinterpret_cast<const void*>(offset)
+                                      reinterpret_cast<const void *>(offset)
                 );
                 glEnableVertexAttribArray(index);
                 index++;
-                offset+= VertexBufferLayout::EntryTypeSize(element);
-                }
+                offset += VertexBufferLayout::EntryTypeSize(element);
+            }
         }
 
-        void GLService::render() const {
-            if(m_indexCount==0)
-                R8GE_LOG_ERROR("Invalid index count: {}", m_indexCount);
-            if(m_indexCount%3!=0)
-                R8GE_LOG_WARNI("Index count is not divisible by 3: {}", m_indexCount);
-            if(m_indexBuffer==-1)
-                R8GE_LOG_ERROR("Invalid index buffer - index buffer is not bound");
-            if(m_vertexArrayObject==-1)
-                R8GE_LOG_ERROR("Invalid vertex array object - vertex array object is not bound");
-
+        void GLService::preRender() const {
             glBindVertexArray(m_vertexArrayObject);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
             glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
-            //TODO Should be moved to pre render loop
             setDataLayout();
+        }
+
+        void GLService::render() const {
+            if (m_indexCount == 0)
+                R8GE_LOG_ERROR("Invalid index count: {}", m_indexCount);
+            if (m_indexCount % 3 != 0)
+                R8GE_LOG_WARNI("Index count is not divisible by 3: {}", m_indexCount);
+            if (m_indexBuffer == -1)
+                R8GE_LOG_ERROR("Invalid index buffer - index buffer is not bound");
+            if (m_vertexArrayObject == -1)
+                R8GE_LOG_ERROR("Invalid vertex array object - vertex array object is not bound");
+
+            glBindVertexArray(m_vertexArrayObject);
 
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
         }
@@ -114,8 +120,11 @@ namespace r8ge {
             GLuint vs = glCreateShader(GL_VERTEX_SHADER);
             GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-            std::string vertexShaderSource   = program.getVertexShader();
-            std::string fragmentShaderSource = program.getFragmentShader();
+            std::string vertexShaderSourceStr = program.getVertexShader();
+            const char* vertexShaderSource = vertexShaderSourceStr.c_str();
+
+            std::string fragmentShaderSourceStr = program.getFragmentShader();
+            const char* fragmentShaderSource = fragmentShaderSourceStr.c_str();
 
             if(!compileShader(vs, vertexShaderSource, "vertex shader")) return false;
             if(!compileShader(fs, fragmentShaderSource, "fragment shader")) return false;
@@ -149,14 +158,14 @@ namespace r8ge {
             return true;
         }
 
-        bool GLService::compileShader(GLuint shader, std::string_view source, std::string_view type) const {
+        bool GLService::compileShader(GLuint shader, std::string_view source, std::string_view type) {
             const std::string shaderSource = std::string(source);
-            char * ptr = const_cast<char*>(shaderSource.c_str());
+            char *ptr = const_cast<char *>(shaderSource.c_str());
             glShaderSource(shader, 1, &ptr, nullptr);
             glCompileShader(shader);
             int result;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
-            if(result != GL_TRUE) {
+            if (result != GL_TRUE) {
                 GLsizei log_length = 0;
                 char message[R8GE_GL_ERROR_MSG_LENGTH];
                 glGetShaderInfoLog(shader, R8GE_GL_ERROR_MSG_LENGTH, &log_length, message);
@@ -164,6 +173,14 @@ namespace r8ge {
                 return false;
             }
             return true;
+        }
+
+        void GLService::setUniform(Program &program,const std::string &name, bool value) {
+            glUniform1i(glGetUniformLocation(m_programs[program.getId()], name.c_str()), (int) value);
+        }
+
+        void GLService::setUniform(Program &program,const std::string &name, int value) {
+            glUniform1i(glGetUniformLocation(m_programs[program.getId()], name.c_str()), value);
         }
 
     }

@@ -8,9 +8,14 @@
 namespace r8ge{
     enum ImageFormat{
         RGB8,
-        RGBA8,
-        NONE
+        RGBA8
     };
+
+    enum Format{
+        RGB,
+        RGBA
+    };
+
 }
 
 #endif //R8GE_TEXTURE_H

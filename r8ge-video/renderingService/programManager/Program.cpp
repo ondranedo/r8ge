@@ -1,13 +1,14 @@
 #include "Program.h"
 
 #include <r8ge/r8ge.h>
+#include <GL/glew.h>
 
 namespace r8ge {
     namespace video {
 
         Program::Program(size_t id, std::string_view source)
-        : m_valid(false), m_source(source), m_id(id)
-        {}
+                : m_valid(false), m_source(source), m_id(id) {
+        }
 
         bool Program::isValid() const {
             return m_valid;
@@ -40,5 +41,6 @@ namespace r8ge {
             glsl->load_glsl();
             return glsl->getFragmentShader();
         }
+
     }
 }

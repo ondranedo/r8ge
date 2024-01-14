@@ -18,13 +18,14 @@ namespace r8ge {
             [[nodiscard]] VertexBufferLayout getLayout() const;
 
             // TODO: Layout should be read from shader
-            void setLayout(const VertexBufferLayout& layout);
+            void setLayout(const VertexBufferLayout &layout);
 
             [[nodiscard]] size_t getId() const;
 
             [[nodiscard]] std::string getVertexShader() const;
 
             [[nodiscard]] std::string getFragmentShader() const;
+
         private:
             size_t m_id;
             std::string m_source;
