@@ -12,9 +12,14 @@ add_library(r8ge-video
 
 include_directories(vendor/stb)
 add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
+
 include_directories(vendor/glfw/include)
 add_subdirectory(vendor/glfw)
 link_libraries(glfw)
+
+include_directories(vendor/glm/glm)
+add_subdirectory(vendor/glm)
+link_libraries(glm)
 
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
