@@ -43,6 +43,7 @@ namespace r8ge {
             glTextureSubImage2D(m_texture, 0, 0, 0, texture2D.getWidth(), texture2D.getHeight(), getFormat(texture2D.getChannelsCount()),
                                 GL_UNSIGNED_BYTE, texture2D.getImageData());
 
+            R8GE_LOG("Created TextureSubImage2D for texture with ID:{}",m_texture);
         }
 
         GLTexture::~GLTexture() {
@@ -55,6 +56,7 @@ namespace r8ge {
 
         void GLTexture::bindTexture(int unit) const {
             glBindTextureUnit(unit, m_texture);
+            R8GE_LOG("Binding texture with ID: {} into unit: GL_TEXTURE_{}",m_texture,unit);
         }
     }
 } // r8ge
