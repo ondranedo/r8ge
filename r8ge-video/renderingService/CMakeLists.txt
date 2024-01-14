@@ -18,12 +18,8 @@
     add_subdirectory(openGL)
     target_link_libraries(r8ge-video-rendering-service PRIVATE r8ge-video-rendering-service-gl)
 
-    add_subdirectory(context)
-    target_link_libraries(r8ge-video-rendering-service PRIVATE r8ge-video-rendering-service-context)
-
     add_subdirectory(programManager)
     target_link_libraries(r8ge-video-rendering-service PUBLIC r8ge-video-program-manager)
 
     add_subdirectory(textures)
     target_link_libraries(r8ge-video-rendering-service PUBLIC r8ge-video-textures)
-

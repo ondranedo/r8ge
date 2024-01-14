@@ -6,8 +6,7 @@
 #define R8GE_TEXTURE2D_H
 
 #include <r8ge/r8ge.h>
-
-#include "../r8ge-video/vendor/stb/stb_image.h"
+#include <stb_image.h>
 
 namespace r8ge {
     namespace video {

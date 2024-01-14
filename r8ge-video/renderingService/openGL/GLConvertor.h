@@ -10,7 +10,8 @@ namespace r8ge {
         class GLConvertor {
         public:
             static GLenum convertToGLType(Primitive type);
-            static GLenum convertImageFormatToGLType(ImageFormat format);
+            static GLenum convertImageFormatToGLInternalFormat(ImageFormat format);
+            static GLenum convertImageFormatToGLFormat(Format format);
         };
     }
 }

@@ -34,6 +34,7 @@ namespace r8ge {
         void Texture2D::loadTextureFromFile(const std::string &pathToFile, bool flipTexture) {
             if (flipTexture) {
                 stbi_set_flip_vertically_on_load(true);
+                m_isFlipped = true;
             }
             m_imageData = stbi_load(pathToFile.c_str(), &m_width, &m_height, &m_channelsCount, 0);
             if (m_imageData == nullptr) {
