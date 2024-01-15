@@ -1,7 +1,5 @@
 #include <r8ge/r8ge.h>
 #include <r8ge/video.h>
-#include <imgui_impl_opengl3.h>
-#include <imgui.h>
 #include <memory>
 
 
@@ -14,12 +12,9 @@ public:
     ~GameLayer() override = default;
 
     GameLayer() : r8ge::Layer("gameLayer") {
-        /*
+
         int f;
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
-        ImGui_ImplOpenGL3_Init("#version 460");
+/*
         //r8ge::Video::getWindowingService()->setContextOfMainWindow();
         bool show_demo_window = true;
         bool show_another_window = false;
@@ -28,8 +23,9 @@ public:
         ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
         ImGui::Checkbox("Another Window", &show_another_window);
         //r8ge::Video::getWindowingService()->poolEvents();
-         */
+
         //r8ge::Video::getRenderingService()->
+        */
     }
 
     void update() override {
@@ -43,8 +39,8 @@ public:
     }
 
     void render() override {
-
 /*
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
         ImGui::Begin("Hello, ImGui!");
@@ -52,6 +48,7 @@ public:
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         */
+
     }
 };
 
@@ -74,8 +71,10 @@ public:
 
     void onExit() override {
         R8GE_LOG("`{}` game exiting", getGameName());
+        /*
         ImGui_ImplOpenGL3_Shutdown();
         ImGui::DestroyContext();
+         */
     }
 };
 

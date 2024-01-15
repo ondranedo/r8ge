@@ -2,7 +2,6 @@
 
 #include <r8ge/r8ge.h>
 #include <iostream>
-#include <GL/glew.h>
 
 #include "renderingService/buffers/IndexBuffer.h"
 #include "renderingService/buffers/VertexBuffer.h"
@@ -15,8 +14,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
 namespace r8ge {
+
+    ImGuiIO io;
+    bool show_demo_window = true;
+    bool show_another_window = false;
+
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
     std::shared_ptr<video::RenderingService> Video::s_renderingService = nullptr;
     bool Video::s_isReady = false;
@@ -43,6 +50,13 @@ namespace r8ge {
         s_windowingService->setGLContext();
 
         s_renderingService->init();
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        io = ImGui::GetIO(); (void)io;
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(s_windowingService->getWindow(), true);
+        ImGui_ImplOpenGL3_Init("#version 460");
 
         R8GE_LOG("R8GE-Video initialized");
     }
@@ -83,23 +97,34 @@ namespace r8ge {
         glTex2.bindTexture(1);
 
         while (Ar8ge::isRunning()) {
-            s_renderingService->clear();
+            s_windowingService->poolEvents();
+
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            if (show_demo_window)
+                ImGui::ShowDemoWindow(&show_demo_window);
 
             auto transform = glm::mat4(1.0f);
             transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(1.0f, 1.0f, 1.0f));
             s_renderingService->setProgram(basic_program);
-
             s_renderingService->setUniformMat4(basic_program,"transform",transform);
 
+            ImGui::Render();
+            s_renderingService->clear();
+
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             s_renderingService->render();
-
             s_windowingService->swapBuffersOfMainWindow();
-
-            s_windowingService->poolEvents();
         }
     }
 
     void Video::exit() {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+
         s_windowingService->destroyMainWindow();
 
         s_windowingService->exit();

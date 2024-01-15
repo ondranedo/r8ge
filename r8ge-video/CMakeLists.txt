@@ -21,6 +21,20 @@ include_directories(vendor/glm/glm)
 add_subdirectory(vendor/glm)
 link_libraries(glm)
 
+include_directories(vendor/imgui)
+
+add_library(imgui
+        vendor/imgui/imgui.cpp
+        vendor/imgui/imgui_draw.cpp
+        vendor/imgui/imgui_demo.cpp
+        vendor/imgui/imgui_widgets.cpp
+        vendor/imgui/imgui_tables.cpp
+        vendor/imgui/backends/imgui_impl_glfw.cpp
+        vendor/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+link_libraries(imgui)
+
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
