@@ -184,9 +184,10 @@ namespace r8ge {
             return true;
         }
 
-        bool GLFW::setContextOfMainWindow() {
+        void GLFW::setContextOfMainWindow() {
+            if (!m_mainWindowCreated)
+                return;
             glfwMakeContextCurrent(m_mainWindow);
-            return true;
         }
 
         void GLFW::swapBuffersOfMainWindow() {
@@ -221,6 +222,18 @@ namespace r8ge {
                 R8GE_LOG_WARNI("GL context already created");
                 return false;
             }
+        }
+
+        GLFWwindow *GLFW::getWindow() {
+            return m_mainWindow;
+        }
+
+        void GLFW::getFramebufferSize(int width, int height) {
+            glfwGetFramebufferSize(m_mainWindow,&width,&height);
+        }
+
+        void GLFW::setViewport(int width,int height) {
+            glViewport(0,0,width,height);
         }
 
     }

@@ -2,11 +2,7 @@
 #define R8GE_X11_H
 
 
-#include <GLFW/glfw3.h>
-
-
 #include "../../WindowingService.h"
-
 
 
 namespace r8ge {
@@ -14,24 +10,38 @@ namespace r8ge {
         class GLFW : public WindowingService {
         public:
             ~GLFW() override;
+
             void init() override;
+
             void exit() override;
+
             bool createMainWindow(size_t width, size_t height, std::string title) override;
 
             void poolEvents() override;
+
             bool destroyMainWindow() override;
+
             void setEventCallbacks() override;
+
             bool setGLContext() override;
-            bool setContextOfMainWindow() override;
+
+            void setContextOfMainWindow() override;
+
             void swapBuffersOfMainWindow() override;
 
-            static void windowSizeCallback(GLFWwindow* window, int width, int height);
+            GLFWwindow *getWindow() override;
+
+            void getFramebufferSize(int width, int height) override;
+
+            void setViewport(int width,int height) override;
+
+            static void windowSizeCallback(GLFWwindow *window, int width, int height);
 
         private:
             size_t m_mainWindowWidth, m_mainWindowHeight;
             std::string m_mainWindowTitle;
 
-            GLFWwindow* m_mainWindow;
+            GLFWwindow *m_mainWindow;
 
         };
     }
