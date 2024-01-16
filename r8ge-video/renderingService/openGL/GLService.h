@@ -65,6 +65,8 @@ namespace r8ge {
 
             void setUniformMat4(Program &program, const std::string &name, const glm::mat4 &mat) override;
 
+            unsigned int getUniformLocation(Program &program, const std::string &name) override;
+
         private:
             //r8ge program id -> gl program id
             GLuint m_indexBuffer, m_vertexArrayObject, m_vertexBuffer;

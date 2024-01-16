@@ -71,6 +71,8 @@ namespace r8ge {
 
             virtual void setUniformMat4(Program &program, const std::string &name, const glm::mat4 &mat) = 0;
 
+            virtual unsigned int getUniformLocation(Program &program, const std::string &name) = 0;
+
 
         public:
             static std::shared_ptr<RenderingService> create(API api);
