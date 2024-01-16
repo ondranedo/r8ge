@@ -39,12 +39,16 @@ namespace r8ge {
 
             unsigned int getHeight() override;
 
+            void setVsync(bool state) override;
+
+            bool getVsyncState() override;
+
             static void windowSizeCallback(GLFWwindow *window, int width, int height);
 
         private:
             size_t m_mainWindowWidth, m_mainWindowHeight;
             std::string m_mainWindowTitle;
-
+            bool m_Vsync = false;
             GLFWwindow *m_mainWindow;
 
         };

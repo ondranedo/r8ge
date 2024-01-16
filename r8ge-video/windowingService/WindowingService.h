@@ -47,6 +47,10 @@ namespace r8ge {
 
             virtual unsigned int getHeight() = 0;
 
+            virtual void setVsync(bool state) = 0;
+
+            virtual bool getVsyncState() = 0;
+
             static std::shared_ptr<WindowingService> create();
 
             void setKeyPressedCallback(std::function<void(const r8ge::Key &, IOAction)> callback);
