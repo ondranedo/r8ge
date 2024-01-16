@@ -11,3 +11,6 @@
 	path = r8ge-video/vendor/imgui
 	url = https://github.com/ocornut/imgui
 	branch = docking
+[submodule "r8ge-video/vendor/ImGuizmo"]
+	path = r8ge-video/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo

@@ -35,6 +35,15 @@ add_library(imgui
 
 link_libraries(imgui)
 
+include_directories(vendor/ImGuizmo)
+
+add_library(ImGuizmo
+    vendor/ImGuizmo/ImGuizmo.cpp
+)
+
+link_libraries(ImGuizmo)
+
+
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
@@ -46,3 +55,6 @@ target_link_libraries(r8ge-video PUBLIC r8ge-video-rendering-service)
 
 add_subdirectory(renderer)
 target_link_libraries(r8ge-video PUBLIC r8ge-video-renderer)
+
+add_subdirectory(guiService)
+target_link_libraries(r8ge-video PUBLIC r8ge-video-gui-service)
