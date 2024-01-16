@@ -33,7 +33,11 @@ namespace r8ge {
 
             void getFramebufferSize(int width, int height) override;
 
-            void setViewport(int width,int height) override;
+            void setViewport(int width, int height) override;
+
+            unsigned int getWidth() override;
+
+            unsigned int getHeight() override;
 
             static void windowSizeCallback(GLFWwindow *window, int width, int height);
 

@@ -236,5 +236,13 @@ namespace r8ge {
             glViewport(0,0,width,height);
         }
 
+        unsigned int GLFW::getWidth() {
+            return m_mainWindowWidth;
+        }
+
+        unsigned int GLFW::getHeight() {
+            return m_mainWindowHeight;
+        }
+
     }
 }

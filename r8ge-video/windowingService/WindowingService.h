@@ -43,6 +43,10 @@ namespace r8ge {
 
             virtual void poolEvents() = 0;
 
+            virtual unsigned int getWidth() = 0;
+
+            virtual unsigned int getHeight() = 0;
+
             static std::shared_ptr<WindowingService> create();
 
             void setKeyPressedCallback(std::function<void(const r8ge::Key &, IOAction)> callback);
