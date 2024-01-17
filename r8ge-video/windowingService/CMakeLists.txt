@@ -1,12 +1,3 @@
-set(include-headers
-        "WindowingService.h"
-)
-
-set(source-code
-        "WindowingService.cpp"
-)
-
-
 if(LINUX)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         set(platform-code
@@ -19,8 +10,8 @@ if(LINUX)
 endif()
 
 add_library(r8ge-video-platform
-        ${include-headers}
-        ${source-code}
+        "WindowingService.cpp"
+        "WindowingService.h"
         ${platform-code}
 )
 

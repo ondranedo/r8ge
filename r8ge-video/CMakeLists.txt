@@ -32,8 +32,9 @@ add_library(imgui
         vendor/imgui/backends/imgui_impl_glfw.cpp
         vendor/imgui/backends/imgui_impl_opengl3.cpp
 )
-
+add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 link_libraries(imgui)
+
 
 include_directories(vendor/ImGuizmo)
 
