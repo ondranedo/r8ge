@@ -29,7 +29,7 @@ namespace r8ge {
             (void) io;
             io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
             io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-            io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+            //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
             float fontSize = 18.0f;
             io.FontDefault = io.Fonts->AddFontFromFileTTF("fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
@@ -41,6 +41,8 @@ namespace r8ge {
                 style.WindowRounding = 0.0f;
                 style.Colors[ImGuiCol_WindowBg].w = 1.0f;
             }
+
+            setColors();
 
             ImGui_ImplGlfw_InitForOpenGL(service.getWindow(), true);
             ImGui_ImplOpenGL3_Init("#version 460");
@@ -59,6 +61,7 @@ namespace r8ge {
         }
 
         void ImGUI::render() {
+            renderR8GELayout();
             ImGui::Render();
         }
 
@@ -77,6 +80,91 @@ namespace r8ge {
         void ImGUI::showDemoWindow() {
             bool demo;
             ImGui::ShowDemoWindow(&demo);
+        }
+
+        void ImGUI::renderR8GELayout(RenderingService &service) {
+            static bool firstLoop = true;
+            static ImVec2 size;
+            ImGuiWindowFlags_ windowFlags = ImGuiWindowFlags_NoMove;
+
+            ImVec2 newSize = ImGui::GetMainViewport()->Size;
+            if (size.x != newSize.x || size.y != newSize.y) {
+                size = newSize;
+
+                ImVec2 workCenter = ImGui::GetMainViewport()->GetWorkCenter();
+                ImGuiID id = ImGui::GetID("MainWindow");
+                ImGui::DockBuilderRemoveNode(id);
+                ImGui::DockBuilderAddNode(id);
+
+                ImVec2 nodePos = ImVec2(0, 0);
+
+                ImGui::DockBuilderSetNodeSize(id, size);
+                ImGui::DockBuilderSetNodePos(id, nodePos);
+
+                ImGuiID dock1 = ImGui::DockBuilderSplitNode(id, ImGuiDir_Up, 1.0f, nullptr, &id);
+                ImGuiID dock2 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Left, 0.25f, nullptr, &dock1);
+                ImGuiID dock3 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Right, 0.15f, nullptr, &dock1);
+                ImGuiID dock4 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Down, 0.25f, nullptr, &dock1);
+
+                ImGui::DockBuilderDockWindow("Viewport", dock1);
+                ImGui::DockBuilderDockWindow("SceneItems", dock2);
+                ImGui::DockBuilderDockWindow("Parameters", dock3);
+                ImGui::DockBuilderDockWindow("File", dock4);
+
+                ImGui::DockBuilderFinish(id);
+
+            }
+
+            if (firstLoop) firstLoop = false;
+
+
+            ImGui::Begin("Viewport", nullptr,windowFlags);
+
+            ImGui::End();
+
+            ImGui::Begin("SceneItems", nullptr,windowFlags);
+
+            ImGui::End();
+
+            ImGui::Begin("Parameters", nullptr,windowFlags);
+
+            ImGui::End();
+
+            ImGui::Begin("File", nullptr,windowFlags);
+
+            ImGui::End();
+
+        }
+
+        void ImGUI::setColors() {
+            ImGuiStyle& style = ImGui::GetStyle();
+            auto& colors = ImGui::GetStyle().Colors;
+
+            colors[ImGuiCol_WindowBg] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.00f };
+
+            colors[ImGuiCol_FrameBg] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_FrameBgHovered] = ImVec4{ 107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_FrameBgActive] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f };
+
+            colors[ImGuiCol_TitleBg] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_TitleBgActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.0f, 0.0f, 0.0f, 0.75f };
+
+            colors[ImGuiCol_Button] = ImVec4{ 107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_ButtonHovered] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_ButtonActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
+
+            colors[ImGuiCol_Header] = ImVec4{ 107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_HeaderHovered] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_HeaderActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
+
+            colors[ImGuiCol_Tab] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f };
+            colors[ImGuiCol_TabHovered] = ImVec4{ 206.0f / 255.0f, 207.0f / 255.0f, 213.0f / 255.0f, 1.0f };
+            colors[ImGuiCol_TabActive] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.0f };
+            colors[ImGuiCol_TabUnfocused] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f };
+            colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.0f };
+
+
         }
 
 

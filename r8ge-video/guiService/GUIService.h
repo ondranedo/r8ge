@@ -1,12 +1,9 @@
-//
-// Created by karnatour on 15.1.24.
-//
-
 #ifndef R8GE_GUISERVICE_H
 #define R8GE_GUISERVICE_H
 
 #include <memory>
 #include "../../../windowingService/WindowingService.h"
+#include "../../../renderingService/RenderingService.h"
 
 namespace r8ge {
     namespace video {
@@ -14,7 +11,7 @@ namespace r8ge {
         public:
             GUIService();
 
-            virtual ~GUIService() = 0;
+            virtual ~GUIService() = default;
 
             virtual void init(WindowingService &service) = 0;
 
@@ -28,14 +25,11 @@ namespace r8ge {
 
             virtual void showDemoWindow() = 0;
 
-
             static std::shared_ptr<GUIService> create();
 
         protected:
             bool m_isInitialized;
-
         };
-
     } // r8ge
 } // video
 

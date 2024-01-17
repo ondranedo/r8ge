@@ -6,6 +6,7 @@
 #define R8GE_IMGUI_H
 
 #include "../../GUIService.h"
+#include "../../../renderingService/RenderingService.h"
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
@@ -27,8 +28,13 @@ namespace r8ge {
 
             void endFrame(WindowingService &service) override;
 
+            void renderR8GELayout();
+
+            void setColors();
+
             void showDemoWindow() override;
         private:
+
         };
 
     } // r8ge

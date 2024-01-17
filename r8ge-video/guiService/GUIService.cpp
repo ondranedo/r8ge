@@ -1,7 +1,4 @@
-//
-// Created by karnatour on 15.1.24.
-//
-
+// GUIService.cpp
 #include "GUIService.h"
 
 namespace r8ge {
@@ -9,6 +6,5 @@ namespace r8ge {
         GUIService::GUIService() : m_isInitialized(false) {
         }
 
-        GUIService::~GUIService() = default;
     } // r8ge
 } // video
