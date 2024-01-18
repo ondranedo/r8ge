@@ -4,7 +4,6 @@
 
 
 #include "ImGUI.h"
-#include "../../../../r8ge-core/Logger.h"
 
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
@@ -60,8 +59,31 @@ namespace r8ge {
             ImGui::NewFrame();
         }
 
-        void ImGUI::render() {
+        void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer) {
             renderR8GELayout();
+
+            ImGui::Begin("Viewport", nullptr, windowFlags);
+            {
+                ImGui::BeginChild("GameRender");
+
+                float width = ImGui::GetContentRegionAvail().x;
+                float height = ImGui::GetContentRegionAvail().y;
+
+                //*m_width = width;
+                //*m_height = height;
+                ImGui::Image(
+                        (ImTextureID) frameBuffer.getFrameTexture(),
+                        ImGui::GetContentRegionAvail(),
+                        ImVec2(0, 1),
+                        ImVec2(1, 0)
+                );
+
+            }
+
+            ImGui::EndChild();
+            ImGui::End();
+
+
             ImGui::Render();
         }
 
@@ -82,10 +104,9 @@ namespace r8ge {
             ImGui::ShowDemoWindow(&demo);
         }
 
-        void ImGUI::renderR8GELayout(RenderingService &service) {
+        void ImGUI::renderR8GELayout() {
             static bool firstLoop = true;
             static ImVec2 size;
-            ImGuiWindowFlags_ windowFlags = ImGuiWindowFlags_NoMove;
 
             ImVec2 newSize = ImGui::GetMainViewport()->Size;
             if (size.x != newSize.x || size.y != newSize.y) {
@@ -115,54 +136,55 @@ namespace r8ge {
 
             }
 
-            if (firstLoop) firstLoop = false;
+            if (firstLoop)
+                firstLoop = false;
 
 
-            ImGui::Begin("Viewport", nullptr,windowFlags);
-
-            ImGui::End();
-
-            ImGui::Begin("SceneItems", nullptr,windowFlags);
+            ImGui::Begin("Viewport", nullptr, windowFlags);
 
             ImGui::End();
 
-            ImGui::Begin("Parameters", nullptr,windowFlags);
+            ImGui::Begin("SceneItems", nullptr, windowFlags);
 
             ImGui::End();
 
-            ImGui::Begin("File", nullptr,windowFlags);
+            ImGui::Begin("Parameters", nullptr, windowFlags);
+
+            ImGui::End();
+
+            ImGui::Begin("File", nullptr, windowFlags);
 
             ImGui::End();
 
         }
 
         void ImGUI::setColors() {
-            ImGuiStyle& style = ImGui::GetStyle();
-            auto& colors = ImGui::GetStyle().Colors;
+            ImGuiStyle &style = ImGui::GetStyle();
+            auto &colors = ImGui::GetStyle().Colors;
 
-            colors[ImGuiCol_WindowBg] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_WindowBg] = ImVec4{9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.00f};
 
-            colors[ImGuiCol_FrameBg] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_FrameBgHovered] = ImVec4{ 107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_FrameBgActive] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_FrameBg] = ImVec4{58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_FrameBgHovered] = ImVec4{107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_FrameBgActive] = ImVec4{157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f};
 
-            colors[ImGuiCol_TitleBg] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_TitleBgActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.0f, 0.0f, 0.0f, 0.75f };
+            colors[ImGuiCol_TitleBg] = ImVec4{9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_TitleBgActive] = ImVec4{58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_TitleBgCollapsed] = ImVec4{0.0f, 0.0f, 0.0f, 0.75f};
 
-            colors[ImGuiCol_Button] = ImVec4{ 107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_ButtonHovered] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_ButtonActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_Button] = ImVec4{107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_ButtonHovered] = ImVec4{157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_ButtonActive] = ImVec4{58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f};
 
-            colors[ImGuiCol_Header] = ImVec4{ 107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_HeaderHovered] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f };
-            colors[ImGuiCol_HeaderActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f };
+            colors[ImGuiCol_Header] = ImVec4{107.0f / 255.0f, 112.0f / 255.0f, 128.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_HeaderHovered] = ImVec4{157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.00f};
+            colors[ImGuiCol_HeaderActive] = ImVec4{58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.00f};
 
-            colors[ImGuiCol_Tab] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f };
-            colors[ImGuiCol_TabHovered] = ImVec4{ 206.0f / 255.0f, 207.0f / 255.0f, 213.0f / 255.0f, 1.0f };
-            colors[ImGuiCol_TabActive] = ImVec4{ 157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.0f };
-            colors[ImGuiCol_TabUnfocused] = ImVec4{ 9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f };
-            colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.0f };
+            colors[ImGuiCol_Tab] = ImVec4{9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f};
+            colors[ImGuiCol_TabHovered] = ImVec4{206.0f / 255.0f, 207.0f / 255.0f, 213.0f / 255.0f, 1.0f};
+            colors[ImGuiCol_TabActive] = ImVec4{157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.0f};
+            colors[ImGuiCol_TabUnfocused] = ImVec4{9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f};
+            colors[ImGuiCol_TabUnfocusedActive] = ImVec4{58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.0f};
 
 
         }

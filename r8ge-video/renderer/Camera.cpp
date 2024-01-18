@@ -3,6 +3,7 @@
 //
 
 #include "Camera.h"
+#include "imgui.h"
 
 #include <r8ge/r8ge.h>
 

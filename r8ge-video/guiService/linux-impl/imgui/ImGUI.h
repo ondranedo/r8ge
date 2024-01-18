@@ -24,7 +24,7 @@ namespace r8ge {
 
             void beginFrame() override;
 
-            void render() override;
+            void render(r8ge::video::GLFrameBuffer &frameBuffer) override;
 
             void endFrame(WindowingService &service) override;
 
@@ -34,7 +34,7 @@ namespace r8ge {
 
             void showDemoWindow() override;
         private:
-
+            ImGuiWindowFlags_ windowFlags = ImGuiWindowFlags_NoMove;
         };
 
     } // r8ge
