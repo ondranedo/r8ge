@@ -13,19 +13,6 @@ public:
 
     GameLayer() : r8ge::Layer("gameLayer") {
 
-        int f;
-/*
-        //r8ge::Video::getWindowingService()->setContextOfMainWindow();
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
-        //r8ge::Video::getWindowingService()->poolEvents();
-
-        //r8ge::Video::getRenderingService()->
-        */
     }
 
     void update() override {
@@ -39,15 +26,6 @@ public:
     }
 
     void render() override {
-/*
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui::NewFrame();
-        ImGui::Begin("Hello, ImGui!");
-        ImGui::Text("Hello, world!");
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        */
 
     }
 };

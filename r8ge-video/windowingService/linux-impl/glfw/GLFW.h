@@ -1,8 +1,9 @@
-#ifndef R8GE_X11_H
-#define R8GE_X11_H
+#ifndef R8GE_GLFW_H
+#define R8GE_GLFW_H
 
 
 #include "../../WindowingService.h"
+#include "../../../renderingService/openGL/GLFrameBuffer.h"
 
 
 namespace r8ge {
@@ -55,4 +56,4 @@ namespace r8ge {
     }
 }
 
-#endif//!R8GE_X11_H
+#endif//!R8GE_GLFW_H
