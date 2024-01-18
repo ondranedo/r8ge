@@ -10,11 +10,14 @@
 
 #include <GLFW/glfw3.h>
 #include "../../r8ge-core/events/Strokes.h"
+#include "../renderingService/openGL/GLFrameBuffer.h"
 
 namespace r8ge {
     namespace video {
         class WindowingService {
         public:
+            using ResizeCallback = std::function<void(int, int, r8ge::video::GLFrameBuffer&)>;
+
             WindowingService();
 
             virtual ~WindowingService();
@@ -56,6 +59,8 @@ namespace r8ge {
             void setKeyPressedCallback(std::function<void(const r8ge::Key &, IOAction)> callback);
 
             void setMousePressedCallback(std::function<void(const r8ge::Key &, IOAction)> callback);
+
+            virtual void setFrameBuffer(r8ge::video::GLFrameBuffer& frameBuffer) = 0;
 
         protected:
             bool m_mainWindowCreated;

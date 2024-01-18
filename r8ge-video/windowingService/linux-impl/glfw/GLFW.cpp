@@ -5,6 +5,8 @@
 #include "Convertor.h"
 #include <r8ge/r8ge.h>
 
+#include <utility>
+
 
 namespace r8ge {
     namespace video {
@@ -69,6 +71,9 @@ namespace r8ge {
             }
             glfwSetWindowUserPointer(m_mainWindow, this);
 
+            setResizeCallback([](int width, int height, r8ge::video::GLFrameBuffer& buffer) {
+                buffer.rescaleFrameBuffer(width, height);
+            });
 
             glfwSetKeyCallback(m_mainWindow, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
                 GLFW *instance = static_cast<GLFW *>(glfwGetWindowUserPointer(window));
@@ -206,6 +211,9 @@ namespace r8ge {
                 instance->m_mainWindowHeight = height;
 
                 glViewport(0, 0, width, height);
+                if (instance->m_resizeCallback) {
+                    instance->m_resizeCallback(width, height, *instance->m_frameBuffer);
+                }
 
                 EventPayload p;
                 p.setEvent(std::make_shared<WindowResized>(width, height));
@@ -254,6 +262,14 @@ namespace r8ge {
 
         bool GLFW::getVsyncState(){
             return m_Vsync;
+        }
+
+        void GLFW::setResizeCallback(GLFW::ResizeCallback callback) {
+            m_resizeCallback = std::move(callback);
+        }
+
+        void GLFW::setFrameBuffer(GLFrameBuffer &frameBuffer) {
+            m_frameBuffer = &frameBuffer;
         }
 
     }

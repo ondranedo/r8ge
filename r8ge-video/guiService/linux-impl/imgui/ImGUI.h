@@ -34,7 +34,8 @@ namespace r8ge {
 
             void showDemoWindow() override;
         private:
-            ImGuiWindowFlags_ windowFlags = ImGuiWindowFlags_NoMove;
+            ImGuiWindowFlags windowFlags = 0;
+
         };
 
     } // r8ge

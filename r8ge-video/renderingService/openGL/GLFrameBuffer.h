@@ -12,7 +12,7 @@ namespace r8ge {
 
         class GLFrameBuffer {
         public:
-            GLFrameBuffer(float width, float height);
+            GLFrameBuffer();
 
             ~GLFrameBuffer();
 
@@ -20,14 +20,16 @@ namespace r8ge {
 
             void rescaleFrameBuffer(float width, float height);
 
+            void setBuffer(float width, float height);
+
             void bind() const;
 
             void unbind() const;
         private:
-            uint32_t m_fbo;
-            uint32_t m_texture;
-            uint32_t m_rbo;
-            uint16_t m_count;
+            uint32_t m_fbo{};
+            uint32_t m_texture{};
+            uint32_t m_rbo{};
+            uint16_t m_count{};
         };
 
     } // r8ge

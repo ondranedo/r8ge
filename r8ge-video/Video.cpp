@@ -33,6 +33,7 @@ namespace r8ge {
     std::shared_ptr<video::RenderingService> Video::s_renderingService = nullptr;
     std::shared_ptr<video::GUIService> Video::s_guiService = nullptr;
 
+    r8ge::video::GLFrameBuffer frameBuffer;
     bool Video::s_isReady = false;
 
     Video::Video() : m_title("R8GE-video Engine") {
@@ -57,6 +58,7 @@ namespace r8ge {
         s_windowingService->setEventCallbacks();
         s_windowingService->setGLContext();
         s_renderingService->init();
+
         s_guiService->init(*s_windowingService);
 
 
@@ -137,10 +139,12 @@ namespace r8ge {
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) s_windowingService->getWidth() /
                                                                      (float) s_windowingService->getHeight(), 0.1f, 100.0f);
         s_renderingService->setUniformMat4(basic_program, "projection", projection);
+        s_windowingService->setFrameBuffer(frameBuffer);
+        frameBuffer.setBuffer(s_windowingService->getWidth(),s_windowingService->getHeight());
 
-        r8ge::video::GLFrameBuffer frameBuffer(s_windowingService->getWidth(),s_windowingService->getHeight());
         glTex1.bindTexture(0);
         glTex2.bindTexture(1);
+
         while (Ar8ge::isRunning()) {
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
@@ -149,7 +153,8 @@ namespace r8ge {
 
             // Begin GUI frame
             s_guiService->beginFrame();
-
+            glTex1.bindTexture(0);
+            glTex2.bindTexture(1);
             // Bind the framebuffer and enable depth testing
             frameBuffer.bind();
             glEnable(GL_DEPTH_TEST);

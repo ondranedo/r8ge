@@ -8,7 +8,6 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 
-
 namespace r8ge {
     namespace video {
         std::shared_ptr<GUIService> GUIService::create() {
@@ -45,6 +44,9 @@ namespace r8ge {
 
             ImGui_ImplGlfw_InitForOpenGL(service.getWindow(), true);
             ImGui_ImplOpenGL3_Init("#version 460");
+
+            windowFlags |= ImGuiWindowFlags_NoResize;
+            windowFlags |= ImGuiWindowFlags_NoMove;
         }
 
         void ImGUI::exit() {
@@ -60,17 +62,13 @@ namespace r8ge {
         }
 
         void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer) {
+
             renderR8GELayout();
 
             ImGui::Begin("Viewport", nullptr, windowFlags);
             {
                 ImGui::BeginChild("GameRender");
 
-                float width = ImGui::GetContentRegionAvail().x;
-                float height = ImGui::GetContentRegionAvail().y;
-
-                //*m_width = width;
-                //*m_height = height;
                 ImGui::Image(
                         (ImTextureID) frameBuffer.getFrameTexture(),
                         ImGui::GetContentRegionAvail(),
@@ -81,6 +79,18 @@ namespace r8ge {
             }
 
             ImGui::EndChild();
+            ImGui::End();
+
+            ImGui::Begin("SceneItems", nullptr, windowFlags);
+
+            ImGui::End();
+
+            ImGui::Begin("Parameters", nullptr, windowFlags);
+
+            ImGui::End();
+
+            ImGui::Begin("File", nullptr, windowFlags);
+
             ImGui::End();
 
 
@@ -105,7 +115,6 @@ namespace r8ge {
         }
 
         void ImGUI::renderR8GELayout() {
-            static bool firstLoop = true;
             static ImVec2 size;
 
             ImVec2 newSize = ImGui::GetMainViewport()->Size;
@@ -117,10 +126,7 @@ namespace r8ge {
                 ImGui::DockBuilderRemoveNode(id);
                 ImGui::DockBuilderAddNode(id);
 
-                ImVec2 nodePos = ImVec2(0, 0);
-
                 ImGui::DockBuilderSetNodeSize(id, size);
-                ImGui::DockBuilderSetNodePos(id, nodePos);
 
                 ImGuiID dock1 = ImGui::DockBuilderSplitNode(id, ImGuiDir_Up, 1.0f, nullptr, &id);
                 ImGuiID dock2 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Left, 0.25f, nullptr, &dock1);
@@ -135,27 +141,6 @@ namespace r8ge {
                 ImGui::DockBuilderFinish(id);
 
             }
-
-            if (firstLoop)
-                firstLoop = false;
-
-
-            ImGui::Begin("Viewport", nullptr, windowFlags);
-
-            ImGui::End();
-
-            ImGui::Begin("SceneItems", nullptr, windowFlags);
-
-            ImGui::End();
-
-            ImGui::Begin("Parameters", nullptr, windowFlags);
-
-            ImGui::End();
-
-            ImGui::Begin("File", nullptr, windowFlags);
-
-            ImGui::End();
-
         }
 
         void ImGUI::setColors() {

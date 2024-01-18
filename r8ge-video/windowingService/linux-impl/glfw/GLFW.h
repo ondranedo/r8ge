@@ -46,12 +46,17 @@ namespace r8ge {
 
             static void windowSizeCallback(GLFWwindow *window, int width, int height);
 
+            void setResizeCallback(ResizeCallback callback);
+
+            void setFrameBuffer(r8ge::video::GLFrameBuffer& frameBuffer) override;
+
         private:
             size_t m_mainWindowWidth, m_mainWindowHeight;
             std::string m_mainWindowTitle;
             bool m_Vsync = false;
             GLFWwindow *m_mainWindow;
-
+            r8ge::video::GLFrameBuffer* m_frameBuffer = nullptr;
+            ResizeCallback m_resizeCallback;
         };
     }
 }
