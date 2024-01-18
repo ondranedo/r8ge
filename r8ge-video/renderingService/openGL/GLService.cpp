@@ -33,7 +33,7 @@ namespace r8ge {
         void GLService::exit() {
             for (auto &[r8geid, glid]: m_programs) {
                 glDeleteProgram(glid);
-                R8GE_LOG("GL Program [r8ge:{},gl:] deleted", r8geid, glid);
+                R8GE_LOG("GL Program [r8ge:{},gl:{}] deleted", r8geid, glid);
             }
         }
 
