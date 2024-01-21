@@ -255,6 +255,12 @@ namespace r8ge {
             }
         }
 
+        size_t Json::size() const {
+            if (is_object()) return m_data.o->size();
+            if (is_array()) return m_data.a->size();
+            return 0;
+        }
+
         std::vector<Json> Json::as_vector() const {
             if (is_array()) return m_data.a->as_vector();
             else
