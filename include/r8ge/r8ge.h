@@ -19,6 +19,7 @@
 #include "../r8ge-core/fileio/fileReaders/Binary.h"
 #include "../r8ge-core/fileio/fileReaders/Text.h"
 #include "../r8ge-core/fileio/fileReaders/Glsl.h"
+#include "../r8ge-core/fileio/fileReaders/Gltf.h"
 #include "../r8ge-core/fileio/fileReaders/Wave.hpp"
 #include "../r8ge-core/Ar8ge.h"
 #include "../r8ge-core/events/Strokes.h"

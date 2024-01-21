@@ -17,4 +17,6 @@ add_library(r8ge-core-fileio
         "fileReaders/Wave.hpp"
         "fileReaders/Glsl.cpp"
         "fileReaders/Glsl.h"
+        fileReaders/Gltf.cpp
+        fileReaders/Gltf.h
 )

@@ -12,7 +12,8 @@ namespace r8ge {
             TEXT,
             BINARY,
             WAVE,
-            GLSL
+            GLSL,
+            GLTF
         };
 
         FileType();
