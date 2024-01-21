@@ -79,9 +79,11 @@ namespace r8ge {
                     switch (action) {
                         case GLFW_PRESS:
                             instance->m_keyActionCallback(code, IOAction::PRESS);
+                            R8GE_LOG("Pressed key {}", to_string(code));
                             break;
                         case GLFW_RELEASE:
                             instance->m_keyActionCallback(code, IOAction::RELEASE);
+                            R8GE_LOG("Released key {}",to_string(code));
                             break;
                             /* TODO Add Repeat ??
                         case GLFW_REPEAT:
@@ -234,6 +236,24 @@ namespace r8ge {
 
         void GLFW::setViewport(int width,int height) {
             glViewport(0,0,width,height);
+        }
+
+        unsigned int GLFW::getWidth() {
+            return m_mainWindowWidth;
+        }
+
+        unsigned int GLFW::getHeight() {
+            return m_mainWindowHeight;
+        }
+
+        void GLFW::setVsync(bool state) {
+            if (state) m_Vsync = true;
+            if (!state) m_Vsync = false;
+            glfwSwapInterval(state);
+        }
+
+        bool GLFW::getVsyncState(){
+            return m_Vsync;
         }
 
     }

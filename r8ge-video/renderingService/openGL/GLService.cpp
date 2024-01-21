@@ -108,6 +108,7 @@ namespace r8ge {
             glBindVertexArray(m_vertexArrayObject);
 
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
+
         }
 
         void GLService::setProgram(const Program &program) {
@@ -227,6 +228,10 @@ namespace r8ge {
         void GLService::setUniformMat4(Program &program, const std::string &name, const glm::mat4 &mat) {
             glUniformMatrix4fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
                                &mat[0][0]);
+        }
+
+        unsigned int GLService::getUniformLocation(Program &program, const std::string &name){
+            return glGetUniformLocation(m_programs[program.getId()],name.c_str());
         }
 
     }

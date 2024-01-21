@@ -32,8 +32,18 @@ add_library(imgui
         vendor/imgui/backends/imgui_impl_glfw.cpp
         vendor/imgui/backends/imgui_impl_opengl3.cpp
 )
-
+add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLAD)
 link_libraries(imgui)
+
+
+include_directories(vendor/ImGuizmo)
+
+add_library(ImGuizmo
+    vendor/ImGuizmo/ImGuizmo.cpp
+)
+
+link_libraries(ImGuizmo)
+
 
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
@@ -46,3 +56,6 @@ target_link_libraries(r8ge-video PUBLIC r8ge-video-rendering-service)
 
 add_subdirectory(renderer)
 target_link_libraries(r8ge-video PUBLIC r8ge-video-renderer)
+
+add_subdirectory(guiService)
+target_link_libraries(r8ge-video PUBLIC r8ge-video-gui-service)
