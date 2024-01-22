@@ -10,19 +10,17 @@ namespace r8ge {
     using texture_coord = float;
 
     struct ColorRGB {
-        uint32_t r : 8;
-        uint32_t g : 8;
-        uint32_t b : 8;
+        float r;
+        float g;
+        float b;
 
-        ColorRGB(uint8_t _r, uint8_t _g, uint8_t _b);
-        explicit ColorRGB(uint32_t rgba);
+        ColorRGB(float _r, float _g, float _b);
     }__attribute__((packed));
 
     struct ColorRGBA : public ColorRGB {
-        ColorRGBA(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a);
-        explicit ColorRGBA(uint32_t rgba);
+        ColorRGBA(float _r, float _g, float _b, float _a);
 
-        uint32_t a : 8;
+        float a;
     }__attribute__((packed));
 }
 

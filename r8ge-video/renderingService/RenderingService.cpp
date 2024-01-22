@@ -6,7 +6,7 @@
 
 namespace r8ge {
     namespace video {
-        RenderingService::RenderingService() : m_clearColor(0xFF00FF) {}
+        RenderingService::RenderingService() : m_clearColor({0,0,0.5,1}) {}
         RenderingService::~RenderingService() = default;
 
         std::shared_ptr<RenderingService> RenderingService::create(RenderingService::API api) {

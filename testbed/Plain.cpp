@@ -3,7 +3,6 @@
 #include <memory>
 
 
-r8ge::ColorRGBA color(0x000000);
 
 class GameLayer : public r8ge::Layer {
 
@@ -16,13 +15,9 @@ public:
     }
 
     void update() override {
-        color.r = 0x00;
-        color.b = 0x30;
-        color.g = 0x00;
     }
 
     void event(const std::shared_ptr<r8ge::Event> &event) override {
-        r8ge::Video::getRenderingService()->setClearColor(color);
     }
 
     void render() override {
