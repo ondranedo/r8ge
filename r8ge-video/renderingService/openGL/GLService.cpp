@@ -51,20 +51,16 @@ namespace r8ge {
 
             auto a = ib.getData();
 
-            glGenBuffers(1, &m_indexBuffer);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0],
-                         GL_STATIC_DRAW);
+            glCreateBuffers(1, &m_indexBuffer);
+            glNamedBufferData(m_indexBuffer, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0], GL_STATIC_DRAW);
         }
 
         void GLService::setVertexBuffer(const VertexBuffer &vb) {
-            glGenVertexArrays(1, &m_vertexArrayObject);
-            glBindVertexArray(m_vertexArrayObject);
+            glCreateVertexArrays(1, &m_vertexArrayObject);
 
-            glGenBuffers(1, &m_vertexBuffer);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vb.getSize()), &vb.getRawData()[0], GL_STATIC_DRAW);
+            glCreateBuffers(1, &m_vertexBuffer);
+            glNamedBufferData(m_vertexBuffer, static_cast<GLsizeiptr>(vb.getSize()), &vb.getRawData()[0],
+                              GL_STATIC_DRAW);
 
             m_layout = vb.getLayout();
 
@@ -72,25 +68,28 @@ namespace r8ge {
         }
 
         void GLService::setDataLayout() const {
-            size_t index = 0, offset = 0;
+            size_t index = 0;
+            GLfloat offset = 0;
             for (auto &element: m_layout.getLayout()) {
-                glVertexAttribPointer(index,
-                                      VertexBufferLayout::EntryTypeComponents(element),
-                                      GLConvertor::convertToGLType(VertexBufferLayout::EntryTypeToDataType(element)),
-                                      VertexBufferLayout::EntryTypeShouldBeNormalized(element),
-                                      static_cast<GLsizei>(m_layout.getStride()),
-                                      reinterpret_cast<const void *>(offset)
+                glEnableVertexArrayAttrib(m_vertexArrayObject, index);
+                glVertexArrayAttribBinding(m_vertexArrayObject, index, 0);
+                glVertexArrayAttribFormat(m_vertexArrayObject,
+                                          index,
+                                          VertexBufferLayout::EntryTypeComponents(element),
+                                          GLConvertor::convertToGLType(
+                                                  VertexBufferLayout::EntryTypeToDataType(element)),
+                                          VertexBufferLayout::EntryTypeShouldBeNormalized(element),
+                                          offset
                 );
-                glEnableVertexAttribArray(index);
                 index++;
                 offset += VertexBufferLayout::EntryTypeSize(element);
             }
         }
 
         void GLService::preRender() const {
-            glBindVertexArray(m_vertexArrayObject);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+            glVertexArrayVertexBuffer(m_vertexArrayObject, 0, m_vertexBuffer, 0,
+                                      static_cast<GLsizei>(m_layout.getStride()));
+            glVertexArrayElementBuffer(m_vertexArrayObject, m_vertexBuffer);
 
             setDataLayout();
         }
@@ -230,8 +229,8 @@ namespace r8ge {
                                &mat[0][0]);
         }
 
-        unsigned int GLService::getUniformLocation(Program &program, const std::string &name){
-            return glGetUniformLocation(m_programs[program.getId()],name.c_str());
+        unsigned int GLService::getUniformLocation(Program &program, const std::string &name) {
+            return glGetUniformLocation(m_programs[program.getId()], name.c_str());
         }
 
     }
