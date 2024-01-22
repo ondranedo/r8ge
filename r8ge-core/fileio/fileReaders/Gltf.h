@@ -26,11 +26,12 @@ namespace r8ge {
             unsigned int materialIndex;                     //material
             unsigned int indicesIndex;                      //indices
             struct subPrimitivesAttributes {                //attributes
-                float position;                             //POSITION
-                float normal;                               //NORMAL
-                float tangent;                              //TANGENT
+                unsigned int position;                      //POSITION
+                unsigned int normal;                        //NORMAL
+                unsigned int tangent;                       //TANGENT
             } attributes;
         };
+
         struct mainMeshes {                                 //meshes
             std::string meshName;                           //name
             std::vector<subPrimitives> primitives;          //primitives
@@ -42,8 +43,8 @@ namespace r8ge {
             int componentType;                              //componentType
             unsigned int count;                             //count
             std::string type;                               //type enum->"SCALAR","VEC2","VEC3","VEC4","MAT2","MAT3","MAT4"
-            std::vector<float> min;                         //min
-            std::vector<float> max;                         //max
+            float min[3];                                   //min
+            float max[3];                                   //max
             unsigned int bufferOffest;                      //bufferOffset
             unsigned int bufferView;                        //bufferView
         };
@@ -73,6 +74,7 @@ namespace r8ge {
             std::vector<mainAccessors> accessorList;
             std::vector<mainScenes> sceneList;
             std::vector<mainBufferViews> bufferViewList;
+            std::vector<mainNodes> nodeList;
         };
 
 
@@ -92,11 +94,11 @@ namespace r8ge {
 
             static FileType getType();
 
-            std::vector<GltfObject> parse();
+            GltfObject parse();
 
         private:
             utility::Json m_gltf;
-            utility::Json m_materials, m_meshes;
+            utility::Json m_materials, m_meshes,m_accessors,m_scenes,m_bufferViews,m_nodes;
         };
 
     } // r8ge
