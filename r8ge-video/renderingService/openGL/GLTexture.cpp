@@ -31,8 +31,6 @@ namespace r8ge {
                 }
             };
 
-            glTextureStorage2D(m_texture, 1, getInternalFormat(texture2D.getChannelsCount()), texture2D.getWidth(),
-                               texture2D.getHeight());
 
             glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -40,9 +38,11 @@ namespace r8ge {
             glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+            glTextureStorage2D(m_texture, 1, getInternalFormat(texture2D.getChannelsCount()), texture2D.getWidth(),
+                               texture2D.getHeight());
             glTextureSubImage2D(m_texture, 0, 0, 0, texture2D.getWidth(), texture2D.getHeight(), getFormat(texture2D.getChannelsCount()),
                                 GL_UNSIGNED_BYTE, texture2D.getImageData());
-
+            glGenerateTextureMipmap(m_texture);
             R8GE_LOG("Created TextureSubImage2D for texture with ID:{}",m_texture);
         }
 
