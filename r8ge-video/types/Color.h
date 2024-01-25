@@ -8,6 +8,7 @@ namespace r8ge {
     using coord_pixel = uint16_t;
     using coord_float = float;
     using texture_coord = float;
+    using normal_float = float;
 
     struct ColorRGB {
         float r;

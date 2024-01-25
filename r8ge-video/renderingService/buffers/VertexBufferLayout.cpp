@@ -22,7 +22,7 @@ namespace r8ge {
                 case VertexBufferLayout::Entry::POS_XY: return "positionXY";
                 case VertexBufferLayout::Entry::POS_XYZ: return "positionXYZ";
                 case VertexBufferLayout::Entry::TEXTURE_XY: return "textureXY";
-                case VertexBufferLayout::Entry::TEXTURE_XYZ: return "textureXYZ";
+                case VertexBufferLayout::Entry::NORMAL_XYZ: return "normalXYZ";
             }
 
             R8GE_LOG_ERROR("Unknown layout entry type to string");
@@ -41,7 +41,7 @@ namespace r8ge {
                 case VertexBufferLayout::Entry::COLOUR_RGBA: return 4;
                 case VertexBufferLayout::Entry::POS_XY: return 2;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return 2;
-                case VertexBufferLayout::Entry::TEXTURE_XYZ: return 3;
+                case VertexBufferLayout::Entry::NORMAL_XYZ: return 3;
             }
 
             R8GE_LOG_ERROR("Unknown layout component count in entry type");
@@ -66,7 +66,7 @@ namespace r8ge {
                 case VertexBufferLayout::Entry::POS_XY: return false;
                 case VertexBufferLayout::Entry::POS_XYZ: return false;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return false;
-                case VertexBufferLayout::Entry::TEXTURE_XYZ: return false;
+                case VertexBufferLayout::Entry::NORMAL_XYZ: return false;
             }
 
             R8GE_LOG_ERROR("Unknown layout entry type normalization");
@@ -80,7 +80,7 @@ namespace r8ge {
                 case VertexBufferLayout::Entry::POS_XY: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::POS_XYZ: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return Primitive::FLOAT;
-                case VertexBufferLayout::Entry::TEXTURE_XYZ: return Primitive::FLOAT;
+                case VertexBufferLayout::Entry::NORMAL_XYZ: return Primitive::FLOAT;
             }
 
             R8GE_LOG_ERROR("Unknown layout entry type data type");

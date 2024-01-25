@@ -106,7 +106,7 @@ size_t r8ge::VertexTexture3D::getSize() const {
 }
 
 r8ge::VertexColor::VertexColor(r8ge::coord_float x, r8ge::coord_float y, r8ge::ColorRGBA rgba) : Vertex(x, y),
-                                                                                               rgba(rgba) {
+                                                                                                 rgba(rgba) {
 }
 
 r8ge::video::VertexBufferLayout r8ge::VertexColor::getLayout() const {
@@ -189,17 +189,21 @@ size_t r8ge::VertexColorTexture::getSize() const {
 
 r8ge::VertexColorTexture3D::VertexColorTexture3D(r8ge::coord_float x, r8ge::coord_float y, r8ge::coord_float z,
                                                  r8ge::ColorRGBA rgba, r8ge::texture_coord tex_x,
-                                                 r8ge::texture_coord tex_y, r8ge::texture_coord tex_z) : Vertex(x, y),
-                                                                                                         z(z),
-                                                                                                         rgba(rgba),
-                                                                                                         tex_x(tex_x),
-                                                                                                         tex_y(tex_y),
-                                                                                                         tex_z(tex_z) {
+                                                 r8ge::texture_coord tex_y, normal_float normal_x,
+                                                 normal_float normal_y,
+                                                 normal_float normal_z) : Vertex(x, y),
+                                                                          z(z),
+                                                                          rgba(rgba),
+                                                                          tex_x(tex_x),
+                                                                          tex_y(tex_y),
+                                                                          normal_x(normal_x),
+                                                                          normal_y(normal_y),
+                                                                          normal_z(normal_z) {
 }
 
 r8ge::video::VertexBufferLayout r8ge::VertexColorTexture3D::getLayout() const {
     return video::VertexBufferLayout({video::VertexBufferLayout::POS_XYZ, video::VertexBufferLayout::COLOUR_RGBA,
-                                      video::VertexBufferLayout::TEXTURE_XYZ
+                                      video::VertexBufferLayout::TEXTURE_XY, video::VertexBufferLayout::NORMAL_XYZ
                                      });
 }
 
@@ -218,9 +222,20 @@ std::vector<uint8_t> r8ge::VertexColorTexture3D::getRawData() const {
     const auto *texYRawData = reinterpret_cast<const uint8_t *>(&tex_y);
     data.insert(data.end(), texYRawData, texYRawData + sizeof(texture_coord));
 
+    const auto *normalXRawData = reinterpret_cast<const uint8_t *>(&normal_x);
+    data.insert(data.end(), normalXRawData, normalXRawData + sizeof(normal_float));
+
+    const auto *normalYRawData = reinterpret_cast<const uint8_t *>(&normal_y);
+    data.insert(data.end(), normalYRawData, normalYRawData + sizeof(normal_float));
+
+    const auto *normalZRawData = reinterpret_cast<const uint8_t *>(&normal_z);
+    data.insert(data.end(), normalZRawData, normalZRawData + sizeof(normal_float));
+
+
     return data;
 }
 
 size_t r8ge::VertexColorTexture3D::getSize() const {
-    return Vertex::getSize() + sizeof(z) + sizeof(rgba) + sizeof(tex_x) + sizeof(tex_y) + sizeof(tex_z);
+    return Vertex::getSize() + sizeof(z) + sizeof(rgba) + sizeof(tex_x) + sizeof(tex_y) + sizeof(normal_x) +
+           sizeof(normal_y) + sizeof(normal_z);
 }

@@ -112,8 +112,8 @@ namespace r8ge {
 
     struct VertexColorTexture3D : public Vertex {
         VertexColorTexture3D(coord_float x, coord_float y, coord_float z, ColorRGBA rgba, texture_coord tex_x,
-                             texture_coord tex_y,
-                             texture_coord tex_z);
+                             texture_coord tex_y,normal_float normal_x, normal_float normal_y,
+                             normal_float normal_z);
 
         ~VertexColorTexture3D() override = default;
 
@@ -125,7 +125,8 @@ namespace r8ge {
 
         coord_float z;
         ColorRGBA rgba;
-        texture_coord tex_x, tex_y, tex_z;
+        texture_coord tex_x, tex_y;
+        normal_float normal_x,normal_y,normal_z;
     };
 
 }

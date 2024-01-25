@@ -41,7 +41,7 @@ namespace r8ge
                 COLOUR_RGB,  // Basic 3 x FLOAT, should be used for RGB colours, !0.0 - 1.0 values only!
                 COLOUR_RGBA, // Basic 4 x FLOAT, should be used for RGBA colours, !0.0 - 1.0 values only!, Alpha channel is used for transparency
                 TEXTURE_XY,  // Basic 2 x FLOAT, should be used for texture coordinates, !0.0 - 1.0 values only!
-                TEXTURE_XYZ   // Basic 3 x FLOAT, should be used for texture coordinates, !0.0 - 1.0 values only!
+                NORMAL_XYZ   // Basic 3 x FLOAT, should be used for normal attributes
             };
 
             // Layout is a vector of LayoutEntryType
