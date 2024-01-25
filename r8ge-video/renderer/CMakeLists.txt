@@ -6,6 +6,10 @@ add_library(r8ge-video-renderer
         ../types/Texture.h
         Camera.cpp
         Camera.h
+        ObjectModel.cpp
+        ObjectModel.h
+        Mesh.cpp
+        Mesh.h
         #"Mesh.cpp"
         #"Mesh.h"
         #"MeshTrinagle.cpp"
