@@ -22,7 +22,6 @@ add_subdirectory(vendor/glm)
 link_libraries(glm)
 
 include_directories(vendor/imgui)
-
 add_library(imgui
         vendor/imgui/imgui.cpp
         vendor/imgui/imgui_draw.cpp
@@ -37,14 +36,12 @@ link_libraries(imgui)
 
 
 include_directories(vendor/ImGuizmo)
-
 add_library(ImGuizmo
     vendor/ImGuizmo/ImGuizmo.cpp
 )
-
 link_libraries(ImGuizmo)
 
-
+include_directories(vendor/json/single_include/nlohmann)
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
