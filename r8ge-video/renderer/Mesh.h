@@ -12,6 +12,7 @@ namespace r8ge {
     namespace video {
 
         class Mesh {
+        public:
             Mesh(std::vector <VertexColorTexture3D>& vertices, std::vector <unsigned int>& indices,
                        std::vector <GLTexture>& textures);
         };

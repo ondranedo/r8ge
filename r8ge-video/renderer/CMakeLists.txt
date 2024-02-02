@@ -6,16 +6,10 @@ add_library(r8ge-video-renderer
         ../types/Texture.h
         Camera.cpp
         Camera.h
-        ObjectModel.cpp
-        ObjectModel.h
         Mesh.cpp
         Mesh.h
-        #"Mesh.cpp"
-        #"Mesh.h"
-        #"MeshTrinagle.cpp"
-        #"MeshTrinagle.h"
-        #"Rectangle.cpp"
-        #"Rectangle.h"
+        Model.cpp
+        Model.h
 )
 
 target_include_directories(r8ge-video-renderer PRIVATE "${CMAKE_SOURCE_DIR}/include")

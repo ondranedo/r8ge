@@ -3,6 +3,7 @@
 //
 
 #include "Texture2D.h"
+#include <stb_image.h>
 
 namespace r8ge {
     namespace video {

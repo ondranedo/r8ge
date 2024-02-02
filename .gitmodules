@@ -14,6 +14,6 @@
 [submodule "r8ge-video/vendor/ImGuizmo"]
 	path = r8ge-video/vendor/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo
-[submodule "r8ge-video/vendor/json"]
-	path = r8ge-video/vendor/json
-	url = https://github.com/nlohmann/json
+[submodule "r8ge-video/vendor/assimp"]
+	path = r8ge-video/vendor/assimp
+	url = https://github.com/assimp/assimp

@@ -17,6 +17,8 @@ namespace r8ge {
         ImGUI::~ImGUI() = default;
 
         void ImGUI::init(WindowingService &service) {
+            windowFlags |= ImGuiWindowFlags_NoResize;
+            windowFlags |= ImGuiWindowFlags_NoMove;
             if (service.getWindow() == nullptr) {
                 R8GE_LOG_ERROR("Provided window is null, init WindowingService first");
             }
@@ -44,9 +46,6 @@ namespace r8ge {
 
             ImGui_ImplGlfw_InitForOpenGL(service.getWindow(), true);
             ImGui_ImplOpenGL3_Init("#version 460");
-
-            windowFlags |= ImGuiWindowFlags_NoResize;
-            windowFlags |= ImGuiWindowFlags_NoMove;
         }
 
         void ImGUI::exit() {

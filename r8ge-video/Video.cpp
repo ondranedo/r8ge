@@ -12,6 +12,7 @@
 #include "renderingService/openGL/GLFrameBuffer.h"
 
 #include "GLFW/glfw3.h"
+#include "renderer/Model.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,10 +22,6 @@
 #include <backends/imgui_impl_opengl3.h>
 
 namespace r8ge {
-
-    ImGuiIO io;
-    bool show_demo_window = true;
-    bool show_another_window = false;
     float deltaTime = 0.0f;    // time between current frame and last frame
     float lastFrame = 0.0f;
     r8ge::video::Camera cam(0.0f,0.0f,3.0f,0.0f,1.0f,-1.0f);
@@ -34,7 +31,7 @@ namespace r8ge {
     std::shared_ptr<video::GUIService> Video::s_guiService = nullptr;
 
     r8ge::video::GLFrameBuffer frameBuffer;
-    bool Video::s_isReady = false;
+
 
     Video::Video() : m_title("R8GE-video Engine") {
         // TODO: Config file, rendering API
@@ -53,6 +50,7 @@ namespace r8ge {
     }
 
     void Video::init() {
+
         s_windowingService->init();
         s_windowingService->createMainWindow(800, 600, m_title);
         s_windowingService->setEventCallbacks();
@@ -60,63 +58,23 @@ namespace r8ge {
         s_renderingService->init();
 
         s_guiService->init(*s_windowingService);
-
-
-        s_windowingService->setVsync(1);
+        r8ge::video::Model model("assets/map/scene.gltf");
+        s_windowingService->setVsync(true);
         R8GE_LOG("R8GE-Video initialized");
     }
 
     void Video::run() {
-
         R8GE_LOG("Video starting to run main loop");
         s_renderingService->setClearColor(ColorRGBA{0, 0, 30, 0});
         video::Program basic_program(0, "shaders/glm.glsl");
         s_renderingService->compileProgram(basic_program);
 
         // TODO: Fetch raw data from Renderer
-        video::IndexBuffer ib({0, 1, 3, 1, 2, 3});
-        std::vector<VertexTexture3D> vertices = {
-                {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
-                {0.5f,  -0.5f, -0.5f, 1.0f, 0.0f},
-                {0.5f,  0.5f,  -0.5f, 1.0f, 1.0f},
-                {0.5f,  0.5f,  -0.5f, 1.0f, 1.0f},
-                {-0.5f, 0.5f,  -0.5f, 0.0f, 1.0f},
-                {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
-
-                {-0.5f, -0.5f, 0.5f,  0.0f, 0.0f},
-                {0.5f,  -0.5f, 0.5f,  1.0f, 0.0f},
-                {0.5f,  0.5f,  0.5f,  1.0f, 1.0f},
-                {0.5f,  0.5f,  0.5f,  1.0f, 1.0f},
-                {-0.5f, 0.5f,  0.5f,  0.0f, 1.0f},
-                {-0.5f, -0.5f, 0.5f,  0.0f, 0.0f},
-
-                {-0.5f, 0.5f,  0.5f,  1.0f, 0.0f},
-                {-0.5f, 0.5f,  -0.5f, 1.0f, 1.0f},
-                {-0.5f, -0.5f, -0.5f, 0.0f, 1.0f},
-                {-0.5f, -0.5f, -0.5f, 0.0f, 1.0f},
-                {-0.5f, -0.5f, 0.5f,  0.0f, 0.0f},
-                {-0.5f, 0.5f,  0.5f,  1.0f, 0.0f},
-
-                {0.5f,  0.5f,  0.5f,  1.0f, 0.0f},
-                {0.5f,  0.5f,  -0.5f, 1.0f, 1.0f},
-                {0.5f,  -0.5f, -0.5f, 0.0f, 1.0f},
-                {0.5f,  -0.5f, -0.5f, 0.0f, 1.0f},
-                {0.5f,  -0.5f, 0.5f,  0.0f, 0.0f},
-                {0.5f,  0.5f,  0.5f,  1.0f, 0.0f},
-
-                {-0.5f, -0.5f, -0.5f, 0.0f, 1.0f},
-                {0.5f,  -0.5f, -0.5f, 1.0f, 1.0f},
-                {0.5f,  -0.5f, 0.5f,  1.0f, 0.0f},
-                {0.5f,  -0.5f, 0.5f,  1.0f, 0.0f},
-                {-0.5f, -0.5f, 0.5f,  0.0f, 0.0f},
-                {-0.5f, -0.5f, -0.5f, 0.0f, 1.0f},
-
-                {-0.5f, 0.5f,  -0.5f, 0.0f, 1.0f},
-                {0.5f,  0.5f,  -0.5f, 1.0f, 1.0f},
-                {0.5f,  0.5f,  0.5f,  1.0f, 0.0f},
-                {0.5f,  0.5f,  0.5f,  1.0f, 0.0f},
-                {-0.5f, 0.5f,  0.5f,  0.0f, 0.0f},
-                {-0.5f, 0.5f,  -0.5f, 0.0f, 1.0f}
+        video::IndexBuffer ib({0, 2, 3});
+        std::vector<VertexColor> vertices = {
+                {1.0f,1.0f,ColorRGBA{0.8f,0.0f,0.0f,1.0f}},
+                {-1.0f,-1.0,ColorRGBA{0.0f,1.0f,0.0f,1.0f}},
+                {1.0f,1.0f,ColorRGBA{0.0f,0.0f,1.0f,1.0f}}
         };
 
 
@@ -126,14 +84,8 @@ namespace r8ge {
         s_renderingService->setIndexBuffer(ib);
 
         s_renderingService->preRender();
-        video::Texture2D tex2D1("textures/morce.jpg", true);
-        video::Texture2D tex2D2("textures/spsetrans.png", true);
-        video::GLTexture glTex1(tex2D1);
-        video::GLTexture glTex2(tex2D2);
 
         s_renderingService->setProgram(basic_program);
-        s_renderingService->setUniformInt(basic_program, "texture1", 0);
-        s_renderingService->setUniformInt(basic_program, "texture2", 1);
 
 
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) s_windowingService->getWidth() /
@@ -141,9 +93,6 @@ namespace r8ge {
         s_renderingService->setUniformMat4(basic_program, "projection", projection);
         s_windowingService->setFrameBuffer(frameBuffer);
         frameBuffer.setBuffer(s_windowingService->getWidth(),s_windowingService->getHeight());
-
-        glTex1.bindTexture(0);
-        glTex2.bindTexture(1);
 
         while (Ar8ge::isRunning()) {
             float currentFrame = static_cast<float>(glfwGetTime());
@@ -153,8 +102,6 @@ namespace r8ge {
 
             // Begin GUI frame
             s_guiService->beginFrame();
-            glTex1.bindTexture(0);
-            glTex2.bindTexture(1);
             // Bind the framebuffer and enable depth testing
             frameBuffer.bind();
             glEnable(GL_DEPTH_TEST);

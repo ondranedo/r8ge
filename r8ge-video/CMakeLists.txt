@@ -10,6 +10,13 @@ add_library(r8ge-video
         EntrytPoint.h
 )
 
+include_directories(vendor/assimp/include)
+add_subdirectory(vendor/assimp)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+link_libraries(assimp)
+
 include_directories(vendor/stb)
 add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
 
@@ -41,7 +48,6 @@ add_library(ImGuizmo
 )
 link_libraries(ImGuizmo)
 
-include_directories(vendor/json/single_include/nlohmann)
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
 

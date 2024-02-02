@@ -109,11 +109,13 @@ namespace r8ge {
         texture_coord tex_x, tex_y;
 
     };
-
+    //This is main structure of video
     struct VertexColorTexture3D : public Vertex {
         VertexColorTexture3D(coord_float x, coord_float y, coord_float z, ColorRGBA rgba, texture_coord tex_x,
                              texture_coord tex_y,normal_float normal_x, normal_float normal_y,
-                             normal_float normal_z);
+                             normal_float normal_z,tangent_float tangent_x, tangent_float tangent_y,
+                             tangent_float tangent_z,bitangent_float bitangent_x,bitangent_float bitangent_y,
+                             bitangent_float bitangent_z);
 
         ~VertexColorTexture3D() override = default;
 
@@ -127,6 +129,8 @@ namespace r8ge {
         ColorRGBA rgba;
         texture_coord tex_x, tex_y;
         normal_float normal_x,normal_y,normal_z;
+        tangent_float tangent_x,tangent_y,tangent_z;
+        bitangent_float bitangent_x,bitangent_y,bitangent_z;
     };
 
 }

@@ -9,6 +9,8 @@ namespace r8ge {
     using coord_float = float;
     using texture_coord = float;
     using normal_float = float;
+    using tangent_float = float;
+    using bitangent_float = float;
 
     struct ColorRGB {
         float r;
