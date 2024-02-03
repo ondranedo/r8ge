@@ -1,17 +1,17 @@
-//
-// Created by karnatour on 4.1.24.
-//
-
 #ifndef R8GE_TEXTURE2D_H
 #define R8GE_TEXTURE2D_H
 
 #include <r8ge/r8ge.h>
 
+
 namespace r8ge {
     namespace video {
         class Texture2D {
         public:
+            Texture2D();
+
             Texture2D(const std::string &pathToFile, bool flipTexture);
+
             ~Texture2D();
 
             [[nodiscard]] uint16_t getWidth() const;
@@ -20,16 +20,21 @@ namespace r8ge {
 
             [[nodiscard]] uint16_t getChannelsCount() const;
 
-            [[nodiscard]] void* getImageData() const;
+            [[nodiscard]] void *getImageData() const;
 
             [[nodiscard]] bool getFlipState() const;
 
+            [[nodiscard]] std::string getType() const;
+
+            void setType(const std::string &type);
+
             void loadTextureFromFile(const std::string &pathToFile, bool flipTexture);
 
-        private:
+        protected:
             int32_t m_width{}, m_height{}, m_channelsCount{};
             void *m_imageData{};
             bool m_isFlipped = false;
+            std::string m_type{};
         };
     }
 } // r8ge

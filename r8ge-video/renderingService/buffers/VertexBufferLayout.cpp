@@ -64,10 +64,8 @@ namespace r8ge {
 
         bool VertexBufferLayout::EntryTypeShouldBeNormalized(VertexBufferLayout::Entry type) {
             switch (type) {
-                case VertexBufferLayout::Entry::COLOUR_RGB: return true;
-                case VertexBufferLayout::Entry::COLOUR_RGBA: return true;
-
-                // Position should not be normalized, it is normalized in shader, with MVP matrix
+                case VertexBufferLayout::Entry::COLOUR_RGB: return false;
+                case VertexBufferLayout::Entry::COLOUR_RGBA: return false;
                 case VertexBufferLayout::Entry::POS_XY: return false;
                 case VertexBufferLayout::Entry::POS_XYZ: return false;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return false;
@@ -82,8 +80,8 @@ namespace r8ge {
 
         Primitive VertexBufferLayout::EntryTypeToDataType(VertexBufferLayout::Entry type) {
             switch (type) {
-                case VertexBufferLayout::Entry::COLOUR_RGB: return Primitive::UINT8;
-                case VertexBufferLayout::Entry::COLOUR_RGBA: return Primitive::UINT8;
+                case VertexBufferLayout::Entry::COLOUR_RGB: return Primitive::FLOAT;
+                case VertexBufferLayout::Entry::COLOUR_RGBA: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::POS_XY: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::POS_XYZ: return Primitive::FLOAT;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return Primitive::FLOAT;

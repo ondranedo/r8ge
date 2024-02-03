@@ -29,6 +29,8 @@ namespace r8ge {
 
             void render() const override;
 
+            void render(unsigned int count) const override;
+
             void setIndexBuffer(const IndexBuffer &ib) override;
 
             void setVertexBuffer(const VertexBuffer &vb) override;
@@ -74,7 +76,6 @@ namespace r8ge {
             VertexBufferLayout m_layout;
         public:
             std::unordered_map<size_t, GLuint> m_programs;
-
         };
     }
 }

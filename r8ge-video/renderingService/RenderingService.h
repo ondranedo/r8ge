@@ -34,6 +34,8 @@ namespace r8ge {
 
             virtual void render() const = 0;
 
+            virtual void render(unsigned int count) const = 0;
+
             void setClearColor(ColorRGBA c);
 
             virtual void setIndexBuffer(const IndexBuffer &ib) = 0;
@@ -76,6 +78,7 @@ namespace r8ge {
 
         public:
             static std::shared_ptr<RenderingService> create(API api);
+            static unsigned int id;
 
         protected:
             ColorRGBA m_clearColor;

@@ -1,16 +1,16 @@
-//
-// Created by karnatour on 4.1.24.
-//
-
 #include "Texture2D.h"
 #include <stb_image.h>
 
 namespace r8ge {
     namespace video {
 
+        Texture2D::Texture2D() = default;
+
         Texture2D::Texture2D(const std::string &pathToFile, bool flipTexture) {
             loadTextureFromFile(pathToFile, flipTexture);
         }
+
+        Texture2D::~Texture2D() = default;
 
         uint16_t Texture2D::getWidth() const {
             return m_width;
@@ -24,7 +24,7 @@ namespace r8ge {
             return m_channelsCount;
         }
 
-        void* Texture2D::getImageData() const{
+        void *Texture2D::getImageData() const {
             return m_imageData;
         }
 
@@ -43,8 +43,13 @@ namespace r8ge {
             }
         }
 
-        Texture2D::~Texture2D() {
-            stbi_image_free(m_imageData);
+        void Texture2D::setType(const std::string &type) {
+            m_type = type;
         }
+
+        std::string Texture2D::getType() const {
+            return m_type;
+        }
+
     }
 }

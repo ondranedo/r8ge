@@ -9,6 +9,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "../renderingService/openGL/GLTexture.h"
+#include "Mesh.h"
+#include "../renderingService/programManager/Program.h"
 
 namespace r8ge {
     namespace video {
@@ -17,15 +19,19 @@ namespace r8ge {
         public:
             Model(std::string const &path);
 
+            void render(Program &shader);
         private:
+
             void connectNodes(aiNode *node, const aiScene *scene);
 
-            void processMesh(aiMesh *mesh, const aiScene *scene);
+            Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 
             std::vector<GLTexture> loadMaterialTextures(aiMaterial *mat, aiTextureType type,
                                                         const std::string &typeName);
 
             std::string m_directory;
+            std::unordered_set<std::string> m_loadedTextureHashSet;
+            std::vector<Mesh> m_meshes;
         };
 
     } // r8ge

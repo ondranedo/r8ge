@@ -24,12 +24,11 @@
 namespace r8ge {
     float deltaTime = 0.0f;    // time between current frame and last frame
     float lastFrame = 0.0f;
-    r8ge::video::Camera cam(0.0f,0.0f,3.0f,0.0f,1.0f,-1.0f);
+    r8ge::video::Camera cam(0.0f, 0.0f, 3.0f, 0.0f, 1.0f, -1.0f);
 
     std::shared_ptr<video::WindowingService> Video::s_windowingService = nullptr;
     std::shared_ptr<video::RenderingService> Video::s_renderingService = nullptr;
     std::shared_ptr<video::GUIService> Video::s_guiService = nullptr;
-
     r8ge::video::GLFrameBuffer frameBuffer;
 
 
@@ -58,67 +57,48 @@ namespace r8ge {
         s_renderingService->init();
 
         s_guiService->init(*s_windowingService);
-        r8ge::video::Model model("assets/map/scene.gltf");
         s_windowingService->setVsync(true);
         R8GE_LOG("R8GE-Video initialized");
     }
 
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
-        s_renderingService->setClearColor(ColorRGBA{0, 0, 30, 0});
-        video::Program basic_program(0, "shaders/glm.glsl");
+        video::Program basic_program(0, "shaders/model.glsl");
+        video::Program test_program(0, "shaders/test.glsl");
         s_renderingService->compileProgram(basic_program);
-
-        // TODO: Fetch raw data from Renderer
-        video::IndexBuffer ib({0, 2, 3});
-        std::vector<VertexColor> vertices = {
-                {1.0f,1.0f,ColorRGBA{0.8f,0.0f,0.0f,1.0f}},
-                {-1.0f,-1.0,ColorRGBA{0.0f,1.0f,0.0f,1.0f}},
-                {1.0f,1.0f,ColorRGBA{0.0f,0.0f,1.0f,1.0f}}
-        };
-
-
-        video::VertexBuffer vb(vertices, vertices[0].getLayout());
-
-        s_renderingService->setVertexBuffer(vb);
-        s_renderingService->setIndexBuffer(ib);
-
-        s_renderingService->preRender();
-
-        s_renderingService->setProgram(basic_program);
-
-
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) s_windowingService->getWidth() /
-                                                                     (float) s_windowingService->getHeight(), 0.1f, 100.0f);
-        s_renderingService->setUniformMat4(basic_program, "projection", projection);
+        r8ge::video::Model modelBackpack("backpack/backpack.obj");
         s_windowingService->setFrameBuffer(frameBuffer);
         frameBuffer.setBuffer(s_windowingService->getWidth(),s_windowingService->getHeight());
-
         while (Ar8ge::isRunning()) {
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
-            cam.changeCameraPosition(deltaTime,0,0);
+            cam.changeCameraPosition(deltaTime, 0, 0);
 
-            // Begin GUI frame
             s_guiService->beginFrame();
             // Bind the framebuffer and enable depth testing
             frameBuffer.bind();
             glEnable(GL_DEPTH_TEST);
 
-            // Clear the framebuffer
+            s_renderingService->setClearColor(ColorRGBA{0, 0, 30, 1.0});
             s_renderingService->clear();
 
-            // Set model and view matrices
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::rotate(model, currentFrame, glm::vec3(0.5f, 1.0f, 0.0f));
 
             s_renderingService->setProgram(basic_program);
-            s_renderingService->setUniformMat4(basic_program, "model", model);
+
+            glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+                                                    static_cast<float>(s_windowingService->getWidth()) /
+                                                    static_cast<float>(s_windowingService->getHeight()), 0.1f, 100.0f);
+            s_renderingService->setUniformMat4(basic_program, "projection", projection);
             s_renderingService->setUniformMat4(basic_program, "view", cam.getViewMatrix());
 
-            s_renderingService->render();
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model,
+                                   glm::vec3(0.0f, 0.0f, 0.0f));
+            model = glm::scale(model,
+                               glm::vec3(1.0f, 1.0f, 1.0f));
+            s_renderingService->setUniformMat4(basic_program, "model", model);
+            modelBackpack.render(basic_program);
 
             frameBuffer.unbind();
             glDisable(GL_DEPTH_TEST);
@@ -127,12 +107,12 @@ namespace r8ge {
 
             s_guiService->endFrame(*s_windowingService);
 
-            // Swap buffers and handle events
             s_windowingService->swapBuffersOfMainWindow();
             s_windowingService->poolEvents();
         }
 
     }
+
     void Video::exit() {
 
         s_windowingService->destroyMainWindow();

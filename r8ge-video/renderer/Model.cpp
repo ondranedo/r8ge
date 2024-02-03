@@ -3,10 +3,6 @@
 //
 
 #include "Model.h"
-#include "../../r8ge-core/Logger.h"
-#include "../types/Vertex.h"
-#include "vec3.hpp"
-
 
 namespace r8ge {
     namespace video {
@@ -25,7 +21,7 @@ namespace r8ge {
         void Model::connectNodes(aiNode *node, const aiScene *scene) {
             for (unsigned int i = 0; i < node->mNumMeshes; i++) {
                 aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-                meshes.push_back(processMesh(mesh, scene));
+                m_meshes.push_back(processMesh(mesh, scene));
             }
 
             for (unsigned int i = 0; i < node->mNumChildren; i++) {
@@ -33,13 +29,13 @@ namespace r8ge {
             }
         }
 
-        void Model::processMesh(aiMesh *mesh, const aiScene *scene) {
+        Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
             std::vector<VertexColorTexture3D> vertices;
             std::vector<unsigned int> indices;
             std::vector<GLTexture> textures;
 
             for (int i = 0; i < mesh->mNumVertices; ++i) {
-                VertexColorTexture3D temp(0.0f, 0.0f, 0.0f, ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f),
+                VertexColorTexture3D temp(0.0f, 0.0f, 0.0f, ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f),
                                           0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                                           0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -54,7 +50,7 @@ namespace r8ge {
                 }
 
                 if (mesh->mTextureCoords[0]) {
-                    temp.tex_x = mesh->mTextureCoords[0][i].x; // Fixed index to access texture coordinates
+                    temp.tex_x = mesh->mTextureCoords[0][i].x;
                     temp.tex_y = mesh->mTextureCoords[0][i].y;
 
                     if (mesh->HasTangentsAndBitangents()) {
@@ -67,10 +63,7 @@ namespace r8ge {
                         temp.bitangent_z = mesh->mBitangents[i].z;
                     }
                 }
-                else {
-                    temp.tex_x = 0.0f;
-                    temp.tex_y = 0.0f;
-                }
+
 
                 vertices.push_back(temp);
             }
@@ -104,14 +97,30 @@ namespace r8ge {
 
         }
 
-        std::vector<Texture2D> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
+        std::vector<GLTexture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
                                                            const std::string &typeName) {
-            std::vector<Texture2D> temp;
-            for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i) {
+            std::vector<GLTexture> textures;
 
+            for (unsigned int i = 0; i < mat->GetTextureCount(type); ++i) {
+                aiString path;
+                mat->GetTexture(type, i, &path);
+                if (m_loadedTextureHashSet.count(path.C_Str()) > 0) {
+
+                }
+                else {
+                    GLTexture tempGLTex(m_directory + '/' + path.C_Str(), true);
+                    tempGLTex.setType(typeName);
+                    textures.push_back(tempGLTex);
+                    m_loadedTextureHashSet.insert(path.C_Str());
+                }
             }
+            return textures;
         }
 
+        void Model::render(Program &shader) {
+            for (unsigned int i = 0; i < m_meshes.size(); i++)
+                m_meshes[i].render(shader);
+        }
 
     } // r8ge
 } // video

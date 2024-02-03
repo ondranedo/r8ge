@@ -32,7 +32,7 @@ namespace r8ge {
             //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
             float fontSize = 18.0f;
-            io.FontDefault = io.Fonts->AddFontFromFileTTF("fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
+           // io.FontDefault = io.Fonts->AddFontFromFileTTF("fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
 
             ImGui::StyleColorsDark();
 

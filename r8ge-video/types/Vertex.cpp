@@ -202,7 +202,8 @@ r8ge::VertexColorTexture3D::VertexColorTexture3D(r8ge::coord_float x, r8ge::coor
 
 r8ge::video::VertexBufferLayout r8ge::VertexColorTexture3D::getLayout() const {
     return video::VertexBufferLayout({video::VertexBufferLayout::POS_XYZ, video::VertexBufferLayout::COLOUR_RGBA,
-                                      video::VertexBufferLayout::TEXTURE_XY, video::VertexBufferLayout::NORMAL_XYZ
+                                      video::VertexBufferLayout::TEXTURE_XY, video::VertexBufferLayout::NORMAL_XYZ,
+                                      video::VertexBufferLayout::TANGENT_XYZ,video::VertexBufferLayout::BITANGENT_XYZ
                                      });
 }
 
@@ -240,10 +241,10 @@ std::vector<uint8_t> r8ge::VertexColorTexture3D::getRawData() const {
     data.insert(data.end(), tangentZRawData, tangentZRawData + sizeof(tangent_float));
 
     const auto *bitangentXRawData = reinterpret_cast<const uint8_t *>(&bitangent_x);
-    data.insert(data.end(), bitangentXRawData, bitangentXRawData + sizeof(tangent_float));
+    data.insert(data.end(), bitangentXRawData, bitangentXRawData + sizeof(bitangent_float));
 
     const auto *bitangentYRawData = reinterpret_cast<const uint8_t *>(&bitangent_y);
-    data.insert(data.end(), bitangentYRawData, bitangentYRawData + sizeof(tangent_float));
+    data.insert(data.end(), bitangentYRawData, bitangentYRawData + sizeof(bitangent_float));
 
     const auto *bitangentZRawData = reinterpret_cast<const uint8_t *>(&bitangent_z);
     data.insert(data.end(), bitangentZRawData, bitangentZRawData + sizeof(bitangent_float));

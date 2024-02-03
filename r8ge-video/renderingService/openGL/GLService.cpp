@@ -14,11 +14,13 @@ namespace r8ge {
         }
 
         GLService::GLService() : m_indexCount(0), m_indexBuffer(-1), m_vertexArrayObject(-1), m_vertexBuffer(-1) {
-            R8GE_LOG("GL Service created");
+            R8GE_LOG("GL Service created ID: {}",id);
+            id++;
         }
 
         GLService::~GLService() {
-            R8GE_LOG("GL Service destroyed");
+            R8GE_LOG("GL Service created ID: {}",id);
+            id--;
         }
 
         void GLService::init() {
@@ -63,8 +65,6 @@ namespace r8ge {
                               GL_STATIC_DRAW);
 
             m_layout = vb.getLayout();
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
 
         void GLService::setDataLayout() const {
@@ -87,11 +87,12 @@ namespace r8ge {
         }
 
         void GLService::preRender() const {
+            setDataLayout();
+
             glVertexArrayVertexBuffer(m_vertexArrayObject, 0, m_vertexBuffer, 0,
                                       static_cast<GLsizei>(m_layout.getStride()));
-            glVertexArrayElementBuffer(m_vertexArrayObject, m_vertexBuffer);
+            glVertexArrayElementBuffer(m_vertexArrayObject, m_indexBuffer);
 
-            setDataLayout();
         }
 
         void GLService::render() const {
@@ -105,8 +106,24 @@ namespace r8ge {
                 R8GE_LOG_ERROR("Invalid vertex array object - vertex array object is not bound");
 
             glBindVertexArray(m_vertexArrayObject);
-
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
+            glBindVertexArray(0);
+        }
+
+        void GLService::render(unsigned int count) const {
+            if (m_indexCount == 0)
+                R8GE_LOG_ERROR("Invalid index count: {}", m_indexCount);
+            if (m_indexCount % 3 != 0)
+                R8GE_LOG_WARNI("Index count is not divisible by 3: {}", m_indexCount);
+            if (m_indexBuffer == -1)
+                R8GE_LOG_ERROR("Invalid index buffer - index buffer is not bound");
+            if (m_vertexArrayObject == -1)
+                R8GE_LOG_ERROR("Invalid vertex array object - vertex array object is not bound");
+
+            glBindVertexArray(m_vertexArrayObject);
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
+            glBindVertexArray(0);
+            glActiveTexture(GL_TEXTURE0);
 
         }
 
@@ -115,8 +132,6 @@ namespace r8ge {
         }
 
         bool GLService::compileProgram(Program &program) {
-
-            // Shader creation
             GLuint vs = glCreateShader(GL_VERTEX_SHADER);
             GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -131,7 +146,6 @@ namespace r8ge {
             if (!compileShader(fs, fragmentShaderSource, "fragment shader"))
                 return false;
 
-            // Program compilation - linking shaders to a program
             GLuint p = glCreateProgram();
 
             glAttachShader(p, vs);
