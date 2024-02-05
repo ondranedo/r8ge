@@ -11,7 +11,9 @@ namespace r8ge {
             JSON,
             TEXT,
             BINARY,
-            GLSL
+            WAVE,
+            GLSL,
+            GLTF
         };
 
         FileType();

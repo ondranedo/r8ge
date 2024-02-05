@@ -79,5 +79,9 @@ namespace r8ge {
 
             return i + 1; // +1 for '}'
         }
+
+        size_t Object::size() const {
+            return m_map.size();
+        }
     }
 }

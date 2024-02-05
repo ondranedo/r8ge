@@ -1,5 +1,8 @@
-# ![Screenshot](./docs/img.png)
+<p align="center">
+<img src="https://github.com/ondranedo/r8ge/blob/gui/docs/logo_new.png" width="512" height="512">
+</p>
 
+# R8GE
 - **R**etro **8**-bit **G**ame **E**ngine, a simple game engine for 2D games.
 - 3D support is planned in the future.
 - Project is in early development stage.

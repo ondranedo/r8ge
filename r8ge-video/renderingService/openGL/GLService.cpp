@@ -5,20 +5,22 @@
 
 #define R8GE_GL_ERROR_MSG_LENGTH 1024
 
-#include <cstdlib>
-#include <cstring>
-
 namespace r8ge {
     namespace video {
-        static void debugMsg(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+        static void
+        debugMsg(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
+                 const void *userParam) {
             R8GE_LOG_ERROR("GL debug message: {}", std::string_view(message, length));
         }
 
         GLService::GLService() : m_indexCount(0), m_indexBuffer(-1), m_vertexArrayObject(-1), m_vertexBuffer(-1) {
-            R8GE_LOG("GL Service created");
+            R8GE_LOG("GL Service created ID: {}",id);
+            id++;
         }
+
         GLService::~GLService() {
-            R8GE_LOG("GL Service destroyed");
+            R8GE_LOG("GL Service created ID: {}",id);
+            id--;
         }
 
         void GLService::init() {
@@ -26,24 +28,23 @@ namespace r8ge {
 
             glDebugMessageCallback(debugMsg, nullptr);
 
-            auto version = std::string_view(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+            auto version = std::string_view(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
             R8GE_LOG_INFOR("GL Running version: {}", version);
         }
 
         void GLService::exit() {
-            for(auto& [r8geid, glid] : m_programs)
-            {
+            for (auto &[r8geid, glid]: m_programs) {
                 glDeleteProgram(glid);
-                R8GE_LOG("GL Program [r8ge:{},gl:] deleted", r8geid, glid);
+                R8GE_LOG("GL Program [r8ge:{},gl:{}] deleted", r8geid, glid);
             }
         }
 
         void GLService::clear() const {
             glClearColor(
-                    static_cast<float>(m_clearColor.r)/0xFF,
-                    static_cast<float>(m_clearColor.g)/0xFF,
-                    static_cast<float>(m_clearColor.b)/0xFF,
-                    static_cast<float>(m_clearColor.a)/0xFF);
+                    static_cast<float>(m_clearColor.r) / 0xFF,
+                    static_cast<float>(m_clearColor.g) / 0xFF,
+                    static_cast<float>(m_clearColor.b) / 0xFF,
+                    static_cast<float>(m_clearColor.a) / 0xFF);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
@@ -52,58 +53,78 @@ namespace r8ge {
 
             auto a = ib.getData();
 
-            glGenBuffers(1, &m_indexBuffer);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0], GL_STATIC_DRAW);
+            glCreateBuffers(1, &m_indexBuffer);
+            glNamedBufferData(m_indexBuffer, static_cast<GLsizei>(ib.getSize()), &ib.getRawData()[0], GL_STATIC_DRAW);
         }
 
         void GLService::setVertexBuffer(const VertexBuffer &vb) {
-            glGenVertexArrays(1, &m_vertexArrayObject);
-            glBindVertexArray(m_vertexArrayObject);
+            glCreateVertexArrays(1, &m_vertexArrayObject);
 
-            glGenBuffers(1, &m_vertexBuffer);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vb.getSize()), &vb.getRawData()[0], GL_STATIC_DRAW);
+            glCreateBuffers(1, &m_vertexBuffer);
+            glNamedBufferData(m_vertexBuffer, static_cast<GLsizeiptr>(vb.getSize()), &vb.getRawData()[0],
+                              GL_STATIC_DRAW);
 
             m_layout = vb.getLayout();
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
 
         void GLService::setDataLayout() const {
-            size_t index = 0, offset = 0;
-            for(auto& element : m_layout.getLayout()) {
-                glEnableVertexAttribArray(index);
-                glVertexAttribPointer(index,
-                                      VertexBufferLayout::EntryTypeComponents(element),
-                                      GLConvertor::convertToGLType(VertexBufferLayout::EntryTypeToDataType(element)),
-                                      VertexBufferLayout::EntryTypeShouldBeNormalized(element),
-                                      static_cast<GLsizei>(m_layout.getStride()),
-                                      reinterpret_cast<const void*>(offset)
+            size_t index = 0;
+            GLfloat offset = 0;
+            for (auto &element: m_layout.getLayout()) {
+                glEnableVertexArrayAttrib(m_vertexArrayObject, index);
+                glVertexArrayAttribBinding(m_vertexArrayObject, index, 0);
+                glVertexArrayAttribFormat(m_vertexArrayObject,
+                                          index,
+                                          VertexBufferLayout::EntryTypeComponents(element),
+                                          GLConvertor::convertToGLType(
+                                                  VertexBufferLayout::EntryTypeToDataType(element)),
+                                          VertexBufferLayout::EntryTypeShouldBeNormalized(element),
+                                          offset
                 );
                 index++;
-                offset+= VertexBufferLayout::EntryTypeSize(element);
+                offset += VertexBufferLayout::EntryTypeSize(element);
             }
         }
 
+        void GLService::preRender() const {
+            setDataLayout();
+
+            glVertexArrayVertexBuffer(m_vertexArrayObject, 0, m_vertexBuffer, 0,
+                                      static_cast<GLsizei>(m_layout.getStride()));
+            glVertexArrayElementBuffer(m_vertexArrayObject, m_indexBuffer);
+
+        }
+
         void GLService::render() const {
-            if(m_indexCount==0)
+            if (m_indexCount == 0)
                 R8GE_LOG_ERROR("Invalid index count: {}", m_indexCount);
-            if(m_indexCount%3!=0)
+            if (m_indexCount % 3 != 0)
                 R8GE_LOG_WARNI("Index count is not divisible by 3: {}", m_indexCount);
-            if(m_indexBuffer==-1)
+            if (m_indexBuffer == -1)
                 R8GE_LOG_ERROR("Invalid index buffer - index buffer is not bound");
-            if(m_vertexArrayObject==-1)
+            if (m_vertexArrayObject == -1)
                 R8GE_LOG_ERROR("Invalid vertex array object - vertex array object is not bound");
 
             glBindVertexArray(m_vertexArrayObject);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-            setDataLayout();
-
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
+            glBindVertexArray(0);
+        }
+
+        void GLService::render(unsigned int count) const {
+            if (m_indexCount == 0)
+                R8GE_LOG_ERROR("Invalid index count: {}", m_indexCount);
+            if (m_indexCount % 3 != 0)
+                R8GE_LOG_WARNI("Index count is not divisible by 3: {}", m_indexCount);
+            if (m_indexBuffer == -1)
+                R8GE_LOG_ERROR("Invalid index buffer - index buffer is not bound");
+            if (m_vertexArrayObject == -1)
+                R8GE_LOG_ERROR("Invalid vertex array object - vertex array object is not bound");
+
+            glBindVertexArray(m_vertexArrayObject);
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(count), GL_UNSIGNED_INT, nullptr);
+            glBindVertexArray(0);
+            glActiveTexture(GL_TEXTURE0);
+
         }
 
         void GLService::setProgram(const Program &program) {
@@ -111,18 +132,21 @@ namespace r8ge {
         }
 
         bool GLService::compileProgram(Program &program) {
-
-            // Shader creation
+            //TODO Check if shader was already compiled
             GLuint vs = glCreateShader(GL_VERTEX_SHADER);
             GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 
-            std::string vertexShaderSource   = program.getVertexShader();
-            std::string fragmentShaderSource = program.getFragmentShader();
+            std::string vertexShaderSourceStr = program.getVertexShader();
+            const char *vertexShaderSource = vertexShaderSourceStr.c_str();
 
-            if(!compileShader(vs, vertexShaderSource, "vertex shader")) return false;
-            if(!compileShader(fs, fragmentShaderSource, "fragment shader")) return false;
+            std::string fragmentShaderSourceStr = program.getFragmentShader();
+            const char *fragmentShaderSource = fragmentShaderSourceStr.c_str();
 
-            // Program compilation - linking shaders to a program
+            if (!compileShader(vs, vertexShaderSource, "vertex shader"))
+                return false;
+            if (!compileShader(fs, fragmentShaderSource, "fragment shader"))
+                return false;
+
             GLuint p = glCreateProgram();
 
             glAttachShader(p, vs);
@@ -148,50 +172,17 @@ namespace r8ge {
 
             R8GE_LOG("GL Program [r8ge:{},gl:{}] compiled and created", program.getId(), p);
 
-            // Uniforms and Attributes
-            {
-                /*GLint count;
-
-                GLint size; // size of the variable
-                GLenum type; // type of the variable (float, vec3 or mat4, etc)
-
-                const GLsizei bufSize = 16; // maximum name length
-                GLchar name[bufSize]; // variable name in GLSL
-                GLsizei length; // name length
-
-                glGetProgramiv(p, GL_ACTIVE_ATTRIBUTES, &count);
-                R8GE_LOG_DEBUG("Active Attributes: {}", count);
-
-                for (size_t i = 0; i < count; ++i)
-                {
-                    glGetActiveAttrib(p, (GLuint)i, bufSize, &length, &size, &type, name);
-
-                    R8GE_LOG_DEBUG("Attribute {} Type: {} Name: {}", i, type, name);
-                }
-
-                glGetProgramiv(p, GL_ACTIVE_UNIFORMS, &count);
-                R8GE_LOG_DEBUG("Active Uniforms: {}", count);
-
-                for (size_t i = 0; i < count; ++i)
-                {
-                    glGetActiveUniform(p, (GLuint)i, bufSize, &length, &size, &type, name);
-
-                    R8GE_LOG_DEBUG("Uniform {} Type: {} Name: {}", i, type, name);
-                }*/
-            }
-
-
             return true;
         }
 
-        bool GLService::compileShader(GLuint shader, std::string_view source, std::string_view type) const {
+        bool GLService::compileShader(GLuint shader, std::string_view source, std::string_view type) {
             const std::string shaderSource = std::string(source);
-            char * ptr = const_cast<char*>(shaderSource.c_str());
+            char *ptr = const_cast<char *>(shaderSource.c_str());
             glShaderSource(shader, 1, &ptr, nullptr);
             glCompileShader(shader);
             int result;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
-            if(result != GL_TRUE) {
+            if (result != GL_TRUE) {
                 GLsizei log_length = 0;
                 char message[R8GE_GL_ERROR_MSG_LENGTH];
                 glGetShaderInfoLog(shader, R8GE_GL_ERROR_MSG_LENGTH, &log_length, message);
@@ -201,58 +192,61 @@ namespace r8ge {
             return true;
         }
 
-        void GLService::sendProgramData(const Program &program, const ProgramData &data) {
-            auto location = glGetUniformLocation(m_programs[program.getId()], data.getLocation().c_str());
-            if(location==-1)
-            {
-                R8GE_LOG_ERROR("Invalid uniform location for uniform `{}` in gl program[r8ge:{}]", data.getLocation(), program.getId());
-                return;
-            }
-
-            // TODO: create conversion module
-            switch (data.getType()) {
-                case ProgramData::Type::VEC1: {
-                    union {
-                        float v1[1];
-                        uint8_t raw[sizeof(float)];
-                    } convertor;
-                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float));
-                    glUniform1f(location, convertor.v1[0]);
-                    break;
-                }
-                case ProgramData::Type::VEC2: {
-                    union {
-                        float v2[2];
-                        uint8_t raw[sizeof(float) * 2];
-                    } convertor;
-                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float) * 2);
-                    glUniform2f(location, convertor.v2[0], convertor.v2[1]);
-                    break;
-                }
-                case ProgramData::Type::VEC3: {
-                    union {
-                        float v3[3];
-                        uint8_t raw[sizeof(float) * 3];
-                    } convertor;
-                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float) * 3);
-                    glUniform3f(location, convertor.v3[0], convertor.v3[1], convertor.v3[2]);
-                    break;
-                }
-                case ProgramData::Type::VEC4:
-                {
-                    union {
-                        float v4[4];
-                        uint8_t raw[sizeof(float)*4];
-                    } convertor;
-                    std::memcpy(convertor.raw, data.getData().data(), sizeof(float)*4);
-                    glUniform4f(location, convertor.v4[0], convertor.v4[1],convertor.v4[2],convertor.v4[3]);
-                    break;
-                }
-
-                default:
-                    R8GE_LOG_ERROR("Invalid uniform type for uniform `{}`", data.getLocation());
-                    break;
-            }
+        void GLService::setUniformBool(Program &program, const std::string &name, bool value) {
+            glUniform1i(glGetUniformLocation(m_programs[program.getId()], name.c_str()), (int) value);
         }
+
+        void GLService::setUniformInt(Program &program, const std::string &name, int value) {
+            glUniform1i(glGetUniformLocation(m_programs[program.getId()], name.c_str()), value);
+        }
+
+        void GLService::setUniformFloat(Program &program, const std::string &name, float value) {
+            glUniform1f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), value);
+        }
+
+        void GLService::setUniformVec2(Program &program, const std::string &name, const glm::vec2 &value) {
+            glUniform2fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, &value[0]);
+        }
+
+        void GLService::setUniformVec2(Program &program, const std::string &name, float x, float y) {
+            glUniform2f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), x, y);
+        }
+
+        void GLService::setUniformVec3(Program &program, const std::string &name, const glm::vec3 &value) {
+            glUniform3fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, &value[0]);
+        }
+
+        void GLService::setUniformVec3(Program &program, const std::string &name, float x, float y, float z) {
+
+            glUniform3f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), x, y, z);
+        }
+
+        void GLService::setUniformVec4(Program &program, const std::string &name, const glm::vec4 &value) {
+            glUniform4fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, &value[0]);
+        }
+
+        void GLService::setUniformVec4(Program &program, const std::string &name, float x, float y, float z, float w) {
+            glUniform4f(glGetUniformLocation(m_programs[program.getId()], name.c_str()), x, y, z, w);
+        }
+
+        void GLService::setUniformMat2(Program &program, const std::string &name, const glm::mat2 &mat) {
+            glUniformMatrix2fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
+                               &mat[0][0]);
+        }
+
+        void GLService::setUniformMat3(Program &program, const std::string &name, const glm::mat3 &mat) {
+            glUniformMatrix3fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
+                               &mat[0][0]);
+        }
+
+        void GLService::setUniformMat4(Program &program, const std::string &name, const glm::mat4 &mat) {
+            glUniformMatrix4fv(glGetUniformLocation(m_programs[program.getId()], name.c_str()), 1, GL_FALSE,
+                               &mat[0][0]);
+        }
+
+        unsigned int GLService::getUniformLocation(Program &program, const std::string &name) {
+            return glGetUniformLocation(m_programs[program.getId()], name.c_str());
+        }
+
     }
 }

@@ -107,6 +107,17 @@ namespace r8ge {
             [[nodiscard]] string as_string(bool format) const;
             [[nodiscard]] std::vector<Json> as_vector() const;
 
+            template<class T>
+            [[nodiscard]] std::vector<T> as_vector() const {
+                std::vector<T> v;
+                for (auto &j: as_vector()) {
+                    v.push_back(j());
+                }
+                return v;
+            }
+
+            [[nodiscard]] size_t size() const;
+
         private:
             Data m_data{};
             Type m_type;

@@ -9,8 +9,12 @@ namespace r8ge {
                 return "TEXT";
             case BINARY:
                 return "BINARY";
+            case WAVE:
+                return "WAVE";
             case GLSL:
                 return "GLSL";
+            case GLTF:
+                return "GLTF";
         }
         return "UNKNOWN";
     }

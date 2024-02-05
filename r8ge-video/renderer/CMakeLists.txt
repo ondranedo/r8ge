@@ -3,10 +3,17 @@ add_library(r8ge-video-renderer
         "../types/Color.h"
         "../types/Primitives.cpp"
         "../types/Primitives.h"
-        #"Mesh.cpp"
-        #"Mesh.h"
-        #"MeshTrinagle.cpp"
-        #"MeshTrinagle.h"
-        #"Rectangle.cpp"
-        #"Rectangle.h"
+        ../types/Texture.h
+        Camera.cpp
+        Camera.h
+        Mesh.cpp
+        Mesh.h
+        Model.cpp
+        Model.h
+        Scene.cpp
+        Scene.h
+        Entity.cpp
+        Entity.h
 )
+
+target_include_directories(r8ge-video-renderer PRIVATE "${CMAKE_SOURCE_DIR}/include")

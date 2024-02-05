@@ -1,27 +1,32 @@
 #ifndef R8GE_MESH_H
 #define R8GE_MESH_H
 
-#include "MeshTrinagle.h"
-#include <vector>
+#include "../renderingService/openGL/GLTexture.h"
+#include "../types/Vertex.h"
+#include "../renderingService/RenderingService.h"
 
-namespace r8ge {/*
-    class Mesh2D {
-    public:
-        Mesh2D();
-        Mesh2D(std::initializer_list<MeshTrinagle> triangles);
-        virtual ~Mesh2D() = default;
+namespace r8ge {
+    namespace video {
 
-        void addTriangle(const MeshTrinagle& triangle);
+        class Mesh {
+        public:
+            Mesh(std::vector<VertexColorTexture3D> &vertices, std::vector<unsigned int> &indices,
+                 std::vector<GLTexture> &textures,const std::string& name);
 
-        void setData(const std::vector<Vertex2D>& vertex, const std::vector<size_t>& indices);
+            void render(Program &shader);
 
-        [[nodiscard]] const std::vector<Vertex2D>& getVertices() const;
-        [[nodiscard]] const std::vector<size_t>& getIndices() const;
-    private:
-        std::vector<Vertex2D> m_vertices;
-        std::vector<size_t> m_indices;
-        size_t m_indexCount;
-    };*/
-}
+            std::string getName();
+        private:
+            void setupRender();
 
-#endif//!R8GE_MESH_H
+            std::vector<VertexColorTexture3D> m_vertices;
+            std::vector<unsigned int> m_indices;
+            std::vector<GLTexture> m_textures;
+            std::shared_ptr<video::RenderingService> m_renderingService;
+            std::string m_name;
+        };
+
+    } // r8ge
+} // video
+
+#endif //R8GE_MESH_H

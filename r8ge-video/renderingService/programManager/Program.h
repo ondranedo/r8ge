@@ -5,6 +5,7 @@
 
 #include "../buffers/VertexBufferLayout.h"
 
+
 namespace r8ge {
     namespace video {
         class Program {
@@ -18,7 +19,7 @@ namespace r8ge {
             [[nodiscard]] VertexBufferLayout getLayout() const;
 
             // TODO: Layout should be read from shader
-            void setLayout(const VertexBufferLayout& layout);
+            void setLayout(const VertexBufferLayout &layout);
 
             [[nodiscard]] size_t getId() const;
 
@@ -26,8 +27,6 @@ namespace r8ge {
 
             [[nodiscard]] std::string getFragmentShader() const;
 
-            // Return uniform list
-            [[nodiscard]] std::vector<std::string> getUniformList() const;
         private:
             size_t m_id;
             std::string m_source;

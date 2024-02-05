@@ -8,7 +8,6 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 # Build
 add_library(r8ge-core
         "Core.h"
-
         "Core.cpp"
         "EntryPoint.cpp"
         "EntryPoint.h"
