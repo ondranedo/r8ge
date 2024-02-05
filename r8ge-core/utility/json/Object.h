@@ -21,6 +21,8 @@ namespace r8ge {
             std::string to_string(bool format, size_t _tab_spaces = 4, size_t _count_of_indent = 0) const;
 
             size_t from_string(std::string_view str, size_t _index = 0);
+
+            [[nodiscard]] size_t size() const;
         private:
             std::unordered_map<std::string, Json> m_map;
         };

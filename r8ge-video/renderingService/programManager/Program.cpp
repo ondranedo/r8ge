@@ -1,13 +1,14 @@
 #include "Program.h"
 
 #include <r8ge/r8ge.h>
+#include <GL/glew.h>
 
 namespace r8ge {
     namespace video {
 
         Program::Program(size_t id, std::string_view source)
-        : m_valid(false), m_source(source), m_id(id)
-        {}
+                : m_valid(false), m_source(source), m_id(id) {
+        }
 
         bool Program::isValid() const {
             return m_valid;
@@ -22,9 +23,8 @@ namespace r8ge {
         }
 
         void Program::setLayout(const VertexBufferLayout &layout) {
-            File<reader::Glsl> glsl(m_source);
-            glsl->load_glsl();
-         }
+            m_layout = layout;
+        }
 
         size_t Program::getId() const {
             return m_id;
@@ -42,8 +42,5 @@ namespace r8ge {
             return glsl->getFragmentShader();
         }
 
-        std::vector<std::string> Program::getUniformList() const {
-            return std::vector<std::string>();
-        }
     }
 }

@@ -25,7 +25,7 @@ double r8ge::Note::generate(double timeSecs, unsigned char channel) {
     }
     //V in rare cases, this could stop the note between decay and sustain
     //V however, there is little chance of this happening with doubles
-    if(modifier <= 0.0){
+    if(modifier < 0.0){
         m_isActive = false;
     }
     return m_generator(timeSecs * m_frequency * 6.2831853) * (channel == 1 ? m_right : m_left) * modifier;
@@ -69,9 +69,17 @@ void r8ge::Sound::setState(bool state) {
     m_isActive = state;
 }
 
+int r8ge::Sound::getID() const {
+    return m_id;
+}
+
+void r8ge::Sound::setMId(int mId) {
+    m_id = mId;
+}
+
 r8ge::Wave::Wave(double startTime, const std::string& filename) : Sound(startTime) {
-  // TODO: File<T>  
-  reader::Wave f(filename);
+  // TODO: File<T>
+    reader::Wave f(filename);
     f.load_wave();
     m_data = f.wave();
     m_endTime = m_startTime + (m_data.m_timeStep * m_data.m_sampleCount);
@@ -100,9 +108,7 @@ double r8ge::Wave::generate(double timeSecs, unsigned char channel) {
     }
 }
 
-r8ge::Wave::~Wave() {
-    delete[] m_data.m_data;
-}
+r8ge::Wave::~Wave() = default;
 
 double r8ge::Wave::getDuration() {
     return m_endTime - m_startTime;

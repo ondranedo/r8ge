@@ -63,5 +63,9 @@ namespace r8ge {
         std::vector<Json> Array::as_vector() const {
             return m_vector;
         }
+
+        size_t Array::size() const {
+            return m_vector.size();
+        }
     }
 }

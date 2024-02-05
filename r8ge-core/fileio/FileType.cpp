@@ -13,6 +13,8 @@ namespace r8ge {
                 return "WAVE";
             case GLSL:
                 return "GLSL";
+            case GLTF:
+                return "GLTF";
         }
         return "UNKNOWN";
     }

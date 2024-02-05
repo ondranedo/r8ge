@@ -179,7 +179,7 @@ r8ge::AudioPusher::AudioPusher() {
     m_timeStep = 1.0 / m_rate;
 
     /* Open the PCM device in playback mode */
-    if (snd_pcm_open(&m_pcmHandle, PCM_DEVICE,SND_PCM_STREAM_PLAYBACK, 0) < 0){
+    if (snd_pcm_open(&m_pcmHandle, PCM_DEVICE, SND_PCM_STREAM_PLAYBACK, 0) < 0){
         R8GE_LOG_ERROR("ERROR: Can't open {} PCM device. {}", std::string(PCM_DEVICE), std::string(snd_strerror(err)));
         goto Exit;
     }
@@ -245,11 +245,10 @@ void r8ge::AudioPusher::mainLoop() {
 
 #endif // R8GE_LINUX
 
-std::vector<r8ge::Sound *> *r8ge::AudioPusher::getSoundVector() {
-    return &m_activeSounds;
-}
-
 double r8ge::AudioPusher::sumSoundsAndRemove(unsigned char channel){
+    if(m_isPaused){
+        return 0.0;
+    }
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
     double res = 0.0;
     int i = 0;
@@ -277,9 +276,12 @@ double r8ge::AudioPusher::getGeneratedTime() const {
     return m_generatedTime;
 }
 
-void r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
+int r8ge::AudioPusher::addSound(r8ge::Sound *sound) {
     const std::lock_guard<std::mutex> lock(m_soundVectorGuard);
+    m_count++;
+    sound->setMId(m_count);
     m_activeSounds.push_back(sound);
+    return m_count;
 }
 
 float *r8ge::AudioPusher::newCurrentSamples() {
@@ -287,6 +289,38 @@ float *r8ge::AudioPusher::newCurrentSamples() {
     std::memcpy(r, m_lastSamples, m_lastSamplesCount);
     return r;
 }
+
+void r8ge::AudioPusher::pause() {
+    m_isPaused = true;
+}
+
+void r8ge::AudioPusher::play() {
+    m_isPaused = false;
+}
+
+int r8ge::AudioPusher::playWave(const std::string &filename) {
+    return addSound(new Wave(m_generatedTime ,filename));;
+}
+
+int r8ge::AudioPusher::playNote(short tone, double (*generator)(double), r8ge::Envelope envelope) {
+    auto noye = new Note(m_generatedTime, tone, generator, envelope);
+    noye->setMId(m_count);
+    return addSound(noye);
+}
+
+int r8ge::AudioPusher::playNote(short tone, r8ge::Instrument inst) {
+    return addSound(new Note(m_generatedTime, tone, inst.m_generator, inst.m_envelope));
+}
+
+void r8ge::AudioPusher::deleteSound(int id) {
+    for(auto& s : m_activeSounds){
+        if(s->getID() == id){
+            s->setEndTime(m_generatedTime);
+            return;
+        }
+    }
+}
+
 /*
 HRESULT r8ge::PlayAudioStream(MyAudioSource *pMySource)
 {
