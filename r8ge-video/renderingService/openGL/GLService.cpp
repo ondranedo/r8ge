@@ -132,6 +132,7 @@ namespace r8ge {
         }
 
         bool GLService::compileProgram(Program &program) {
+            //TODO Check if shader was already compiled
             GLuint vs = glCreateShader(GL_VERTEX_SHADER);
             GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 

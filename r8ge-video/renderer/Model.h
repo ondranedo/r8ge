@@ -20,6 +20,8 @@ namespace r8ge {
             Model(std::string const &path);
 
             void render(Program &shader);
+
+            std::vector<std::string> m_getNameVector();
         private:
 
             void connectNodes(aiNode *node, const aiScene *scene);
@@ -32,6 +34,7 @@ namespace r8ge {
             std::string m_directory;
             std::unordered_set<std::string> m_loadedTextureHashSet;
             std::vector<Mesh> m_meshes;
+            std::vector<std::string> m_nameVector;
         };
 
     } // r8ge

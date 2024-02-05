@@ -3,23 +3,19 @@
 #include <r8ge/r8ge.h>
 #include <iostream>
 
-#include "renderingService/buffers/IndexBuffer.h"
-#include "renderingService/buffers/VertexBuffer.h"
-#include "types/Vertex.h"
 #include "renderingService/openGL/GLTexture.h"
 #include "renderingService/programManager/Program.h"
 #include "renderer/Camera.h"
 #include "renderingService/openGL/GLFrameBuffer.h"
-
 #include "GLFW/glfw3.h"
+
 #include "renderer/Model.h"
+#include "imgui_internal.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 #include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+#include <ImGuizmo.h>
 
 namespace r8ge {
     float deltaTime = 0.0f;    // time between current frame and last frame
@@ -64,11 +60,21 @@ namespace r8ge {
     void Video::run() {
         R8GE_LOG("Video starting to run main loop");
         video::Program basic_program(0, "shaders/model.glsl");
-        video::Program test_program(0, "shaders/test.glsl");
+        video::Program test_program(1, "shaders/test.glsl");
+        test_program
         s_renderingService->compileProgram(basic_program);
         r8ge::video::Model modelBackpack("backpack/backpack.obj");
         s_windowingService->setFrameBuffer(frameBuffer);
-        frameBuffer.setBuffer(s_windowingService->getWidth(),s_windowingService->getHeight());
+        frameBuffer.setBuffer(s_windowingService->getWidth(), s_windowingService->getHeight());;
+        glEnable(GL_DEPTH_TEST);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+                                                static_cast<float>(s_windowingService->getWidth()) /
+                                                static_cast<float>(s_windowingService->getHeight()), 0.1f, 100.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model,
+                               glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::scale(model,
+                           glm::vec3(1.0f, 1.0f, 1.0f));
         while (Ar8ge::isRunning()) {
             float currentFrame = static_cast<float>(glfwGetTime());
             deltaTime = currentFrame - lastFrame;
@@ -76,9 +82,8 @@ namespace r8ge {
             cam.changeCameraPosition(deltaTime, 0, 0);
 
             s_guiService->beginFrame();
-            // Bind the framebuffer and enable depth testing
+
             frameBuffer.bind();
-            glEnable(GL_DEPTH_TEST);
 
             s_renderingService->setClearColor(ColorRGBA{0, 0, 30, 1.0});
             s_renderingService->clear();
@@ -86,22 +91,37 @@ namespace r8ge {
 
             s_renderingService->setProgram(basic_program);
 
-            glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-                                                    static_cast<float>(s_windowingService->getWidth()) /
-                                                    static_cast<float>(s_windowingService->getHeight()), 0.1f, 100.0f);
             s_renderingService->setUniformMat4(basic_program, "projection", projection);
-            s_renderingService->setUniformMat4(basic_program, "view", cam.getViewMatrix());
+            glm::mat4 view = cam.getViewMatrix();
+            s_renderingService->setUniformMat4(basic_program, "view", view);
 
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model,
-                                   glm::vec3(0.0f, 0.0f, 0.0f));
-            model = glm::scale(model,
-                               glm::vec3(1.0f, 1.0f, 1.0f));
+
             s_renderingService->setUniformMat4(basic_program, "model", model);
+
             modelBackpack.render(basic_program);
 
+
             frameBuffer.unbind();
-            glDisable(GL_DEPTH_TEST);
+
+            ImGui::Begin("Viewport",nullptr,ImGuiWindowFlags_NoMove);
+            {
+
+                ImGui::Image(
+                        (ImTextureID) frameBuffer.getFrameTexture(),
+                        ImGui::GetContentRegionAvail(),
+                        ImVec2(0, 1),
+                        ImVec2(1, 0)
+                );
+                ImGuizmo::SetOrthographic(false);
+                ImGuizmo::SetDrawlist();
+                ImGuizmo::SetRect(ImGui::GetWindowPos().x,ImGui::GetWindowPos().y,ImGui::GetWindowHeight(),ImGui::GetWindowHeight());
+                ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection), ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(model));
+            }
+
+            ImGui::End();
+
+            s_guiService->insertModelIntoSceneItems(modelBackpack.m_getNameVector());
+
 
             s_guiService->render(frameBuffer);
 

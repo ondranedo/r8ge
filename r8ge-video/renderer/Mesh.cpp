@@ -7,10 +7,11 @@
 namespace r8ge {
     namespace video {
         Mesh::Mesh(std::vector<VertexColorTexture3D> &vertices, std::vector<unsigned int> &indices,
-                   std::vector<GLTexture> &textures) {
+                   std::vector<GLTexture> &textures,const std::string& name) {
             m_vertices = vertices;
             m_indices = indices;
             m_textures = textures;
+            m_name = name;
             m_renderingService = video::RenderingService::create(video::RenderingService::API::OpenGL);
             setupRender();
         }
@@ -45,6 +46,10 @@ namespace r8ge {
             m_renderingService->setVertexBuffer(vb);
             m_renderingService->setIndexBuffer(ib);
             m_renderingService->preRender();
+        }
+
+        std::string Mesh::getName() {
+            return m_name;
         }
     } // r8ge
 } // video

@@ -9,7 +9,6 @@
 #include "../../../renderingService/RenderingService.h"
 #include <imgui.h>
 #include <imgui_internal.h>
-#include <ImGuizmo.h>
 
 
 namespace r8ge {
@@ -27,6 +26,8 @@ namespace r8ge {
             void render(r8ge::video::GLFrameBuffer &frameBuffer) override;
 
             void endFrame(WindowingService &service) override;
+
+            void insertModelIntoSceneItems(std::vector<std::string> meshes) override;
 
             void renderR8GELayout();
 

@@ -18,7 +18,6 @@ namespace r8ge {
         void Camera::changeCameraPosition(float deltaTime,float xoffset, float yoffset) {
             //TODO: Replace core deltaTime
             float velocity = m_MovementSpeed * deltaTime;
-
             if (r8ge::Input::isKeyPressed(r8ge::Key::W)) {
                 m_Position += m_Front * velocity;
             }

@@ -11,9 +11,11 @@ namespace r8ge {
         class Mesh {
         public:
             Mesh(std::vector<VertexColorTexture3D> &vertices, std::vector<unsigned int> &indices,
-                 std::vector<GLTexture> &textures);
+                 std::vector<GLTexture> &textures,const std::string& name);
 
             void render(Program &shader);
+
+            std::string getName();
         private:
             void setupRender();
 
@@ -21,6 +23,7 @@ namespace r8ge {
             std::vector<unsigned int> m_indices;
             std::vector<GLTexture> m_textures;
             std::shared_ptr<video::RenderingService> m_renderingService;
+            std::string m_name;
         };
 
     } // r8ge

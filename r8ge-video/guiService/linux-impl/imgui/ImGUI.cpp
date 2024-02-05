@@ -4,6 +4,8 @@
 
 
 #include "ImGUI.h"
+#include "ImGuizmo.h"
+#include "../../../renderer/Entity.h"
 
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
@@ -32,7 +34,7 @@ namespace r8ge {
             //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
             float fontSize = 18.0f;
-           // io.FontDefault = io.Fonts->AddFontFromFileTTF("fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
+            // io.FontDefault = io.Fonts->AddFontFromFileTTF("fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
 
             ImGui::StyleColorsDark();
 
@@ -58,31 +60,15 @@ namespace r8ge {
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
+            ImGuizmo::BeginFrame();
+            ImGuizmo::Enable(true);
         }
+
+
 
         void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer) {
 
             renderR8GELayout();
-
-            ImGui::Begin("Viewport", nullptr, windowFlags);
-            {
-                ImGui::BeginChild("GameRender");
-
-                ImGui::Image(
-                        (ImTextureID) frameBuffer.getFrameTexture(),
-                        ImGui::GetContentRegionAvail(),
-                        ImVec2(0, 1),
-                        ImVec2(1, 0)
-                );
-
-            }
-
-            ImGui::EndChild();
-            ImGui::End();
-
-            ImGui::Begin("SceneItems", nullptr, windowFlags);
-
-            ImGui::End();
 
             ImGui::Begin("Parameters", nullptr, windowFlags);
 
@@ -141,6 +127,25 @@ namespace r8ge {
 
             }
         }
+        /*
+        //TODO Why insert single entity insert whole scene every frame
+        void ImGUI::insetEntityIntoSceneItems(const Entity& entity) {
+            if (ImGui::Begin("SceneItems", nullptr, windowFlags)) {
+
+                if (ImGui::TreeNode(meshes[0].c_str())) {
+
+                    for (int i = 1;i<meshes.size();i++) {
+
+
+                        if (ImGui::Selectable(meshes[i].c_str())) {
+                        }
+                    }
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::End();
+        }
+         */
 
         void ImGUI::setColors() {
             ImGuiStyle &style = ImGui::GetStyle();

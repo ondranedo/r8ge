@@ -39,15 +39,16 @@ add_library(imgui
         vendor/imgui/backends/imgui_impl_opengl3.cpp
 )
 add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-link_libraries(imgui)
-
 
 include_directories(vendor/ImGuizmo)
 add_library(ImGuizmo
-    vendor/ImGuizmo/ImGuizmo.cpp
+        vendor/ImGuizmo/ImGuizmo.cpp
+        vendor/ImGuizmo/ImCurveEdit.cpp
+        vendor/ImGuizmo/ImGradient.cpp
+        vendor/ImGuizmo/ImSequencer.cpp
+        vendor/ImGuizmo/ImGuizmo.cpp
 )
-link_libraries(ImGuizmo)
-
+link_libraries(imgui ImGuizmo)
 
 target_include_directories(r8ge-video PUBLIC "${CMAKE_SOURCE_DIR}/include")
 

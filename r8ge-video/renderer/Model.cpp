@@ -15,6 +15,7 @@ namespace r8ge {
                 R8GE_LOG_ERROR("Assimp Error: {}", importer.GetErrorString());
             }
             m_directory = path.substr(0, path.find_last_of('/'));
+            m_nameVector.emplace_back(path.substr(path.find_last_of('/')));
             connectNodes(scene->mRootNode, scene);
         }
 
@@ -93,7 +94,9 @@ namespace r8ge {
                                                                      "texture_height");
             textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-            return Mesh(vertices, indices, textures);
+            m_nameVector.emplace_back(mesh->mName.C_Str());
+
+            return Mesh(vertices, indices, textures,mesh->mName.C_Str());
 
         }
 
@@ -120,6 +123,10 @@ namespace r8ge {
         void Model::render(Program &shader) {
             for (unsigned int i = 0; i < m_meshes.size(); i++)
                 m_meshes[i].render(shader);
+        }
+
+        std::vector<std::string> Model::m_getNameVector() {
+            return m_nameVector;
         }
 
     } // r8ge
