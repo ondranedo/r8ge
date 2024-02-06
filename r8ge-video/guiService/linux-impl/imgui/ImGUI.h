@@ -27,8 +27,6 @@ namespace r8ge {
 
             void endFrame(WindowingService &service) override;
 
-            void insertModelIntoSceneItems(std::vector<std::string> meshes) override;
-
             void renderR8GELayout();
 
             void setColors();

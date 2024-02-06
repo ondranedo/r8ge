@@ -14,7 +14,7 @@ namespace r8ge {
         }
 
         void EntityModel::render() {
-            m_model.render();
+            //m_model.render();
         }
 
         void EntityModel::update(float deltaTime) {

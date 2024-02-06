@@ -61,9 +61,9 @@ namespace r8ge {
         R8GE_LOG("Video starting to run main loop");
         video::Program basic_program(0, "shaders/model.glsl");
         video::Program test_program(1, "shaders/test.glsl");
-        test_program
         s_renderingService->compileProgram(basic_program);
         r8ge::video::Model modelBackpack("backpack/backpack.obj");
+        r8ge::video::Texture2D tex1("test",false);
         s_windowingService->setFrameBuffer(frameBuffer);
         frameBuffer.setBuffer(s_windowingService->getWidth(), s_windowingService->getHeight());;
         glEnable(GL_DEPTH_TEST);
@@ -119,8 +119,6 @@ namespace r8ge {
             }
 
             ImGui::End();
-
-            s_guiService->insertModelIntoSceneItems(modelBackpack.m_getNameVector());
 
 
             s_guiService->render(frameBuffer);

@@ -34,7 +34,7 @@ namespace r8ge {
             unsigned long m_id;
             bool m_hasMaterial = false;
             bool m_hasTexture = false;
-            Program m_shader;
+            //Program m_shader;
         };
 
         class EntityModel : public Entity {

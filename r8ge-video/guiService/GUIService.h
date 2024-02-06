@@ -23,8 +23,6 @@ namespace r8ge {
             //TODO Replace this with rendering service after merging GLFramebuffer into GLService
             virtual void render(r8ge::video::GLFrameBuffer &frameBuffer) = 0;
 
-            virtual void insertModelIntoSceneItems(std::vector<std::string> meshes) = 0;
-
             virtual void endFrame(WindowingService &service) = 0;
 
             virtual void showDemoWindow() = 0;
