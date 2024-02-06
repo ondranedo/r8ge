@@ -13,6 +13,7 @@ namespace r8ge {
                                                            aiProcess_CalcTangentSpace);
             if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
                 R8GE_LOG_ERROR("Assimp Error: {}", importer.GetErrorString());
+                return;
             }
             m_directory = path.substr(0, path.find_last_of('/'));
             m_nameVector.emplace_back(path.substr(path.find_last_of('/')));

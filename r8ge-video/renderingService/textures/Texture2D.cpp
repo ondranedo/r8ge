@@ -39,7 +39,8 @@ namespace r8ge {
             }
             m_imageData = stbi_load(pathToFile.c_str(), &m_width, &m_height, &m_channelsCount, 0);
             if (m_imageData == nullptr) {
-                R8GE_LOG_WARNI("Data of texture {} is null", pathToFile.c_str());
+                R8GE_LOG_ERROR("Texture Error: Unable to open file `{}`", pathToFile.c_str());
+                return;
             }
         }
 
