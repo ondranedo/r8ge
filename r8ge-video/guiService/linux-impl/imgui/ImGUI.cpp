@@ -7,6 +7,7 @@
 #include "ImGuizmo.h"
 #include "../../../renderer/Entity.h"
 
+
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 
@@ -48,6 +49,8 @@ namespace r8ge {
 
             ImGui_ImplGlfw_InitForOpenGL(service.getWindow(), true);
             ImGui_ImplOpenGL3_Init("#version 460");
+
+            m_cubeButtonTex = GLTexture("Engine/GUI/cube.png", true);
         }
 
         void ImGUI::exit() {
@@ -65,8 +68,7 @@ namespace r8ge {
         }
 
 
-
-        void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer) {
+        void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer,Scene &scene) {
 
             renderR8GELayout();
 
@@ -76,6 +78,15 @@ namespace r8ge {
 
             ImGui::Begin("File", nullptr, windowFlags);
 
+            ImGui::End();
+
+            ImGui::Begin("Builder", nullptr, windowFlags);
+            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(m_cubeButtonTex.getTexture()), ImVec2(32, 32))) {
+                std::vector<GLTexture> emptyTextures;
+                Mesh cubeMesh(cubeVertices, cubeIndices, emptyTextures, "Cube");
+                Entity* cubeEntity = new EntityCube(scene,cubeMesh);
+                scene.addEntity(cubeEntity);
+            }
             ImGui::End();
 
 
@@ -117,16 +128,19 @@ namespace r8ge {
                 ImGuiID dock2 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Left, 0.25f, nullptr, &dock1);
                 ImGuiID dock3 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Right, 0.15f, nullptr, &dock1);
                 ImGuiID dock4 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Down, 0.25f, nullptr, &dock1);
+                ImGuiID dock5 = ImGui::DockBuilderSplitNode(dock3, ImGuiDir_Up, 0.15f, nullptr, &dock3);
 
                 ImGui::DockBuilderDockWindow("Viewport", dock1);
                 ImGui::DockBuilderDockWindow("SceneItems", dock2);
                 ImGui::DockBuilderDockWindow("Parameters", dock3);
                 ImGui::DockBuilderDockWindow("File", dock4);
+                ImGui::DockBuilderDockWindow("Builder", dock5);
 
                 ImGui::DockBuilderFinish(id);
 
             }
         }
+
         /*
         //TODO Why insert single entity insert whole scene every frame
         void ImGUI::insetEntityIntoSceneItems(const Entity& entity) {

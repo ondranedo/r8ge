@@ -6,7 +6,7 @@
 #define R8GE_CAMERA_H
 
 
-#include "ext/matrix_transform.hpp"
+#include <glm/ext/matrix_transform.hpp>
 #include "../../r8ge-core/events/Strokes.h"
 #include <glm/glm.hpp>
 

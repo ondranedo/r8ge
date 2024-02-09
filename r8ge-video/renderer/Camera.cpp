@@ -15,7 +15,7 @@ namespace r8ge {
 
         //TODO: We need to check if we are not in GUI
         //TODO: Implement Mouse input from core
-        void Camera::changeCameraPosition(float deltaTime,float xoffset, float yoffset) {
+        void Camera::changeCameraPosition(float deltaTime, float xoffset, float yoffset) {
             //TODO: Replace core deltaTime
             float velocity = m_MovementSpeed * deltaTime;
             if (r8ge::Input::isKeyPressed(r8ge::Key::W)) {
@@ -34,7 +34,7 @@ namespace r8ge {
             xoffset *= m_MouseSensitivity;
             yoffset *= m_MouseSensitivity;
 
-            m_Yaw   += xoffset;
+            m_Yaw += xoffset;
             m_Pitch += yoffset;
 
             if (m_Pitch > 89.0f)
@@ -44,7 +44,7 @@ namespace r8ge {
 
             updateCameraVectors();
             //R8GE_LOG("Delta time: {}, Camera position changed to X: {}, Y: {}, Z: {}", deltaTime, m_Position.x,
-                     //m_Position.y, m_Position.z);
+            //m_Position.y, m_Position.z);
         }
 
         void Camera::updateCameraVectors() {

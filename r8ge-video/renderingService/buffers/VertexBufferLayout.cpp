@@ -39,9 +39,9 @@ namespace r8ge {
         uint8_t VertexBufferLayout::EntryTypeComponents(VertexBufferLayout::Entry type) {
             switch (type) {
                 case VertexBufferLayout::Entry::COLOUR_RGB: return 3;
-                case VertexBufferLayout::Entry::POS_XYZ: return 3;
                 case VertexBufferLayout::Entry::COLOUR_RGBA: return 4;
                 case VertexBufferLayout::Entry::POS_XY: return 2;
+                case VertexBufferLayout::Entry::POS_XYZ: return 3;
                 case VertexBufferLayout::Entry::TEXTURE_XY: return 2;
                 case VertexBufferLayout::Entry::NORMAL_XYZ: return 3;
                 case VertexBufferLayout::Entry::TANGENT_XYZ: return 3;

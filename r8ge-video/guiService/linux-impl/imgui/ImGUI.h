@@ -7,6 +7,7 @@
 
 #include "../../GUIService.h"
 #include "../../../renderingService/RenderingService.h"
+#include "../../../renderingService/openGL/GLTexture.h"
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -23,7 +24,7 @@ namespace r8ge {
 
             void beginFrame() override;
 
-            void render(r8ge::video::GLFrameBuffer &frameBuffer) override;
+            void render(r8ge::video::GLFrameBuffer &frameBuffer,Scene &scene) override;
 
             void endFrame(WindowingService &service) override;
 
@@ -34,6 +35,7 @@ namespace r8ge {
             void showDemoWindow() override;
         private:
             ImGuiWindowFlags windowFlags = 0;
+            GLTexture m_cubeButtonTex;
 
         };
 

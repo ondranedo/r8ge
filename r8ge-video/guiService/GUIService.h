@@ -5,6 +5,8 @@
 #include "../../../windowingService/WindowingService.h"
 #include "../../../renderingService/RenderingService.h"
 #include "../renderingService/openGL/GLFrameBuffer.h"
+#include "../../../renderer/Scene.h"
+
 
 namespace r8ge {
     namespace video {
@@ -21,7 +23,7 @@ namespace r8ge {
             virtual void beginFrame() = 0;
 
             //TODO Replace this with rendering service after merging GLFramebuffer into GLService
-            virtual void render(r8ge::video::GLFrameBuffer &frameBuffer) = 0;
+            virtual void render(GLFrameBuffer &frameBuffer,Scene &scene) = 0;
 
             virtual void endFrame(WindowingService &service) = 0;
 
