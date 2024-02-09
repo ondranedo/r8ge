@@ -75,7 +75,7 @@ namespace r8ge {
             size_t m_indexCount;
             VertexBufferLayout m_layout;
         public:
-            std::unordered_map<size_t, GLuint> m_programs;
+            static std::unordered_map<size_t, GLuint> m_programs;
         };
     }
 }

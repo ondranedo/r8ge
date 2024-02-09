@@ -13,6 +13,8 @@ namespace r8ge {
             R8GE_LOG_ERROR("GL debug message: {}", std::string_view(message, length));
         }
 
+        std::unordered_map<size_t, GLuint> GLService::m_programs;
+
         GLService::GLService() : m_indexCount(0), m_indexBuffer(-1), m_vertexArrayObject(-1), m_vertexBuffer(-1) {
             R8GE_LOG("GL Service created ID: {}",id);
             id++;
@@ -108,6 +110,7 @@ namespace r8ge {
             glBindVertexArray(m_vertexArrayObject);
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indexCount), GL_UNSIGNED_INT, nullptr);
             glBindVertexArray(0);
+            glActiveTexture(GL_TEXTURE0);
         }
 
         void GLService::render(unsigned int count) const {
