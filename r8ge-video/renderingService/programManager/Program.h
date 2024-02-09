@@ -10,7 +10,7 @@ namespace r8ge {
     namespace video {
         class Program {
         public:
-            Program(size_t id, std::string_view source);
+            explicit Program(std::string_view source);
 
             [[nodiscard]] bool isValid() const;
 
@@ -28,7 +28,8 @@ namespace r8ge {
             [[nodiscard]] std::string getFragmentShader() const;
 
         private:
-            size_t m_id;
+            static unsigned long m_nextID;
+            unsigned long m_id;
             std::string m_source;
             VertexBufferLayout m_layout;
             bool m_valid;

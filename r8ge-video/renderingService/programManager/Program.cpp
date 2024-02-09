@@ -6,8 +6,11 @@
 namespace r8ge {
     namespace video {
 
-        Program::Program(size_t id, std::string_view source)
-                : m_valid(false), m_source(source), m_id(id) {
+        unsigned long Program::m_nextID = 0;
+
+        Program::Program(std::string_view source)
+                : m_valid(false), m_source(source), m_id(m_nextID++) {
+            R8GE_LOG("Created program located in `{}` with assigned ID {}",m_source,m_id);
         }
 
         bool Program::isValid() const {
