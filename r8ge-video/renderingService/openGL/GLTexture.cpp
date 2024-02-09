@@ -97,6 +97,10 @@ namespace r8ge {
             glBindTextureUnit(unit, m_texture);
         }
 
+        uint32_t GLTexture::getTexture() const {
+            return m_texture;
+        }
+
         GLTexture::~GLTexture() = default;
     }
 } // r8ge

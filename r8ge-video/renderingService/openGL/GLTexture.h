@@ -19,6 +19,8 @@ namespace r8ge {
 
             void updateData(void *data);
 
+            [[nodiscard]] uint32_t getTexture() const;
+
             void bindTexture(unsigned int unit) const;
 
         private:
