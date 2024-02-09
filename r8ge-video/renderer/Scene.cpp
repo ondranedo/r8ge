@@ -11,24 +11,29 @@ namespace r8ge {
         }
 
         void Scene::removeEntity(unsigned long id) {
-            m_entities.erase(id);
-        }
-
-        void Scene::changeTexture(Texture2D texture) {
-            if (m_selectedEntityPtr) {
-
+            auto it = m_entities.find(id);
+            if (it != m_entities.end()) {
+                delete it->second;
+                m_entities.erase(it);
             }
         }
 
-        void Scene::changeMaterial(Material material) {
-            if (m_selectedEntityPtr) {
 
+        void Scene::changeTexture(const Texture2D &texture) {
+            if (m_selectedEntityPtr) {
+                m_entities[m_selectedEntityPtr->getEntityID()]->changeTexture(texture);
             }
         }
 
-        void Scene::changeTransformation(Transformation transform) {
+        void Scene::changeMaterial(const Material &material) {
             if (m_selectedEntityPtr) {
+                m_entities[m_selectedEntityPtr->getEntityID()]->changeMaterial(material);
+            }
+        }
 
+        void Scene::changeTransformation(const Transformation &transform) {
+            if (m_selectedEntityPtr) {
+                m_entities[m_selectedEntityPtr->getEntityID()]->changeTransformation(transform);
             }
         }
 
@@ -41,7 +46,7 @@ namespace r8ge {
             }
         }
 
-        Entity *Scene::getEntity(unsigned long id) {
+        Entity* Scene::getEntity(unsigned long id) {
             auto it = m_entities.find(id);
             if (it != nullptr) {
                 return it->second;
@@ -54,7 +59,16 @@ namespace r8ge {
         }
 
         void Scene::init() {
-
+            /*
+            if (!std::filesystem::exists("Engine/Shaders") || !std::filesystem::is_directory("Engine/Shaders")) {
+                R8GE_LOG_ERROR("Engine shaders folder is missing");
+            }
+            else {
+                for (const auto &file: std::filesystem::directory_iterator("Engine/Shaders")) {
+                    m_shaderLibrary.emplace_back(file.path().c_str());
+                }
+            }
+             */
         }
 
         void Scene::copySelectedEntity() {
@@ -62,6 +76,20 @@ namespace r8ge {
                 Entity *copiedEntity = m_selectedEntityPtr;
                 addEntity(copiedEntity);
             }
+        }
+
+        void Scene::changeCamera(float deltaTime) {
+            m_camera.changeCameraPosition(deltaTime, 0.0f, 0.0f);
+        }
+
+        void Scene::render() {
+            for (const auto &pair: m_entities) {
+                pair.second->render();
+            }
+        }
+
+        Camera& Scene::getCamera() {
+            return m_camera;
         }
 
     } // r8ge

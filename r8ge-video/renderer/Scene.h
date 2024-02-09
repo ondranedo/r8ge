@@ -5,34 +5,15 @@
 #ifndef R8GE_SCENE_H
 #define R8GE_SCENE_H
 
-#include "Model.h"
 #include "Entity.h"
 #include "Camera.h"
+#include <filesystem>
 
 namespace r8ge {
     namespace video {
 
-        struct Transformation {
-            glm::vec3 translation;
-            glm::vec3 rotation;
-            glm::vec3 scale;
-        };
-
-        struct Material{
-            glm::vec3 ambient;
-            glm::vec3 diffuse;
-            glm::vec3 specular;
-            float shine;
-        };
-
-        struct ShaderLibrary{
-            std::string name;
-            Program shader;
-        };
-
         class Scene {
         public:
-
             void init();
 
             void addEntity(Entity *entity);
@@ -41,24 +22,30 @@ namespace r8ge {
 
             void copySelectedEntity();
 
-            void changeTexture(Texture2D texture);
+            void render();
 
-            void changeMaterial(Material material);
+            void changeTexture(const Texture2D& texture);
 
-            void changeTransformation(Transformation transform);
+            void changeMaterial(const Material& material);
+
+            void changeTransformation(const Transformation& transform);
+
+            void changeCamera(float deltaTime);
 
             void handleTreeNodeSelect(int nodeIndex);
+
+            Camera& getCamera();
 
             Entity* getEntity(unsigned long id);
 
         private:
-            std::unordered_map<unsigned long, Entity*> m_entities;
+            Camera m_camera = Camera(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f);
+            std::unordered_map<unsigned long, Entity *> m_entities;
             Entity *m_selectedEntityPtr = nullptr;
-            Camera m_camera;
-            std::vector<ShaderLibrary> m_ShaderLibrary;
+            std::vector<Program> m_shaderLibrary;
         };
 
     } // r8ge
 } // video
 
-#endif //R8GE_SCENE_H
+#endif //R8GE_SCENESTRUCTS_H
