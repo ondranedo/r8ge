@@ -4,6 +4,8 @@
 #include "../renderingService/openGL/GLTexture.h"
 #include "../types/Vertex.h"
 #include "../renderingService/RenderingService.h"
+#include "../types/SceneHelper.h"
+
 
 namespace r8ge {
     namespace video {
@@ -13,7 +15,7 @@ namespace r8ge {
             Mesh(std::vector<VertexColorTexture3D> &vertices, std::vector<unsigned int> &indices,
                  std::vector<GLTexture> &textures,const std::string& name);
 
-            void render(Program &shader);
+            void render(Program &shader,Transformation &transformation);
 
             std::string getName();
         private:
@@ -24,6 +26,7 @@ namespace r8ge {
             std::vector<GLTexture> m_textures;
             std::shared_ptr<video::RenderingService> m_renderingService;
             std::string m_name;
+            bool m_firstRenderLoop;
         };
 
     } // r8ge

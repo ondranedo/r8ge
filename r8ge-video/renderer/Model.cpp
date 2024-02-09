@@ -121,9 +121,9 @@ namespace r8ge {
             return textures;
         }
 
-        void Model::render(Program &shader) {
+        void Model::render(Program &shader,Transformation &transformation) {
             for (unsigned int i = 0; i < m_meshes.size(); i++)
-                m_meshes[i].render(shader);
+                m_meshes[i].render(shader,transformation);
         }
 
         std::vector<std::string> Model::m_getNameVector() {

@@ -19,7 +19,7 @@ namespace r8ge {
         public:
             Model(std::string const &path);
 
-            void render(Program &shader);
+            void render(Program &shader,Transformation &transformation);
 
             std::vector<std::string> m_getNameVector();
         private:
