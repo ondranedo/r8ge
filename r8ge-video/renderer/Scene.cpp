@@ -37,7 +37,7 @@ namespace r8ge {
             }
         }
 
-        void Scene::handleTreeNodeSelect(int nodeIndex) {
+        void Scene::handleTreeNodeSelect(unsigned long nodeIndex) {
             if (nodeIndex > 0 && nodeIndex < m_entities.size()) {
                 m_selectedEntityPtr = m_entities[nodeIndex];
             }
@@ -90,6 +90,24 @@ namespace r8ge {
 
         Camera& Scene::getCamera() {
             return m_camera;
+        }
+
+        std::string Scene::getName() {
+            return m_name;
+        }
+
+        std::unordered_map<unsigned long, Entity *> Scene::getEntitiesMap() {
+            return m_entities;
+        }
+
+        Entity *Scene::getSelectedEntity() {
+            return m_selectedEntityPtr;
+        }
+
+        void Scene::deselectAllEntities() {
+            for (auto &entityPair : m_entities) {
+                entityPair.second->setSelectionState(false);
+            }
         }
 
     } // r8ge

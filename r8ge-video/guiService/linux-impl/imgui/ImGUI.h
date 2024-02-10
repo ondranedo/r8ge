@@ -28,6 +28,8 @@ namespace r8ge {
 
             void endFrame(WindowingService &service) override;
 
+            void insertSceneIntoSceneItems(Scene &scene) override;
+
             void renderR8GELayout();
 
             void setColors();
@@ -36,7 +38,6 @@ namespace r8ge {
         private:
             ImGuiWindowFlags windowFlags = 0;
             GLTexture m_cubeButtonTex;
-
         };
 
     } // r8ge

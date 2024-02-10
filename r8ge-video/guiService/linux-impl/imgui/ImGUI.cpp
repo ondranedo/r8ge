@@ -6,6 +6,7 @@
 #include "ImGUI.h"
 #include "ImGuizmo.h"
 #include "../../../renderer/Entity.h"
+#include <glm/gtc/type_ptr.hpp>
 
 
 #include <backends/imgui_impl_opengl3.h>
@@ -34,8 +35,14 @@ namespace r8ge {
             io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
             //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-            float fontSize = 18.0f;
-            // io.FontDefault = io.Fonts->AddFontFromFileTTF("fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
+            float fontSize = 30.0f;
+            ImFont *font = io.Fonts->AddFontFromFileTTF("Engine/Fonts/Raleway/static/Raleway-Regular.ttf", fontSize);
+            if (font == nullptr) {
+                R8GE_LOG_ERROR("Engine default font was not found");
+            }
+            else {
+                io.FontDefault = font;
+            }
 
             ImGui::StyleColorsDark();
 
@@ -68,7 +75,7 @@ namespace r8ge {
         }
 
 
-        void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer,Scene &scene) {
+        void ImGUI::render(r8ge::video::GLFrameBuffer &frameBuffer, Scene &scene) {
 
             renderR8GELayout();
 
@@ -84,11 +91,33 @@ namespace r8ge {
             if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(m_cubeButtonTex.getTexture()), ImVec2(32, 32))) {
                 std::vector<GLTexture> emptyTextures;
                 Mesh cubeMesh(cubeVertices, cubeIndices, emptyTextures, "Cube");
-                Entity* cubeEntity = new EntityCube(scene,cubeMesh);
+                Entity *cubeEntity = new EntityCube(scene, cubeMesh);
                 scene.addEntity(cubeEntity);
             }
             ImGui::End();
 
+            ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove);
+            {
+
+                ImGui::Image(
+                        reinterpret_cast<ImTextureID>(frameBuffer.getFrameTexture()),
+                        ImGui::GetContentRegionAvail(),
+                        ImVec2(0, 1),
+                        ImVec2(1, 0)
+                );
+                if (scene.getSelectedEntity() != nullptr) {
+                    ImGuizmo::SetOrthographic(false);
+                    ImGuizmo::SetDrawlist();
+                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowHeight(),
+                                      ImGui::GetWindowHeight());
+                    ImGuizmo::Manipulate(glm::value_ptr(scene.getSelectedEntity()->getTransformation().view),
+                                         glm::value_ptr(scene.getSelectedEntity()->getTransformation().projection),
+                                         ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL,
+                                         glm::value_ptr(scene.getSelectedEntity()->getTransformation().model));
+                }
+            }
+
+            ImGui::End();
 
             ImGui::Render();
         }
@@ -108,6 +137,38 @@ namespace r8ge {
         void ImGUI::showDemoWindow() {
             bool demo;
             ImGui::ShowDemoWindow(&demo);
+        }
+
+        //TODO Optimize that we will remember last selected entity instead of deselectAllEntities();
+        void ImGUI::insertSceneIntoSceneItems(Scene &scene) {
+            unsigned long currentSelectedEntityID = -1;
+            if (ImGui::Begin("SceneItems", nullptr, windowFlags)) {
+                if (ImGui::TreeNode(scene.getName().c_str())) {
+                    for (auto &entityPair : scene.getEntitiesMap()) {
+                        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanAvailWidth;
+                        bool isSelected = entityPair.second->getSelectionState();
+                        if (isSelected) {
+                            flags |= ImGuiTreeNodeFlags_Selected;
+                        }
+                        flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet;
+                        if (ImGui::TreeNodeEx((void *)(intptr_t)entityPair.second->getEntityID(), flags, "%s",
+                                              entityPair.second->getName().c_str())) {
+                            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+                                currentSelectedEntityID = entityPair.first;
+                                R8GE_LOG_DEBUG("EntityWasSelected entity selected : {}",entityPair.first);
+                                scene.deselectAllEntities();
+                                entityPair.second->setSelectionState(true);
+                            }
+                            ImGui::TreePop();
+                        }
+                    }
+                    ImGui::TreePop();
+                }
+            }
+            if (currentSelectedEntityID != -1) {
+                scene.handleTreeNodeSelect(currentSelectedEntityID);
+            }
+            ImGui::End();
         }
 
         void ImGUI::renderR8GELayout() {
@@ -137,29 +198,8 @@ namespace r8ge {
                 ImGui::DockBuilderDockWindow("Builder", dock5);
 
                 ImGui::DockBuilderFinish(id);
-
             }
         }
-
-        /*
-        //TODO Why insert single entity insert whole scene every frame
-        void ImGUI::insetEntityIntoSceneItems(const Entity& entity) {
-            if (ImGui::Begin("SceneItems", nullptr, windowFlags)) {
-
-                if (ImGui::TreeNode(meshes[0].c_str())) {
-
-                    for (int i = 1;i<meshes.size();i++) {
-
-
-                        if (ImGui::Selectable(meshes[i].c_str())) {
-                        }
-                    }
-                    ImGui::TreePop();
-                }
-            }
-            ImGui::End();
-        }
-         */
 
         void ImGUI::setColors() {
             ImGuiStyle &style = ImGui::GetStyle();
@@ -188,8 +228,6 @@ namespace r8ge {
             colors[ImGuiCol_TabActive] = ImVec4{157.0f / 255.0f, 160.0f / 255.0f, 170.0f / 255.0f, 1.0f};
             colors[ImGuiCol_TabUnfocused] = ImVec4{9.0f / 255.0f, 17.0f / 255.0f, 43.0f / 255.0f, 1.0f};
             colors[ImGuiCol_TabUnfocusedActive] = ImVec4{58.0f / 255.0f, 65.0f / 255.0f, 85.0f / 255.0f, 1.0f};
-
-
         }
 
 

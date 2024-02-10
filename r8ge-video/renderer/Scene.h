@@ -8,12 +8,15 @@
 #include "Entity.h"
 #include "Camera.h"
 #include <filesystem>
+#include <utility>
 
 namespace r8ge {
     namespace video {
 
         class Scene {
         public:
+            explicit Scene(std::string name) : m_name(std::move(name)) {};
+
             void init();
 
             void addEntity(Entity *entity);
@@ -32,17 +35,26 @@ namespace r8ge {
 
             void changeCamera(float deltaTime);
 
-            void handleTreeNodeSelect(int nodeIndex);
+            void handleTreeNodeSelect(unsigned long nodeIndex);
 
             Camera& getCamera();
 
             Entity* getEntity(unsigned long id);
+
+            Entity* getSelectedEntity();
+
+            void deselectAllEntities();
+
+            std::string getName();
+
+            std::unordered_map<unsigned long,Entity *> getEntitiesMap();
 
         private:
             Camera m_camera = Camera(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f);
             std::unordered_map<unsigned long, Entity *> m_entities;
             Entity *m_selectedEntityPtr = nullptr;
             std::vector<Program> m_shaderLibrary;
+            std::string m_name;
         };
 
     } // r8ge

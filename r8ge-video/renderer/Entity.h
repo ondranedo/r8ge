@@ -38,6 +38,14 @@ namespace r8ge {
 
             [[nodiscard]] bool getTextureState() const;
 
+            [[nodiscard]] bool getSelectionState() const;
+
+            void setSelectionState(bool state);
+
+            std::string getName();
+
+            Transformation &getTransformation();
+
             virtual ~Entity() = default;
 
         protected:
@@ -45,18 +53,20 @@ namespace r8ge {
             unsigned long m_id;
             bool m_hasMaterial = false;
             bool m_hasTexture = false;
+            bool m_isSelected = false;
             UpdateFunction m_updateFunction{};
             Program m_shader = Program("Engine/Shaders/EntityDefault.glsl");
             GLTexture m_texture;
             Material m_material{};
             Transformation m_transformation;
             Scene &m_scene;
+            std::string m_name;
 
         };
 
         class EntityModel : public Entity {
         public:
-            explicit EntityModel(Scene &scene, Model model) : Entity(scene), m_model(std::move(model)) {};
+            explicit EntityModel(Scene &scene, Model model);
 
             void render() override;
 
@@ -67,7 +77,7 @@ namespace r8ge {
 
         class EntityCube : public Entity {
         public:
-            explicit EntityCube(Scene &scene, Mesh cubeMesh) : Entity(scene), m_cubeMesh(std::move(cubeMesh)) {};
+            explicit EntityCube(Scene &scene, Mesh cubeMesh);
 
             void render() override;
 
@@ -77,8 +87,7 @@ namespace r8ge {
 
         class EntitySphere : public Entity {
         public:
-            explicit EntitySphere(Scene &scene, Mesh sphereMesh) : Entity(scene),
-                                                                   m_sphereMesh(std::move(sphereMesh)) {};
+            explicit EntitySphere(Scene &scene, Mesh sphereMesh);
 
             void render() override;
 
@@ -88,8 +97,7 @@ namespace r8ge {
 
         class EntityCylinder : public Entity {
         public:
-            explicit EntityCylinder(Scene &scene, Mesh cylinderMesh) : Entity(scene),
-                                                                       m_cylinderMesh(std::move(cylinderMesh)) {};
+            explicit EntityCylinder(Scene &scene, Mesh cylinderMesh);
 
             void render() override;
 
