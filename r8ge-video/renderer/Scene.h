@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "Camera.h"
 #include <filesystem>
+#include <map>
 #include <utility>
 
 namespace r8ge {
@@ -47,11 +48,11 @@ namespace r8ge {
 
             std::string getName();
 
-            std::unordered_map<unsigned long,Entity *> getEntitiesMap();
+            std::map<unsigned long,Entity *> getEntitiesMap();
 
         private:
             Camera m_camera = Camera(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f);
-            std::unordered_map<unsigned long, Entity *> m_entities;
+            std::map<unsigned long, Entity *> m_entities;
             Entity *m_selectedEntityPtr = nullptr;
             std::vector<Program> m_shaderLibrary;
             std::string m_name;

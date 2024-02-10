@@ -48,7 +48,7 @@ namespace r8ge {
 
         Entity* Scene::getEntity(unsigned long id) {
             auto it = m_entities.find(id);
-            if (it != nullptr) {
+            if (it != m_entities.end()) {
                 return it->second;
             }
             else {
@@ -96,7 +96,7 @@ namespace r8ge {
             return m_name;
         }
 
-        std::unordered_map<unsigned long, Entity *> Scene::getEntitiesMap() {
+        std::map<unsigned long, Entity *> Scene::getEntitiesMap() {
             return m_entities;
         }
 
