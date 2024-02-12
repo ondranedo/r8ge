@@ -4,7 +4,6 @@
 #include "windowingService/WindowingService.h"
 #include "renderingService/RenderingService.h"
 #include "guiService/GUIService.h"
-
 #include <memory>
 
 namespace r8ge {
@@ -16,8 +15,6 @@ namespace r8ge {
         void init();
         void run();
         void exit();
-
-    public:
 
     private:
         std::string m_title;

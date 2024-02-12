@@ -82,11 +82,7 @@ namespace r8ge {
             ImGui::Begin("Parameters", nullptr, windowFlags);
 
             ImGui::End();
-
-            ImGui::Begin("File", nullptr, windowFlags);
-
-            ImGui::End();
-
+            
             ImGui::Begin("Builder", nullptr, windowFlags);
             if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(m_cubeButtonTex.getTexture()), ImVec2(32, 32))) {
                 std::vector<GLTexture> emptyTextures;
@@ -108,7 +104,7 @@ namespace r8ge {
                 if (scene.getSelectedEntity() != nullptr) {
                     ImGuizmo::SetOrthographic(false);
                     ImGuizmo::SetDrawlist();
-                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowHeight(),
+                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(),
                                       ImGui::GetWindowHeight());
                     ImGuizmo::Manipulate(glm::value_ptr(scene.getSelectedEntity()->getTransformation().view),
                                          glm::value_ptr(scene.getSelectedEntity()->getTransformation().projection),
@@ -188,13 +184,11 @@ namespace r8ge {
                 ImGuiID dock1 = ImGui::DockBuilderSplitNode(id, ImGuiDir_Up, 1.0f, nullptr, &id);
                 ImGuiID dock2 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Left, 0.25f, nullptr, &dock1);
                 ImGuiID dock3 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Right, 0.15f, nullptr, &dock1);
-                ImGuiID dock4 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Down, 0.25f, nullptr, &dock1);
                 ImGuiID dock5 = ImGui::DockBuilderSplitNode(dock3, ImGuiDir_Up, 0.15f, nullptr, &dock3);
 
                 ImGui::DockBuilderDockWindow("Viewport", dock1);
                 ImGui::DockBuilderDockWindow("SceneItems", dock2);
                 ImGui::DockBuilderDockWindow("Parameters", dock3);
-                ImGui::DockBuilderDockWindow("File", dock4);
                 ImGui::DockBuilderDockWindow("Builder", dock5);
 
                 ImGui::DockBuilderFinish(id);
